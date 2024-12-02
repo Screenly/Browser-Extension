@@ -63,7 +63,6 @@ export function initOptions() {
   getUser().then((user) => {
     if (user.token) {
       showPage(elements.signedInPage);
-      console.info(user);
     } else {
       showPage(elements.signInPage);
     }
