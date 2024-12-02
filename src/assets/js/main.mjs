@@ -2,40 +2,9 @@
 
 /* global browser */
 
-import 'bootstrap/dist/css/bootstrap.css';
-import 'bootstrap';
-
-import '@/scss/style.scss';
 import "@/vendor/normalize-url.js";
 
-export function assert(condition, msg=undefined) {
-  if (!condition)
-    throw msg ? msg : "Assertion error";
-}
-
-export function showElement(element) {
-  element.hidden = false;
-}
-
-export function hideElement(element) {
-  element.hidden = true;
-}
-
-export function showPage(pageEl) {
-  Array.from(document.querySelectorAll(".page"))
-    .filter(value => value !== pageEl)
-    .forEach(hideElement);
-
-  showElement(pageEl);
-}
-
-export function setButtonWaitState(element, state) {
-  element.disabled = state;
-  element.querySelector(".spinner").hidden = !state;
-  element.querySelector(".label").hidden = state;
-}
-
-function callApi(method, url, data=undefined, token=undefined) {
+export function callApi(method, url, data=undefined, token=undefined) {
   let init = {
     method: method,
     headers: {
