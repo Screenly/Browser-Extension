@@ -9,12 +9,17 @@
     "test": "src/test"
   },
   "devDependencies": {
+    "@babel/core": "^7.26.0",
+    "@babel/preset-env": "^7.26.0",
+    "@babel/preset-react": "^7.25.9",
     "@eslint/eslintrc": "^3.1.0",
     "@eslint/js": "^9.14.0",
+    "babel-loader": "^9.2.1",
     "copy-webpack-plugin": "^12.0.2",
     "css-loader": "^7.1.2",
     "eslint": "^9.14.0",
     "eslint-plugin-jasmine": "^4.2.2",
+    "eslint-plugin-react": "^7.37.2",
     "globals": "^15.12.0",
     "html-webpack-plugin": "^5.6.3",
     "karma": "^6.4.4",
@@ -36,6 +41,10 @@
   },
   "author": "Screenly, Inc.",
   "dependencies": {
-    "bootstrap": "^5.3.3"
+    "@reduxjs/toolkit": "^2.3.0",
+    "bootstrap": "^5.3.3",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-redux": "^9.1.2"
   }
 }

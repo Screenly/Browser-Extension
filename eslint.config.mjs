@@ -14,7 +14,11 @@ const compat = new FlatCompat({
 });
 
 export default [
-  ...compat.extends("eslint:recommended", "plugin:jasmine/recommended"),
+  ...compat.extends(
+    "eslint:recommended",
+    "plugin:react/recommended",
+    "plugin:jasmine/recommended"
+  ),
   {
     ignores: [
       "src/lib/vendor/",
@@ -25,6 +29,12 @@ export default [
   {
     plugins: {
       jasmine,
+    },
+
+    settings: {
+      react: {
+        version: "detect",
+      },
     },
 
     languageOptions: {
@@ -38,6 +48,12 @@ export default [
 
       ecmaVersion: "latest",
       sourceType: "module",
+
+      parserOptions: {
+        ecmaFeatures: {
+          jsx: true,
+        },
+      },
     },
 
     rules: {},

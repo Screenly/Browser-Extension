@@ -3,56 +3,10 @@
   <head>
     <meta charset='utf-8'>
     <meta content='width=device-width, initial-scale=1, shrink-to-fit=no' name='viewport'>
-    <title>Options - Screenly</title>
+    <title>Options &middot; Screenly</title>
   </head>
   <body>
-    <div class='container container-small'>
-      <div class='mb-5 mt-5 text-center'>
-        <img src='assets/images/screenly-logo-128.png' width='64'>
-      </div>
-      <div class='page' id='sign-in-page'>
-        <form class='sign-in'>
-          <div class='form-group mb-3'>
-            <input class='form-control' id='token' type='password' placeholder='Token' required='true'>
-          </div>
-          <button class='btn btn-primary w-100' id='sign-in-submit' type='submit'>
-            <span class='spinner spinner-border spinner-border-sm' ariaHidden='true' hidden='true'></span>
-            <span class='label'>Sign In</span>
-          </button>
-          <div class='alert alert-info mt-3'>
-            <p class='mb-0'>
-              For instructions on how to get your token, visit
-              <a
-                href="https://support.screenly.io/hc/en-us/articles/35897560148371-How-to-Generate-a-Screenly-API-Token"
-                target='_blank'
-              >this page</a> for details.
-            </p>
-          </div>
-          <div class='alert alert-danger mb-0 mt-3' id='sign-in-error' hidden='true'>
-            Unable to sign in. Check your credentials and internet connectivity, then try again.
-          </div>
-        </form>
-        <section class='mt-2'>
-          <div class='small text-center'>
-            Need an account?
-            <a id='sign-up-link'>
-              Sign Up.
-            </a>
-          </div>
-        </section>
-      </div>
-      <div class='page' id='signed-in-page'>
-        <section>
-          Signed in
-        </section>
-        <section class='mt-3'>
-          <button class='btn btn-primary w-100' id='sign-out' type='submit'>
-            <span class='spinner spinner-border spinner-border-sm' ariaHidden='true' hidden='true'></span>
-            <span class='label'>Sign Out</span>
-          </button>
-        </section>
-      </div>
-    </div>
+    <div id="app"></div>
     <script src='lib/vendor/browser-polyfill.min.js'></script>
   </body>
 </html>
