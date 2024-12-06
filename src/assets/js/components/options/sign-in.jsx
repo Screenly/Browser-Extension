@@ -53,11 +53,11 @@ export const SignInForm = () => {
   }
 
   return (
-    <div className="page" id="sign-in-page">
+    <div className="SignInForm page" id="sign-in-page">
       <form className="sign-in">
         <div className="form-group mb-3">
           <input
-            className="form-control"
+            className="form-control shadow-none border-3"
             id="token"
             type="password"
             placeholder="Token"

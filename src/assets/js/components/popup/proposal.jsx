@@ -309,7 +309,7 @@ export const Proposal = () => {
           <section>
             <div className="form-check">
               <input
-                className="form-check-input"
+                className="form-check-input shadow-none"
                 id="with-auth-check"
                 type="checkbox"
                 checked={saveAuthentication}

@@ -8,8 +8,8 @@ import {
   useSelector,
   useDispatch,
 } from 'react-redux';
+import classNames from 'classnames';
 
-import 'bootstrap/scss/bootstrap.scss';
 import '@/scss/style.scss';
 
 import { SignInForm } from '@/components/options/sign-in';
@@ -33,10 +33,19 @@ const OptionsPage = () => {
   }, []);
 
   return (
-    <div className='container'>
-      <div className='container container-small'>
-        <div className='mb-5 mt-5 text-center'>
-          <img src='assets/images/screenly-logo-128.png' width='64' />
+    <div className="container OptionsPage">
+      <div
+        className={classNames(
+          'container',
+          'container-small',
+          'p-5',
+          'border',
+          'border-3',
+          'border-primary',
+        )}
+      >
+        <div className="mb-5 mt-5 text-center">
+          <img src='assets/images/screenly-logo-128.png' width="128" />
         </div>
 
         {

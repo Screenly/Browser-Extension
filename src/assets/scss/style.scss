@@ -1,3 +1,7 @@
+$primary: #972EFF;
+
+@import 'bootstrap/scss/bootstrap';
+
 body.popup {
     .page {
         width: 350px;
@@ -27,7 +31,7 @@ body.popup {
 .container-small {
     margin: auto;
     width: 100%;
-    max-width: 350px;
+    max-width: 450px;
 }
 
 #sign-in-page {
@@ -36,6 +40,10 @@ body.popup {
         font-weight: normal;
         font-size: 40px;
     }
+}
+
+#signed-in-page {
+    min-height: 400px;
 }
 
 .break-anywhere {
@@ -53,4 +61,15 @@ body.popup {
 #fail-message {
     overflow-wrap: break-word;
     max-width: 300px;
+}
+
+.OptionsPage {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+
+  & > .container {
+    border-radius: 1rem;
+  }
 }
