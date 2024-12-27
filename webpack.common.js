@@ -13,14 +13,15 @@ module.exports = {
   module: {
     rules: [
       {
-        test: /.(js|jsx|mjs)$/,
+        test: /\.(js|jsx|mjs|ts|tsx)$/,
         exclude: /node_modules/,
         use: {
           loader: 'babel-loader',
           options: {
             presets: [
               '@babel/preset-env',
-              '@babel/preset-react'
+              '@babel/preset-react',
+              '@babel/preset-typescript'
             ]
           }
         }
@@ -90,7 +91,7 @@ module.exports = {
       '@/scss': path.resolve(__dirname, 'src/assets/scss'),
       '@/vendor': path.resolve(__dirname, 'src/lib/vendor'),
     },
-    extensions: ['.js', '.jsx', '.mjs'],
+    extensions: ['.ts', '.tsx', '.js', '.jsx', '.mjs'],
   },
 
   watchOptions: {
