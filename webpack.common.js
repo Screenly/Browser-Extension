@@ -7,7 +7,7 @@ const webpack = require('webpack');
 
 module.exports = {
   entry: {
-    'popup': './src/assets/js/popup.jsx',
+    'popup': './src/assets/js/popup.tsx',
   },
 
   module: {

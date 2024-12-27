@@ -21,8 +21,13 @@ import { Settings } from '@/components/settings';
 
 import { store } from '@/store';
 import { signIn } from '@/features/popupSlice';
+import { RootState } from '@/types';
 
-const PopupPage = () => {
+interface CustomEvent extends Event {
+  detail: string;
+}
+
+const PopupPage: React.FC = () => {
   const dispatch = useDispatch();
 
   const {
@@ -31,16 +36,16 @@ const PopupPage = () => {
     showSuccess,
     showSignInSuccess,
     showSettings,
-  } = useSelector((state) => state.popup);
+  } = useSelector((state: RootState) => state.popup);
 
-  const [assetDashboardLink, setAssetDashboardLink] = useState('');
+  const [assetDashboardLink, setAssetDashboardLink] = useState<string>('');
 
   useEffect(() => {
     dispatch(signIn());
 
-    document.addEventListener('set-asset-dashboard-link', (event) => {
+    document.addEventListener('set-asset-dashboard-link', ((event: CustomEvent) => {
       setAssetDashboardLink(event.detail);
-    });
+    }) as EventListener);
   }, []);
 
   return (
@@ -49,14 +54,15 @@ const PopupPage = () => {
       {showProposal && <Proposal />}
       {showSuccess && <Success assetDashboardLink={assetDashboardLink} />}
       {showSignInSuccess && <SignInSuccess />}
-      {
-        showSettings && <Settings />
-      }
+      {showSettings && <Settings />}
     </>
   );
-}
+};
 
-const root = ReactDOM.createRoot(document.getElementById('app'));
+const container = document.getElementById('app');
+if (!container) throw new Error('Failed to find the app element');
+
+const root = ReactDOM.createRoot(container);
 root.render(
   <Provider store={store}>
     <PopupPage />
