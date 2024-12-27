@@ -1,4 +1,4 @@
-export const PopupSpinner = () => {
+export const PopupSpinner: React.FC = () => {
   return (
     <div
       className="page"
@@ -15,4 +15,3 @@ export const PopupSpinner = () => {
     </div>
   );
 };
-

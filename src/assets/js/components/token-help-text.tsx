@@ -1,4 +1,4 @@
-export const TokenHelpText = () => {
+export const TokenHelpText: React.FC = () => {
   return (
     <div className="alert mt-3 mb-1 TokenHelpText">
       <p className="mb-0">
@@ -10,5 +10,5 @@ export const TokenHelpText = () => {
         >this page</a>&nbsp;for details.
       </p>
     </div>
-  )
+  );
 };

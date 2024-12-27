@@ -1,4 +1,4 @@
-export const SaveAuthHelp = () => {
+export const SaveAuthHelp: React.FC = () => {
   return (
     <div className="font-italic mb-0 mt-2 text-muted">
       <p className="mb-0">
