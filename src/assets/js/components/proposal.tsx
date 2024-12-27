@@ -21,81 +21,106 @@ import {
   openSettings,
 } from '@/features/popupSlice';
 
-export const Proposal = () => {
+interface ErrorState {
+  show: boolean;
+  message: string;
+}
+
+interface ProposalState {
+  user: any; // TODO: Define proper user type
+  title: string;
+  url: string;
+  cookieJar: Cookie[];
+  state?: SavedAssetState;
+}
+
+interface SavedAssetState {
+  assetId: string;
+  withCookies: boolean;
+}
+
+interface Cookie {
+  domain: string;
+  name: string;
+  value: string;
+  hostOnly?: boolean;
+}
+
+interface ResourceEntry {
+  name: string;
+}
+
+type ButtonState = 'add' | 'update' | 'loading';
+
+export const Proposal: React.FC = () => {
   const dispatch = useDispatch();
-  const [isLoading, setIsLoading] = useState(false);
-  const [assetTitle, setAssetTitle] = useState('');
-  const [assetUrl, setAssetUrl] = useState('');
-  const [assetHostname, setAssetHostname] = useState('');
-  const [buttonState, setButtonState] = useState('add');
-  const [error, setError] = useState({
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [assetTitle, setAssetTitle] = useState<string>('');
+  const [assetUrl, setAssetUrl] = useState<string>('');
+  const [assetHostname, setAssetHostname] = useState<string>('');
+  const [buttonState, setButtonState] = useState<ButtonState>('add');
+  const [error, setError] = useState<ErrorState>({
     show: false,
     message: 'Failed to add or update asset'
   });
-  const [bypassVerification, setBypassVerification] = useState(false);
-  const [saveAuthentication, setSaveAuthentication] = useState(false);
-  const [proposal, setProposal] = useState(null);
+  const [bypassVerification, setBypassVerification] = useState<boolean>(false);
+  const [saveAuthentication, setSaveAuthentication] = useState<boolean>(false);
+  const [proposal, setProposal] = useState<ProposalState | null>(null);
 
-  const updateProposal = (newProposal) => {
-    setError((prev) => {
-      return {
-        ...prev,
-        show: false
-      };
-    });
+  const updateProposal = async (newProposal: ProposalState) => {
+    setError((prev) => ({
+      ...prev,
+      show: false
+    }));
 
     let currentProposal = newProposal;
     const url = currentProposal.url;
 
-    return State.getSavedAssetState(url)
-      .then((state) => {
-        if (state)
-          // Does the asset still exist?
-          return getWebAsset(state.assetId, newProposal.user)
-            .then(() => {
-              // Yes it does. Proceed with the update path.
-              return state;
-            })
-            .catch((error) => {
-              if (error.status === 404) {
-                // It's gone. Proceed like if we never had it.
-                State.setSavedAssetState(url, null);
-                return undefined;
-              }
+    try {
+      const state = await State.getSavedAssetState(url);
 
-              throw error;
-            });
-      })
-      .then((state) => {
-        currentProposal.state = state;
-
-        setAssetTitle(currentProposal.title);
-        setAssetUrl(currentProposal.url);
-        setAssetHostname(new URL(url).hostname);
-
-        setProposal(currentProposal);
-
-        if (state) {
-          setSaveAuthentication(state.withCookies);
-          setButtonState('update');
-        } else {
-          setButtonState('add');
+      if (state) {
+        try {
+          await getWebAsset(state.assetId, newProposal.user);
+          currentProposal.state = state;
+        } catch (error: any) {
+          if (error.status === 404) {
+            State.setSavedAssetState(url, null);
+            currentProposal.state = undefined;
+          } else {
+            throw error;
+          }
         }
-      })
-      .catch((error) => {
-        // Unknown error.
-        setError((prev) => {
-          return {
-            ...prev,
-            show: true,
-            message: 'Failed to check asset.'
-          };
-        });
-        throw error;
-      });
-  }
+      }
 
-  const proposeToAddToScreenly = async(user, url, title, cookieJar) => {
+      setAssetTitle(currentProposal.title);
+      setAssetUrl(currentProposal.url);
+      setAssetHostname(new URL(url).hostname);
+
+      setProposal(currentProposal);
+
+      if (currentProposal.state) {
+        setSaveAuthentication(currentProposal.state.withCookies);
+        setButtonState('update');
+      } else {
+        setButtonState('add');
+      }
+    } catch (error) {
+      setError((prev) => ({
+        ...prev,
+        show: true,
+        message: 'Failed to check asset.'
+      }));
+      throw error;
+    }
+  };
+
+  const proposeToAddToScreenly = async (
+    user: any,
+    url: string,
+    title: string,
+    cookieJar: Cookie[]
+  ) => {
     await updateProposal({
       user,
       title,
@@ -104,7 +129,7 @@ export const Proposal = () => {
     });
   };
 
-  const prepareToAddToScreenly = async() => {
+  const prepareToAddToScreenly = async () => {
     const onlyPrimaryDomain = true;
     const user = await getUser();
 
@@ -112,12 +137,14 @@ export const Proposal = () => {
       return;
     }
 
-    let tabs = await browser.tabs.query({ active: true, currentWindow: true });
-    let tabId = tabs[0].id;
+    const tabs = await browser.tabs.query({ active: true, currentWindow: true });
+    const tabId = tabs[0].id;
+
+    if (!tabId) return;
 
     try {
-      let result = await browser.scripting.executeScript({
-        target: { tabId: tabId },
+      const result = await browser.scripting.executeScript({
+        target: { tabId },
         func: () => {
           return [
             window.location.href,
@@ -127,7 +154,7 @@ export const Proposal = () => {
         }
       });
 
-      let [pageUrl, pageTitle, resourceEntries] = result[0].result;
+      const [pageUrl, pageTitle, resourceEntries] = result[0].result;
 
       if (!resourceEntries) {
         return;
@@ -135,7 +162,7 @@ export const Proposal = () => {
 
       const originDomain = new URL(pageUrl).host;
 
-      let results = await Promise.all(
+      const results = await Promise.all(
         resourceEntries.map(url =>
           browser.cookies.getAll({ url })
         )
@@ -155,10 +182,9 @@ export const Proposal = () => {
       );
 
       if (onlyPrimaryDomain) {
-        // noinspection JSUnresolvedVariable
         cookieJar = cookieJar.filter(cookie =>
           cookie.domain === originDomain || (!cookie.hostOnly && originDomain.endsWith(cookie.domain))
-        )
+        );
       }
 
       await proposeToAddToScreenly(user, pageUrl, pageTitle, cookieJar);
@@ -175,123 +201,108 @@ export const Proposal = () => {
       });
   }, []);
 
-  const handleSettings = (event) => {
+  const handleSettings = (event: React.MouseEvent) => {
     event.preventDefault();
     dispatch(openSettings());
   };
 
-  const handleSubmission = async (event) => {
+  const handleSubmission = async (event: React.FormEvent) => {
     event.preventDefault();
 
-    let currentProposal = proposal;
-
-    if (buttonState === 'loading') {
+    if (!proposal || buttonState === 'loading') {
       return;
     }
 
     setButtonState('loading');
-    let headers = {};
+    let headers: Record<string, string> = {};
 
-    if (saveAuthentication && currentProposal.cookieJar) {
+    if (saveAuthentication && proposal.cookieJar) {
       headers = {
-        'Cookie': currentProposal.cookieJar.map(
+        'Cookie': proposal.cookieJar.map(
           cookie => cookiejs.serialize(cookie.name, cookie.value)
         ).join('; ')
       };
     }
 
-    const state = currentProposal.state;
-    let action = (
-      !state ?
-        createWebAsset(
-          currentProposal.user,
-          currentProposal.url,
-          currentProposal.title,
-          headers,
-          bypassVerification
-        ) :
-        updateWebAsset(
-          state.assetId,
-          currentProposal.user,
-          currentProposal.url,
-          currentProposal.title,
+    const state = proposal.state;
+    try {
+      const result = !state
+        ? await createWebAsset(
+          proposal.user,
+          proposal.url,
+          proposal.title,
           headers,
           bypassVerification
         )
-    );
-
-    action
-      .then((result) => {
-        if (result.length === 0) {
-          throw 'No asset data returned';
-        }
-
-        State.setSavedAssetState(
-          currentProposal.url,
-          result[0].id,
-          saveAuthentication,
+        : await updateWebAsset(
+          state.assetId,
+          proposal.user,
+          proposal.url,
+          proposal.title,
+          headers,
           bypassVerification
         );
 
-        setButtonState(state ? 'update' : 'add');
+      if (result.length === 0) {
+        throw new Error('No asset data returned');
+      }
 
-        const event = new CustomEvent('set-asset-dashboard-link', {
-          detail: getAssetDashboardLink(result[0].id)
-        });
-        document.dispatchEvent(event);
+      State.setSavedAssetState(
+        proposal.url,
+        result[0].id,
+        saveAuthentication,
+        bypassVerification
+      );
 
-        dispatch(notifyAssetSaveSuccess());
-      })
-      .catch((error) => {
-        if (error.statusCode === 401) {
-          setError((prev) => {
-            return {
-              ...prev,
-              show: true,
-              message: 'Screenly authentication failed. Try signing out and back in again.'
-            };
-          });
-          return;
-        }
+      setButtonState(state ? 'update' : 'add');
 
-        error.json()
-          .then((errorJson) => {
-            if (
-              errorJson.type &&
-              errorJson.type[0] === 'AssetUnreachableError'
-            ) {
-              setBypassVerification(true);
-              setError((prev) => {
-                return {
-                  ...prev,
-                  show: true,
-                  message: 'Screenly couldn\'t reach this web page. To save it anyhow, use the Bypass Verification option.'
-                };
-              });
-            } else if (!errorJson.type) {
-              throw JSON.stringify(errorJson);
-            } else {
-              throw 'Unknown error';
-            }
-          }).catch((error) => {
-            const prefix = (
-              state ?
-                'Failed to update asset' :
-                'Failed to save web page'
-            );
-            setError((prev) => {
-              return {
-                ...prev,
-                show: true,
-                message: (
-                  `${prefix}: ${error}`
-                )
-              };
-            });
-
-            setButtonState(state ? 'update' : 'add');
-          });
+      const event = new CustomEvent('set-asset-dashboard-link', {
+        detail: getAssetDashboardLink(result[0].id)
       });
+      document.dispatchEvent(event);
+
+      dispatch(notifyAssetSaveSuccess());
+    } catch (error: any) {
+      if (error.statusCode === 401) {
+        setError((prev) => ({
+          ...prev,
+          show: true,
+          message: 'Screenly authentication failed. Try signing out and back in again.'
+        }));
+        return;
+      }
+
+      try {
+        const errorJson = await error.json();
+        if (
+          errorJson.type &&
+          errorJson.type[0] === 'AssetUnreachableError'
+        ) {
+          setBypassVerification(true);
+          setError((prev) => ({
+            ...prev,
+            show: true,
+            message: 'Screenly couldn\'t reach this web page. To save it anyhow, use the Bypass Verification option.'
+          }));
+        } else if (!errorJson.type) {
+          throw JSON.stringify(errorJson);
+        } else {
+          throw new Error('Unknown error');
+        }
+      } catch (jsonError) {
+        const prefix = state
+          ? 'Failed to update asset'
+          : 'Failed to save web page';
+
+        setError((prev) => ({
+          ...prev,
+          show: true,
+          message: `${prefix}: ${jsonError}`
+        }));
+
+        setButtonState(state ? 'update' : 'add');
+      }
+    }
   };
 
   if (isLoading) {
@@ -325,7 +336,7 @@ export const Proposal = () => {
               className="form-check-label"
               htmlFor="with-auth-check"
             >
-            Save Authentication
+              Save Authentication
             </label>
           </div>
           <SaveAuthWarning hostname={assetHostname} hidden={!saveAuthentication} />
