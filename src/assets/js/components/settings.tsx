@@ -4,11 +4,11 @@ import classNames from 'classnames';
 
 import { signOut } from '@/features/popupSlice';
 
-export const Settings = () => {
+export const Settings: React.FC = () => {
   const dispatch = useDispatch();
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
-  const handleSignOut = async (event) => {
+  const handleSignOut = async (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
     setIsLoading(true);
     dispatch(signOut());
