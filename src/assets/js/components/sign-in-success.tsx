@@ -1,4 +1,4 @@
-export const SignInSuccess = () => {
+export const SignInSuccess: React.FC = () => {
   return (
     <div className="page" id="success-page">
       <div className="d-flex flex-column">
