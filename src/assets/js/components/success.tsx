@@ -1,4 +1,8 @@
-export const Success = ({ assetDashboardLink }) => {
+interface SuccessProps {
+  assetDashboardLink: string;
+}
+
+export const Success: React.FC<SuccessProps> = ({ assetDashboardLink }) => {
   const openAssetDashboard = () => {
     window.open(assetDashboardLink);
   };
@@ -39,5 +43,3 @@ export const Success = ({ assetDashboardLink }) => {
     </div>
   );
 };
-
-
