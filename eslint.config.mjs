@@ -4,6 +4,8 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import js from '@eslint/js';
 import { FlatCompat } from '@eslint/eslintrc';
+import tseslint from '@typescript-eslint/eslint-plugin';
+import tsparser from '@typescript-eslint/parser';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -17,7 +19,8 @@ export default [
   ...compat.extends(
     'eslint:recommended',
     'plugin:react/recommended',
-    'plugin:jasmine/recommended'
+    'plugin:jasmine/recommended',
+    'plugin:@typescript-eslint/recommended'
   ),
   {
     ignores: [
@@ -27,9 +30,10 @@ export default [
     ],
   },
   {
-    files: ['**/*.{js,jsx,mjs}'],
+    files: ['**/*.{js,jsx,mjs,ts,tsx}'],
     plugins: {
       jasmine,
+      '@typescript-eslint': tseslint,
     },
 
     settings: {
@@ -39,6 +43,7 @@ export default [
     },
 
     languageOptions: {
+      parser: tsparser,
       globals: {
         ...globals.browser,
         ...globals.jasmine,
@@ -47,10 +52,8 @@ export default [
         SharedArrayBuffer: 'readonly',
         React: 'readonly',
       },
-
       ecmaVersion: 'latest',
       sourceType: 'module',
-
       parserOptions: {
         ecmaFeatures: {
           jsx: true,
@@ -60,6 +63,8 @@ export default [
 
     rules: {
       'react/prop-types': 'off',
+      '@typescript-eslint/explicit-function-return-type': 'off',
+      '@typescript-eslint/no-unused-vars': ['warn', { argsIgnorePattern: '^_' }],
     },
   }
 ];
