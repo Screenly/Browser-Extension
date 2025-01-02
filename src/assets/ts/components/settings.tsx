@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import classNames from 'classnames';
 
-import { signOut } from '@/features/popupSlice';
+import { signOut } from '@/features/popup-slice';
 
 export const Settings: React.FC = () => {
   const dispatch = useDispatch();

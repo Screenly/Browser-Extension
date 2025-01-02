@@ -7,7 +7,7 @@ import classNames from 'classnames';
 import { callApi } from '@/main';
 import {
   notifySignInSuccess,
-} from '@/features/popupSlice';
+} from '@/features/popup-slice';
 import { TokenHelpText } from '@/components/token-help-text';
 
 interface SignInFormErrorProps {

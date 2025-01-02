@@ -5,7 +5,7 @@
 
 import {
     State
-} from "../../assets/js/main.mjs";
+} from "@/main";
 
 describe("State.normalizeUrl", function() {
     const behaviours = [

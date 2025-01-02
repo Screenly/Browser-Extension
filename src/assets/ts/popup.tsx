@@ -20,7 +20,7 @@ import { SignInSuccess } from '@/components/sign-in-success';
 import { Settings } from '@/components/settings';
 
 import { store } from '@/store';
-import { signIn } from '@/features/popupSlice';
+import { signIn } from '@/features/popup-slice';
 import { RootState } from '@/types';
 
 interface CustomEvent extends Event {

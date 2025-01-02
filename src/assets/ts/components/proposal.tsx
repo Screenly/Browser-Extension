@@ -19,7 +19,7 @@ import {
 import {
   notifyAssetSaveSuccess,
   openSettings,
-} from '@/features/popupSlice';
+} from '@/features/popup-slice';
 
 interface ErrorState {
   show: boolean;
