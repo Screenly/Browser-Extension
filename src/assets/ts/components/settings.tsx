@@ -3,9 +3,10 @@ import { useDispatch } from 'react-redux';
 import classNames from 'classnames';
 
 import { signOut } from '@/features/popup-slice';
+import { AppDispatch } from '@/store';
 
 export const Settings: React.FC = () => {
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const handleSignOut = async (event: React.MouseEvent<HTMLButtonElement>) => {

@@ -21,14 +21,14 @@ import { Settings } from '@/components/settings';
 
 import { store } from '@/store';
 import { signIn } from '@/features/popup-slice';
-import { RootState } from '@/types';
+import { RootState, AppDispatch } from '@/store';
 
 interface CustomEvent extends Event {
   detail: string;
 }
 
 const PopupPage: React.FC = () => {
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
 
   const {
     showSignIn,

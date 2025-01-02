@@ -63,7 +63,6 @@ const popupSlice = createSlice({
 });
 
 export const {
-  setAssetDashboardLink,
   notifyAssetSaveSuccess,
   notifySignInSuccess,
   openSettings,

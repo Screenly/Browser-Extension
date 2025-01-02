@@ -7,7 +7,7 @@ import { PopupSpinner } from '@/components/popup-spinner';
 import { SaveAuthWarning } from '@/components/save-auth-warning';
 import { SaveAuthHelp } from '@/components/save-auth-help';
 
-import * as cookiejs from '@/vendor/cookie';
+import * as cookiejs from '@/vendor/cookie.mjs';
 import {
   getAssetDashboardLink,
   getUser,
@@ -85,7 +85,7 @@ export const Proposal: React.FC = () => {
           currentProposal.state = state;
         } catch (error: any) {
           if (error.status === 404) {
-            State.setSavedAssetState(url, null);
+            State.setSavedAssetState(url, null, false, false);
             currentProposal.state = undefined;
           } else {
             throw error;
@@ -163,7 +163,7 @@ export const Proposal: React.FC = () => {
       const originDomain = new URL(pageUrl).host;
 
       const results = await Promise.all(
-        resourceEntries.map(url =>
+        resourceEntries.map((url: string) =>
           browser.cookies.getAll({ url })
         )
       );

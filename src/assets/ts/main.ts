@@ -1,11 +1,29 @@
 'use strict';
 
-/* global browser */
-
 import '@/vendor/normalize-url';
 
-export function callApi(method, url, data, token) {
-  let init = {
+interface RequestInit {
+  method: string;
+  headers: Record<string, string>;
+  body?: string;
+}
+
+declare global {
+  const browser: any;
+  interface Window {
+    normalizeUrl: (url: string, options: any) => string;
+  }
+}
+
+type BrowserStorageState = Record<string, any>;
+
+export function callApi(
+  method: string,
+  url: string,
+  data: any,
+  token: string
+) {
+  let init: RequestInit = {
     method: method,
     headers: {
       'Content-Type': 'application/json',
@@ -43,7 +61,13 @@ export function getUser() {
   return browser.storage.sync.get(['token']);
 }
 
-export function createWebAsset(user, url, title, headers, disableVerification) {
+export function createWebAsset(
+  user: any,
+  url: string,
+  title: string,
+  headers: any,
+  disableVerification: boolean
+) {
   return callApi(
     'POST',
     'https://api.screenlyapp.com/api/v4/assets/',
@@ -57,7 +81,14 @@ export function createWebAsset(user, url, title, headers, disableVerification) {
   );
 }
 
-export function updateWebAsset(assetId, user, url, title, headers, disableVerification) { // eslint-disable-line no-unused-vars
+export function updateWebAsset(
+  assetId: string,
+  user: any,
+  url: string,
+  title: string,
+  headers: any,
+  disableVerification: boolean
+) { // eslint-disable-line no-unused-vars
   let queryParams = `id=eq.${encodeURIComponent(assetId)}`;
   return callApi(
     'PATCH',
@@ -70,7 +101,7 @@ export function updateWebAsset(assetId, user, url, title, headers, disableVerifi
   );
 }
 
-export function getWebAsset(assetId, user) {
+export function getWebAsset(assetId: string, user: any) {
   return callApi(
     'GET',
     `https://api.screenlyapp.com/api/v4/assets/${encodeURIComponent(assetId)}/`,
@@ -79,7 +110,7 @@ export function getWebAsset(assetId, user) {
   )
 }
 
-export function getAssetDashboardLink(assetId) {
+export function getAssetDashboardLink(assetId: string) {
   return `https://login.screenlyapp.com/login?next=/manage/assets/${assetId}`;
 }
 
@@ -89,7 +120,7 @@ export class State {
   }
 
   // Make a new URL equivalent to the given URL but in a normalized format.
-  static normalizeUrl(url) {
+  static normalizeUrl(url: string) {
     return window.normalizeUrl(url, {
       removeTrailingSlash: false,
       sortQueryParameters: false,
@@ -98,7 +129,7 @@ export class State {
   }
 
   // Simplify a URL heavily, even if it slightly changes its meaning.
-  static simplifyUrl(url) {
+  static simplifyUrl(url: string) {
     return window.normalizeUrl(url, {
       removeTrailingSlash: true,
       sortQueryParameters: true,
@@ -108,7 +139,12 @@ export class State {
     })
   }
 
-  static setSavedAssetState(url, assetId, withCookies, withBypass) {
+  static setSavedAssetState(
+    url: string,
+    assetId: string | null,
+    withCookies: boolean,
+    withBypass: boolean
+  ) {
     url = State.simplifyUrl(url);
 
     const savedState = {
@@ -118,7 +154,7 @@ export class State {
     };
 
     return browser.storage.sync.get(['state'])
-      .then((state) => {
+      .then((state: BrowserStorageState) => {
         state = state || {};
 
         if (assetId) {
@@ -127,7 +163,7 @@ export class State {
           delete state[url];
 
         return browser.storage.sync.set({'state': state})
-          .catch((error) => {
+          .catch((error: Error) => {
 
             if (!error || !error.message || !error.message.includes('QUOTA_BYTES')) {
               // Unknown error. Ignore.
@@ -149,11 +185,11 @@ export class State {
       });
   }
 
-  static getSavedAssetState(url) {
+  static getSavedAssetState(url: string) {
     url = State.simplifyUrl(url);
 
     return browser.storage.sync.get(['state'])
-      .then(({state}) => {
+      .then(({state}: {state: BrowserStorageState}) => {
         state = state || {};
         const v = state[url];
         if (typeof v != 'object') {
