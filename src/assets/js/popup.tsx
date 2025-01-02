@@ -21,7 +21,8 @@ import { Settings } from '@/components/settings';
 
 import { store } from '@/store';
 import { signIn } from '@/features/popupSlice';
-import { RootState } from '@/types';
+
+import { RootState } from '@/store';
 
 interface CustomEvent extends Event {
   detail: string;
