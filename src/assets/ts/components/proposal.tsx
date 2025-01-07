@@ -46,10 +46,6 @@ interface Cookie {
   hostOnly?: boolean;
 }
 
-interface ResourceEntry {
-  name: string;
-}
-
 type ButtonState = 'add' | 'update' | 'loading';
 
 export const Proposal: React.FC = () => {
