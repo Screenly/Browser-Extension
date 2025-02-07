@@ -33,9 +33,7 @@ jobs:
             export SCREENLY_CE_VERSION="0.0.0"
           fi
 
-          cat src/manifest-${{ matrix.platform }}.json \
-              | jq --arg version "$SCREENLY_CE_VERSION" '.version = $version' \
-              > src/manifest.json
+          jq --arg version "$SCREENLY_CE_VERSION" '.version = $version' src/manifest-${{ matrix.platform }}.json > src/manifest.json
 
       - name: Build Docker images
         run: |
@@ -45,7 +43,7 @@ jobs:
         run: |
           docker run \
             --rm \
-            -v $(pwd):/app:delegated \
+            -v "$(pwd):/app:delegated" \
             -v /app/node_modules \
             sce_webpack:latest \
             /bin/bash -c "npx webpack --config webpack.dev.js && npm run test"
@@ -55,7 +53,7 @@ jobs:
           mkdir artifacts
           docker run \
             --rm \
-            -v $(pwd)/artifacts:/app/artifacts:delegated \
+            -v "$(pwd)/artifacts:/app/artifacts:delegated" \
             -v /app/artifacts/node_modules \
             sce_webpack:latest \
             /bin/bash -c "npm run build && cp -r dist/ artifacts/"
