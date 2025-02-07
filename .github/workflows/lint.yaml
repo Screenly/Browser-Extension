@@ -46,4 +46,4 @@ jobs:
           tar xzf actionlint.tar.gz
 
       - name: Run actionlint
-        run: ./actionlint
+        run: ./actionlint  -color
