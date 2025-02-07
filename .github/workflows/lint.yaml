@@ -29,18 +29,21 @@ jobs:
 
   actionlint:
     runs-on: ubuntu-latest
-    name: Run Actionlint
+    name: Run Linter for GitHub Actions Workflows
+    strategy:
+      matrix:
+        actionlint-version: ['1.7.7']
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Download and run actionlint
+      - name: Download actionlint
         run: |
-          ACTIONLINT_VERSION="1.7.7"
-          ACTIONLINT_FILE="actionlint_${ACTIONLINT_VERSION}_linux_amd64.tar.gz"
+          ACTIONLINT_FILE="actionlint_${{ matrix.actionlint-version }}_linux_amd64.tar.gz"
           ACTIONLINT_URL="https://github.com/rhysd/actionlint/releases/download"
-          ACTIONLINT_DOWNLOAD_URL="$ACTIONLINT_URL/v$ACTIONLINT_VERSION/$ACTIONLINT_FILE"
+          ACTIONLINT_DOWNLOAD_URL="$ACTIONLINT_URL/v${{ matrix.actionlint-version }}/$ACTIONLINT_FILE"
           curl -L -o actionlint.tar.gz "$ACTIONLINT_DOWNLOAD_URL"
           tar xzf actionlint.tar.gz
 
-          ./actionlint
+      - name: Run actionlint
+        run: ./actionlint
