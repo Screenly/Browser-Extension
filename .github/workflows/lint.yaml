@@ -1,5 +1,5 @@
 ---
-name: Run ESLint
+name: Run Linters
 
 on:
   pull_request:
@@ -12,7 +12,7 @@ on:
       - v*.*
 
 jobs:
-  build:
+  eslint:
     runs-on: ubuntu-latest
     name: Run ESLint
     steps:
@@ -26,3 +26,21 @@ jobs:
       - name: Run ESLint
         run: |
           ./bin/host_eslint.sh
+
+  actionlint:
+    runs-on: ubuntu-latest
+    name: Run Actionlint
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Download and run actionlint
+        run: |
+          ACTIONLINT_VERSION="1.7.7"
+          ACTIONLINT_FILE="actionlint_${ACTIONLINT_VERSION}_linux_amd64.tar.gz"
+          ACTIONLINT_URL="https://github.com/rhysd/actionlint/releases/download"
+          ACTIONLINT_DOWNLOAD_URL="$ACTIONLINT_URL/v$ACTIONLINT_VERSION/$ACTIONLINT_FILE"
+          curl -L -o actionlint.tar.gz "$ACTIONLINT_DOWNLOAD_URL"
+          tar xzf actionlint.tar.gz
+
+          ./actionlint
