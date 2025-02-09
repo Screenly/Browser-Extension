@@ -53,6 +53,7 @@
     "@reduxjs/toolkit": "^2.3.0",
     "bootstrap": "^5.3.3",
     "bootstrap-icons": "^1.11.3",
+    "normalize-url": "^7.1.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-redux": "^9.1.2"

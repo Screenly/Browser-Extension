@@ -1,7 +1,6 @@
 'use strict';
 
-import '@/vendor/normalize-url';
-
+import normalizeUrl from 'normalize-url';
 interface RequestInit {
   method: string;
   headers: Record<string, string>;
@@ -121,7 +120,7 @@ export class State {
 
   // Make a new URL equivalent to the given URL but in a normalized format.
   static normalizeUrl(url: string) {
-    return window.normalizeUrl(url, {
+    return normalizeUrl(url, {
       removeTrailingSlash: false,
       sortQueryParameters: false,
       stripWWW: false,
@@ -130,7 +129,7 @@ export class State {
 
   // Simplify a URL heavily, even if it slightly changes its meaning.
   static simplifyUrl(url: string) {
-    return window.normalizeUrl(url, {
+    return normalizeUrl(url, {
       removeTrailingSlash: true,
       sortQueryParameters: true,
       stripHash: true,
