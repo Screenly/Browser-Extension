@@ -52,8 +52,8 @@ $ ./bin/install_git_hooks.sh
 ```
 
 This will install pre-commit hooks that run:
-* actionlint - Validates GitHub Actions workflow files
-* ESLint - Checks JavaScript/TypeScript code quality
+* [actionlint](https://github.com/rhysd/actionlint) - Validates GitHub Actions workflow files
+* [ESLint](https://eslint.org/) - Checks JavaScript/TypeScript code quality
 
 ### Development Mode
 
