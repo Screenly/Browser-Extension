@@ -25,4 +25,4 @@ jobs:
 
       - name: Run ESLint
         run: |
-          ./bin/host_eslint.sh
+          ./bin/host_eslint.sh src/
