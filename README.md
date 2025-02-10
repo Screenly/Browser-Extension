@@ -89,7 +89,7 @@ $ ./bin/run_tests.sh
 To run the linter locally and check for code style and potential errors:
 
 ```bash
-$ ./bin/host_eslint.sh src/
+$ docker compose build && ./bin/run_eslint.sh src/
 ```
 
 This will run ESLint on the codebase and show any style issues or potential problems that need to be fixed.
