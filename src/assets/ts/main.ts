@@ -70,7 +70,7 @@ export function getUser() {
 }
 
 export function createWebAsset(
-  user: User,
+  user: any,
   url: string,
   title: string,
   headers: object | null,
