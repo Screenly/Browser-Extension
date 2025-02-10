@@ -86,10 +86,16 @@ $ ./bin/run_tests.sh
 
 ## :mag: Run Linter
 
-To run the linter locally and check for code style and potential errors:
+Build the Docker image, which is a one-time operation:
 
 ```bash
-$ docker compose build && ./bin/run_eslint.sh src/
+$ docker compose build
+```
+
+Run the linter:
+
+```bash
+$ ./bin/run_eslint.sh src/
 ```
 
 This will run ESLint on the codebase and show any style issues or potential problems that need to be fixed.
