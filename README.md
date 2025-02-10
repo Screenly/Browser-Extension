@@ -83,3 +83,13 @@ $ ./bin/run_tests.sh
 * Click on **This Firefox** and then **Load Temporary Add-on**.
   * You can either select the `manifest.json` file or the zipped extension.
 * Find the extension URL and then open `moz-extension://<extension-id>/test/tests.html` in Firefox.
+
+## :mag: Run Linter
+
+To run the linter locally and check for code style and potential errors:
+
+```bash
+$ ./bin/host_eslint.sh src/
+```
+
+This will run ESLint on the codebase and show any style issues or potential problems that need to be fixed.
