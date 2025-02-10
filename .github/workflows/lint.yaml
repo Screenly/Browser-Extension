@@ -37,13 +37,5 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Download actionlint
-        run: |
-          ACTIONLINT_FILE="actionlint_${{ matrix.actionlint-version }}_linux_amd64.tar.gz"
-          ACTIONLINT_URL="https://github.com/rhysd/actionlint/releases/download"
-          ACTIONLINT_DOWNLOAD_URL="$ACTIONLINT_URL/v${{ matrix.actionlint-version }}/$ACTIONLINT_FILE"
-          curl -L -o actionlint.tar.gz "$ACTIONLINT_DOWNLOAD_URL"
-          tar xzf actionlint.tar.gz
-
       - name: Run actionlint
-        run: ./actionlint  -color
+        run: ./bin/run_actionlint.sh
