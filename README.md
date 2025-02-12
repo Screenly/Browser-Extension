@@ -34,6 +34,13 @@
 
 <br>
 
+## :white_check_mark: Prerequisites
+
+* Linux or macOS &mdash; If you're on Windows, you can use [WSL](https://learn.microsoft.com/en-us/windows/wsl/setup/environment). All of the scripts were written in Bash.
+* Docker &mdash; The easiest way to get started is to install [Docker Desktop](https://www.docker.com/products/docker-desktop/).
+* `jq` &mdash; Most of the scripts in the [`bin/`](/bin/) directory use `jq` to parse JSON. Install it from [here](https://jqlang.org/download/).
+
+
 ## :seedling: Install
 
 * Install the extension from the [Chrome Web Store](https://chromewebstore.google.com/detail/save-to-screenly/kcoehkngnbhlmdcgcadliaadlmbjmcln).
