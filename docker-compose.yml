@@ -2,7 +2,7 @@ services:
   webpack:
     build: .
     command: npx webpack --watch --config webpack.dev.js
-    image: sce_webpack:latest
+    image: sbe_webpack:latest
     volumes:
       - .:/app:delegated
       - /app/node_modules/  # exclude from volume mount; we want this inside the container

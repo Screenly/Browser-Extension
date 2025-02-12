@@ -47,7 +47,7 @@ jobs:
             --rm \
             -v $(pwd):/app:delegated \
             -v /app/node_modules \
-            sce_webpack:latest \
+            sbe_webpack:latest \
             /bin/bash -c "npx webpack --config webpack.dev.js && npm run test"
 
       - name: Build and Package the Extension
@@ -57,7 +57,7 @@ jobs:
             --rm \
             -v $(pwd)/artifacts:/app/artifacts:delegated \
             -v /app/artifacts/node_modules \
-            sce_webpack:latest \
+            sbe_webpack:latest \
             /bin/bash -c "npm run build && cp -r dist/ artifacts/"
 
       - name: Compress

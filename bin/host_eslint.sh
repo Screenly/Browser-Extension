@@ -7,5 +7,5 @@ IFS=$'\n\t'
 docker run \
     --rm \
     -v $(pwd):$(pwd):delegated \
-    sce_webpack:latest \
+    sbe_webpack:latest \
     /app/node_modules/.bin/eslint $@
