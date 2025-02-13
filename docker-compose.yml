@@ -1,6 +1,12 @@
 services:
   webpack:
-    build: .
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        USER_ID: ${UID:-1000}
+        GROUP_ID: ${GID:-1000}
+        USER_NAME: ${USER:-user}
     command: npx webpack --watch --config webpack.dev.js
     image: sbe_webpack:latest
     volumes:
