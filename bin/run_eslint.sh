@@ -8,5 +8,5 @@ docker run \
     --rm \
     -v $(pwd):/app:delegated \
     -v /app/node_modules \
-    sce_webpack:latest \
+    sbe_webpack:latest \
     npx eslint "$@"
