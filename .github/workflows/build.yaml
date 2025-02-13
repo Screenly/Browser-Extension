@@ -53,14 +53,10 @@ jobs:
 
       - name: Build and Package the Extension
         run: |
-          mkdir -p artifacts
-          # Create dist directory with proper permissions
-          docker run \
-            --rm \
-            -v $(pwd):/app:delegated \
-            -v /app/node_modules \
-            sbe_webpack:latest \
-            /bin/bash -c "mkdir -p /app/dist && chown -R $(id -u):$(id -g) /app/dist"
+          # Create directories with correct permissions from the start
+          mkdir -p dist artifacts
+          chmod 777 dist artifacts
+
           # Run the build
           docker run \
             --rm \
@@ -68,7 +64,7 @@ jobs:
             -v /app/node_modules \
             --user $(id -u):$(id -g) \
             sbe_webpack:latest \
-            /bin/bash -c "npm run build && mkdir -p artifacts && cp -r dist/* artifacts/"
+            /bin/bash -c "npm run build && cp -r dist/* artifacts/"
 
       - name: Compress
         run: |
