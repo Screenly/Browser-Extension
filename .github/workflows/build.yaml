@@ -25,11 +25,6 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      # nico start - debug stuff
-      - name: Debug stuff
-        run: ls -l
-      # nico end
-
       - name: Prepare manifest.json
         run: |
           if [[ $GITHUB_REF == refs/tags/v* ]]; then
