@@ -47,6 +47,7 @@ jobs:
             --rm \
             -v $(pwd):/app:delegated \
             -v /app/node_modules \
+            --user $(id -u):$(id -g) \
             sbe_webpack:latest \
             /bin/bash -c "npx webpack --config webpack.dev.js && npm run test"
 
@@ -57,6 +58,7 @@ jobs:
             --rm \
             -v $(pwd)/artifacts:/app/artifacts:delegated \
             -v /app/artifacts/node_modules \
+            --user $(id -u):$(id -g) \
             sbe_webpack:latest \
             /bin/bash -c "npm run build && cp -r dist/ artifacts/"
 
