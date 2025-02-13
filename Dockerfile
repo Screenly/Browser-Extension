@@ -1,5 +1,18 @@
 FROM node:22
 
+ARG USER_ID
+ARG GROUP_ID
+ARG USER_NAME
+
+RUN userdel node
+RUN groupadd -g ${GROUP_ID} ${USER_NAME}
+RUN useradd \
+    -u ${USER_ID} \
+    -g ${GROUP_ID} \
+    --create-home \
+    --non-unique \
+    ${USER_NAME}
+
 WORKDIR /app
 RUN mkdir -p /output
 RUN chmod -R 777 /output
@@ -52,5 +65,7 @@ RUN apt-get update --fix-missing \
 ADD package.json /app/package.json
 ADD package-lock.json /app/package-lock.json
 RUN npm install --quiet
+
+USER ${USER_ID}:${GROUP_ID}
 
 ADD . /app
