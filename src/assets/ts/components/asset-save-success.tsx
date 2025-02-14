@@ -2,7 +2,7 @@ interface SuccessProps {
   assetDashboardLink: string;
 }
 
-export const Success: React.FC<SuccessProps> = ({ assetDashboardLink }) => {
+export const AssetSaveSuccess: React.FC<SuccessProps> = ({ assetDashboardLink }) => {
   const openAssetDashboard = () => {
     window.open(assetDashboardLink);
   };
