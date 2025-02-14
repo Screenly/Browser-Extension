@@ -1,28 +1,37 @@
+/// <reference types="chrome"/>
 'use strict';
 
 import normalizeUrl from 'normalize-url';
+
 interface RequestInit {
   method: string;
   headers: Record<string, string>;
   body?: string;
 }
 
-declare global {
-  const browser: any;
-  interface Window {
-    normalizeUrl: (url: string, options: any) => string;
-  }
+export interface User {
+  token: string;
 }
 
-type BrowserStorageState = Record<string, any>;
+declare global {
+  const browser: typeof chrome;
+}
+
+export interface SavedAssetState {
+  assetId: string | null;
+  withCookies: boolean;
+  withBypass: boolean;
+}
+
+type BrowserStorageState = Record<string, SavedAssetState>;
 
 export function callApi(
   method: string,
   url: string,
-  data: any,
+  data: object | null,
   token: string
 ) {
-  let init: RequestInit = {
+  const init: RequestInit = {
     method: method,
     headers: {
       'Content-Type': 'application/json',
@@ -61,10 +70,10 @@ export function getUser() {
 }
 
 export function createWebAsset(
-  user: any,
+  user: User,
   url: string,
   title: string,
-  headers: any,
+  headers: object | null,
   disableVerification: boolean
 ) {
   return callApi(
@@ -81,14 +90,14 @@ export function createWebAsset(
 }
 
 export function updateWebAsset(
-  assetId: string,
-  user: any,
+  assetId: string | null,
+  user: User,
   url: string,
   title: string,
-  headers: any,
-  disableVerification: boolean
-) { // eslint-disable-line no-unused-vars
-  let queryParams = `id=eq.${encodeURIComponent(assetId)}`;
+  headers: object | null,
+  disableVerification: boolean, // eslint-disable-line @typescript-eslint/no-unused-vars
+) {
+  const queryParams = `id=eq.${encodeURIComponent(assetId || '')}`;
   return callApi(
     'PATCH',
     `https://api.screenlyapp.com/api/v4/assets/?${queryParams}`,
@@ -100,10 +109,10 @@ export function updateWebAsset(
   );
 }
 
-export function getWebAsset(assetId: string, user: any) {
+export function getWebAsset(assetId: string | null, user: User) {
   return callApi(
     'GET',
-    `https://api.screenlyapp.com/api/v4/assets/${encodeURIComponent(assetId)}/`,
+    `https://api.screenlyapp.com/api/v4/assets/${encodeURIComponent(assetId || '')}/`,
     null,
     user.token
   )
@@ -188,8 +197,8 @@ export class State {
     url = State.simplifyUrl(url);
 
     return browser.storage.sync.get(['state'])
-      .then(({state}: {state: BrowserStorageState}) => {
-        state = state || {};
+      .then((result: { state?: BrowserStorageState }) => {
+        const state = result.state || {};
         const v = state[url];
         if (typeof v != 'object') {
           // Backwards compatibility with 0.2. Just ignore the old format.
