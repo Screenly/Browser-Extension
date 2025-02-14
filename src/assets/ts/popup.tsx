@@ -14,7 +14,7 @@ import '@/scss/style.scss';
 import '@/scss/sweetalert-icons.scss';
 
 import { SignInForm } from '@/components/sign-in';
-import { Success } from '@/components/success';
+import { AssetSaveSuccess } from '@/components/asset-save-success';
 import { Proposal } from '@/components/proposal';
 import { SignInSuccess } from '@/components/sign-in-success';
 import { Settings } from '@/components/settings';
@@ -52,7 +52,7 @@ const PopupPage: React.FC = () => {
     <>
       {showSignIn && <SignInForm />}
       {showProposal && <Proposal />}
-      {showSuccess && <Success assetDashboardLink={assetDashboardLink} />}
+      {showSuccess && <AssetSaveSuccess assetDashboardLink={assetDashboardLink} />}
       {showSignInSuccess && <SignInSuccess />}
       {showSettings && <Settings />}
     </>
