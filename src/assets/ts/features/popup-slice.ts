@@ -19,7 +19,7 @@ export const signIn = createAsyncThunk(
 export const signOut = createAsyncThunk(
   'popup/signOut',
   async () => {
-    await browser.storage.sync.clear();
+    await browser.storage.sync.remove('token');
   }
 );
 
