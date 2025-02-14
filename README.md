@@ -34,6 +34,13 @@
 
 <br>
 
+## :white_check_mark: Prerequisites
+
+* Linux or macOS &mdash; If you're on Windows, you can use [WSL](https://learn.microsoft.com/en-us/windows/wsl/setup/environment). All of the scripts were written in Bash.
+* Docker &mdash; The easiest way to get started is to install [Docker Desktop](https://www.docker.com/products/docker-desktop/).
+* `jq` &mdash; Most of the scripts in the [`bin/`](/bin/) directory use `jq` to parse JSON. Install it from [here](https://jqlang.org/download/).
+
+
 ## :seedling: Install
 
 * Install the extension from the [Chrome Web Store](https://chromewebstore.google.com/detail/save-to-screenly/kcoehkngnbhlmdcgcadliaadlmbjmcln).
@@ -97,3 +104,19 @@ $ ./bin/run_tests.sh
 * Click on **This Firefox** and then **Load Temporary Add-on**.
   * You can either select the `manifest.json` file or the zipped extension.
 * Find the extension URL and then open `moz-extension://<extension-id>/test/tests.html` in Firefox.
+
+## :mag: Run Linter
+
+Build the Docker image, which is a one-time operation:
+
+```bash
+$ docker compose build
+```
+
+Run the linter:
+
+```bash
+$ ./bin/run_eslint.sh src/
+```
+
+This will run ESLint on the codebase and show any style issues or potential problems that need to be fixed.
