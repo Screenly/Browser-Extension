@@ -1,5 +1,5 @@
 ---
-name: Run ESLint
+name: Run Linters
 
 on:
   pull_request:
@@ -12,7 +12,7 @@ on:
       - v*.*
 
 jobs:
-  build:
+  eslint:
     runs-on: ubuntu-latest
     name: Run ESLint
     steps:
@@ -26,3 +26,16 @@ jobs:
       - name: Run ESLint
         run: |
           ./bin/run_eslint.sh src/
+
+  actionlint:
+    runs-on: ubuntu-latest
+    name: Run Linter for GitHub Actions Workflows
+    strategy:
+      matrix:
+        actionlint-version: ['1.7.7']
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Run actionlint
+        run: ./bin/run_actionlint.sh

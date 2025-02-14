@@ -50,6 +50,20 @@
 
 The extension is built using [webpack](https://webpack.js.org/). Please check our [contributing guidelines](CONTRIBUTING.md) for detailed information about opening pull requests and releasing new versions.
 
+### Setup Git Hooks
+
+Before starting development, set up the Git hooks to ensure code quality:
+
+```bash
+$ ./bin/install_git_hooks.sh
+```
+
+This will install pre-commit hooks that run:
+* [actionlint](https://github.com/rhysd/actionlint) - Validates GitHub Actions workflow files
+* [ESLint](https://eslint.org/) - Checks JavaScript/TypeScript code quality
+
+### Development Mode
+
 ```bash
 $ PLATFORM=<PLATFORM> \
   VERSION=<VERSION> \
