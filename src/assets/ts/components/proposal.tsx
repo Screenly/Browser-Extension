@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
+import type { User } from '@/main';
 
 import { PopupSpinner } from '@/components/popup-spinner';
 import { SaveAuthWarning } from '@/components/save-auth-warning';
@@ -15,6 +16,7 @@ import {
   createWebAsset,
   updateWebAsset,
   State,
+  SavedAssetState,
 } from '@/main';
 import {
   notifyAssetSaveSuccess,
@@ -27,16 +29,11 @@ interface ErrorState {
 }
 
 interface ProposalState {
-  user: any; // TODO: Define proper user type
+  user: User;
   title: string;
   url: string;
   cookieJar: Cookie[];
   state?: SavedAssetState;
-}
-
-interface SavedAssetState {
-  assetId: string;
-  withCookies: boolean;
 }
 
 interface Cookie {
@@ -47,6 +44,16 @@ interface Cookie {
 }
 
 type ButtonState = 'add' | 'update' | 'loading';
+
+interface AssetError {
+  type?: string[];
+}
+
+interface ApiError {
+  status?: number;
+  statusCode?: number;
+  json(): Promise<AssetError>;
+}
 
 export const Proposal: React.FC = () => {
   const dispatch = useDispatch();
@@ -69,7 +76,7 @@ export const Proposal: React.FC = () => {
       show: false
     }));
 
-    let currentProposal = newProposal;
+    const currentProposal = newProposal;
     const url = currentProposal.url;
 
     try {
@@ -79,8 +86,9 @@ export const Proposal: React.FC = () => {
         try {
           await getWebAsset(state.assetId, newProposal.user);
           currentProposal.state = state;
-        } catch (error: any) {
-          if (error.status === 404) {
+        } catch (error: unknown) {
+          const apiError = error as ApiError;
+          if (apiError.status === 404) {
             State.setSavedAssetState(url, null, false, false);
             currentProposal.state = undefined;
           } else {
@@ -112,7 +120,7 @@ export const Proposal: React.FC = () => {
   };
 
   const proposeToAddToScreenly = async (
-    user: any,
+    user: User,
     url: string,
     title: string,
     cookieJar: Cookie[]
@@ -146,11 +154,15 @@ export const Proposal: React.FC = () => {
             window.location.href,
             document.title,
             performance.getEntriesByType('resource').map(e => e.name)
-          ];
+          ] as [string, string, string[]];
         }
       });
 
-      const [pageUrl, pageTitle, resourceEntries] = result[0].result;
+      if (!result?.[0]?.result || !Array.isArray(result[0].result)) {
+        throw new Error('Failed to get page information');
+      }
+
+      const [pageUrl, pageTitle, resourceEntries] = result[0].result as [string, string, string[]];
 
       if (!resourceEntries) {
         return;
@@ -183,7 +195,7 @@ export const Proposal: React.FC = () => {
         );
       }
 
-      await proposeToAddToScreenly(user, pageUrl, pageTitle, cookieJar);
+      await proposeToAddToScreenly(user as User, pageUrl, pageTitle, cookieJar);
     } catch {
       dispatch(openSettings());
     }
@@ -258,8 +270,9 @@ export const Proposal: React.FC = () => {
       document.dispatchEvent(event);
 
       dispatch(notifyAssetSaveSuccess());
-    } catch (error: any) {
-      if (error.statusCode === 401) {
+    } catch (error: unknown) {
+      const apiError = error as ApiError;
+      if (apiError.statusCode === 401) {
         setError((prev) => ({
           ...prev,
           show: true,
@@ -269,7 +282,7 @@ export const Proposal: React.FC = () => {
       }
 
       try {
-        const errorJson = await error.json();
+        const errorJson = await (error as ApiError).json();
         if (
           errorJson.type &&
           errorJson.type[0] === 'AssetUnreachableError'
