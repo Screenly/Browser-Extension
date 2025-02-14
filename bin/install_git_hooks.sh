@@ -20,7 +20,7 @@ echo "Running actionlint check..."
 
 # Run eslint check
 echo "Running eslint check..."
-"${ROOT_DIR}/bin/host_eslint.sh"
+"${ROOT_DIR}/bin/run_eslint.sh"
 
 # If we got here, all checks passed
 exit 0

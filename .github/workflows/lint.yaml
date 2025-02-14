@@ -26,7 +26,6 @@ jobs:
       - name: Run ESLint
         run: |
           ./bin/run_eslint.sh src/
-          ./bin/host_eslint.sh
 
   actionlint:
     runs-on: ubuntu-latest
