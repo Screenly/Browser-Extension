@@ -261,7 +261,7 @@ export const Proposal: React.FC = () => {
 
       if (selectedPlaylistId) {
         await waitForAssetToBeReady(result[0].id, proposal.user);
-        addAssetToPlaylist(result[0].id, selectedPlaylistId, proposal.user.token);
+        await addAssetToPlaylist(result[0].id, selectedPlaylistId, proposal.user);
       }
 
       State.setSavedAssetState(
