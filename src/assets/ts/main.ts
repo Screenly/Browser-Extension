@@ -110,12 +110,45 @@ export function updateWebAsset(
 }
 
 export function getWebAsset(assetId: string | null, user: User) {
+  const queryParams = `id=eq.${encodeURIComponent(assetId || '')}`;
   return callApi(
     'GET',
-    `https://api.screenlyapp.com/api/v4/assets/${encodeURIComponent(assetId || '')}/`,
+    `https://api.screenlyapp.com/api/v4/assets/?${queryParams}`,
     null,
     user.token
   )
+}
+
+export function getPlaylists(token: string) {
+  return callApi(
+    'GET',
+    'https://api.screenlyapp.com/api/v4/playlists/',
+    null,
+    token
+  );
+}
+
+export async function waitForAssetToBeReady(assetId: string, user: User) {
+  const readyStates = ['downloading', 'processing', 'finished'];
+  do {
+    const assetResult = await getWebAsset(assetId, user);
+    const asset = assetResult[0];
+    if (readyStates.includes(asset.status)) {
+      break;
+    }
+  } while (true);
+}
+
+export function addAssetToPlaylist(assetId: string, playlistId: string, token: string) {
+  return callApi(
+    'POST',
+    `https://api.screenlyapp.com/api/v4/playlist-items/`,
+    {
+      'asset_id': assetId,
+      'playlist_id': playlistId,
+    },
+    token
+  );
 }
 
 export function getAssetDashboardLink(assetId: string) {

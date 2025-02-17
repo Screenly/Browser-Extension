@@ -4,6 +4,7 @@ import {
   createAsyncThunk,
   createSlice
 } from '@reduxjs/toolkit';
+import { getPlaylists } from '@/main';
 
 export const signIn = createAsyncThunk(
   'popup/signIn',
@@ -23,6 +24,18 @@ export const signOut = createAsyncThunk(
   }
 );
 
+export const fetchPlaylists = createAsyncThunk(
+  'popup/fetchPlaylists',
+  async () => {
+    const result = await browser.storage.sync.get('token');
+    if (result.token) {
+      const playlists = await getPlaylists(result.token);
+      return playlists;
+    }
+    return [];
+  }
+);
+
 const popupSlice = createSlice({
   name: 'popup',
   initialState: {
@@ -32,6 +45,13 @@ const popupSlice = createSlice({
     showSignInSuccess: false,
     assetDashboardLink: '',
     showSettings: false,
+    playlists: [
+      {
+        id: '',
+        title: 'None',
+      }
+    ],
+    selectedPlaylistId: '',
   },
   reducers: {
     notifyAssetSaveSuccess: (state) => {
@@ -46,6 +66,9 @@ const popupSlice = createSlice({
       state.showSettings = true;
       state.showProposal = false;
     },
+    setSelectedPlaylist: (state, action) => {
+      state.selectedPlaylistId = action.payload;
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -58,6 +81,15 @@ const popupSlice = createSlice({
       .addCase(signOut.fulfilled, (state) => {
         state.showSettings = false;
         state.showSignIn = true;
+      })
+      .addCase(fetchPlaylists.fulfilled, (state, action) => {
+        state.playlists = [
+          {
+            id: '',
+            title: 'None',
+          },
+          ...action.payload,
+        ];
       });
   },
 });
@@ -66,5 +98,6 @@ export const {
   notifyAssetSaveSuccess,
   notifySignInSuccess,
   openSettings,
+  setSelectedPlaylist,
 } = popupSlice.actions;
 export default popupSlice.reducer;

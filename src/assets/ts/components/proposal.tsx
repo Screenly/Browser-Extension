@@ -1,12 +1,15 @@
 /* global browser */
 
 import { useEffect, useState } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import type { User } from '@/main';
+import { addAssetToPlaylist, waitForAssetToBeReady } from '@/main';
+import { RootState } from '@/store';
 
 import { PopupSpinner } from '@/components/popup-spinner';
 import { SaveAuthWarning } from '@/components/save-auth-warning';
 import { SaveAuthHelp } from '@/components/save-auth-help';
+import { PlaylistSelection } from '@/components/playlist-selection';
 
 import * as cookiejs from '@/vendor/cookie.mjs';
 import {
@@ -57,6 +60,7 @@ interface ApiError {
 
 export const Proposal: React.FC = () => {
   const dispatch = useDispatch();
+  const selectedPlaylistId = useSelector((state: RootState) => state.popup.selectedPlaylistId);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [assetTitle, setAssetTitle] = useState<string>('');
   const [assetUrl, setAssetUrl] = useState<string>('');
@@ -255,6 +259,11 @@ export const Proposal: React.FC = () => {
         throw new Error('No asset data returned');
       }
 
+      if (selectedPlaylistId) {
+        await waitForAssetToBeReady(result[0].id, proposal.user);
+        addAssetToPlaylist(result[0].id, selectedPlaylistId, proposal.user.token);
+      }
+
       State.setSavedAssetState(
         proposal.url,
         result[0].id,
@@ -366,6 +375,10 @@ export const Proposal: React.FC = () => {
               Bypass Verification
             </label>
           </div>
+        </section>
+
+        <section>
+          <PlaylistSelection />
         </section>
 
         <section>
