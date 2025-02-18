@@ -3,11 +3,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '@/store';
 import { fetchPlaylists, setSelectedPlaylist } from '@/features/popup-slice';
 
-interface Playlist {
-    id: string;
-    name: string;
-}
-
 export const PlaylistSelection: React.FC = () => {
     const dispatch = useDispatch<AppDispatch>();
     const playlists = useSelector((state: RootState) => state.popup.playlists);

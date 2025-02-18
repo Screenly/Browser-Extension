@@ -130,13 +130,11 @@ export function getPlaylists(token: string) {
 
 export async function waitForAssetToBeReady(assetId: string, user: User) {
   const readyStates = ['downloading', 'processing', 'finished'];
+  let asset;
   do {
     const assetResult = await getWebAsset(assetId, user);
-    const asset = assetResult[0];
-    if (readyStates.includes(asset.status)) {
-      break;
-    }
-  } while (true);
+    asset = assetResult[0];
+  } while (!readyStates.includes(asset.status));
 }
 
 export async function getPlaylistItems(assetId: string, playlistId: string, user: User) {
