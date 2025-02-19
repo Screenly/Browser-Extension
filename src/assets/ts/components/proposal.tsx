@@ -60,7 +60,7 @@ interface ApiError {
 
 export const Proposal: React.FC = () => {
   const dispatch = useDispatch();
-  const selectedPlaylistId = useSelector((state: RootState) => state.popup.selectedPlaylistId);
+  const selectedPlaylistIds = useSelector((state: RootState) => state.popup.selectedPlaylistIds);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [assetTitle, setAssetTitle] = useState<string>('');
   const [assetUrl, setAssetUrl] = useState<string>('');
@@ -259,9 +259,11 @@ export const Proposal: React.FC = () => {
         throw new Error('No asset data returned');
       }
 
-      if (selectedPlaylistId) {
+      if (selectedPlaylistIds.length > 0) {
         await waitForAssetToBeReady(result[0].id, proposal.user);
-        await addAssetToPlaylist(result[0].id, selectedPlaylistId, proposal.user);
+        await Promise.all(selectedPlaylistIds.map(playlistId =>
+          addAssetToPlaylist(result[0].id, playlistId, proposal.user)
+        ));
       }
 
       State.setSavedAssetState(

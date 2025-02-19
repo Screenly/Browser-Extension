@@ -2,9 +2,37 @@
 
 import {
   createAsyncThunk,
-  createSlice
+  createSlice,
+  PayloadAction
 } from '@reduxjs/toolkit';
 import { getPlaylists } from '@/main';
+
+interface Playlist {
+  id: string;
+  title: string;
+}
+
+interface PopupState {
+  showSignIn: boolean;
+  showProposal: boolean;
+  showSuccess: boolean;
+  showSignInSuccess: boolean;
+  assetDashboardLink: string;
+  showSettings: boolean;
+  playlists: Playlist[];
+  selectedPlaylistIds: string[];
+}
+
+const initialState: PopupState = {
+  showSignIn: true,
+  showProposal: false,
+  showSuccess: false,
+  showSignInSuccess: false,
+  assetDashboardLink: '',
+  showSettings: false,
+  playlists: [],
+  selectedPlaylistIds: [],
+};
 
 export const signIn = createAsyncThunk(
   'popup/signIn',
@@ -38,21 +66,7 @@ export const fetchPlaylists = createAsyncThunk(
 
 const popupSlice = createSlice({
   name: 'popup',
-  initialState: {
-    showSignIn: true,
-    showProposal: false,
-    showSuccess: false,
-    showSignInSuccess: false,
-    assetDashboardLink: '',
-    showSettings: false,
-    playlists: [
-      {
-        id: '',
-        title: 'None',
-      }
-    ],
-    selectedPlaylistId: '',
-  },
+  initialState,
   reducers: {
     notifyAssetSaveSuccess: (state) => {
       state.showSuccess = true;
@@ -66,13 +80,13 @@ const popupSlice = createSlice({
       state.showSettings = true;
       state.showProposal = false;
     },
-    setSelectedPlaylist: (state, action) => {
-      state.selectedPlaylistId = action.payload;
+    setSelectedPlaylists: (state, action: PayloadAction<string[]>) => {
+      state.selectedPlaylistIds = action.payload;
     },
   },
   extraReducers: (builder) => {
     builder
-      .addCase(signIn.fulfilled, (state, action) => {
+      .addCase(signIn.fulfilled, (state, action: PayloadAction<boolean>) => {
         if (action.payload) {
           state.showSignIn = false;
           state.showProposal = true;
@@ -82,12 +96,8 @@ const popupSlice = createSlice({
         state.showSettings = false;
         state.showSignIn = true;
       })
-      .addCase(fetchPlaylists.fulfilled, (state, action) => {
+      .addCase(fetchPlaylists.fulfilled, (state, action: PayloadAction<Playlist[]>) => {
         state.playlists = [
-          {
-            id: '',
-            title: 'None',
-          },
           ...action.payload,
         ];
       });
@@ -98,6 +108,6 @@ export const {
   notifyAssetSaveSuccess,
   notifySignInSuccess,
   openSettings,
-  setSelectedPlaylist,
+  setSelectedPlaylists,
 } = popupSlice.actions;
 export default popupSlice.reducer;
