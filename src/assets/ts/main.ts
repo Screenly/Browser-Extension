@@ -110,12 +110,63 @@ export function updateWebAsset(
 }
 
 export function getWebAsset(assetId: string | null, user: User) {
+  const queryParams = `id=eq.${encodeURIComponent(assetId || '')}`;
   return callApi(
     'GET',
-    `https://api.screenlyapp.com/api/v4/assets/${encodeURIComponent(assetId || '')}/`,
+    `https://api.screenlyapp.com/api/v4/assets/?${queryParams}`,
     null,
     user.token
   )
+}
+
+export function getPlaylists(token: string) {
+  return callApi(
+    'GET',
+    'https://api.screenlyapp.com/api/v4/playlists/',
+    null,
+    token
+  );
+}
+
+export async function waitForAssetToBeReady(assetId: string, user: User) {
+  const readyStates = ['downloading', 'processing', 'finished'];
+  let asset;
+  do {
+    const assetResult = await getWebAsset(assetId, user);
+    asset = assetResult[0];
+  } while (!readyStates.includes(asset.status));
+}
+
+export async function getPlaylistItems(user: User, assetId?: string, playlistId?: string) {
+  const queryParams = [
+    assetId && `asset_id=eq.${encodeURIComponent(assetId)}`,
+    playlistId && `playlist_id=eq.${encodeURIComponent(playlistId)}`
+  ].filter(Boolean).join('&');
+
+  const url = `https://api.screenlyapp.com/api/v4/playlist-items/${queryParams ? `?${queryParams}` : ''}`;
+  return callApi(
+    'GET',
+    url,
+    null,
+    user.token
+  );
+}
+
+export async function addAssetToPlaylist(assetId: string, playlistId: string, user: User) {
+  const playlistItems = await getPlaylistItems(user, assetId, playlistId);
+  if (playlistItems.length > 0) {
+    return;
+  }
+
+  return callApi(
+    'POST',
+    `https://api.screenlyapp.com/api/v4/playlist-items/`,
+    {
+      'asset_id': assetId,
+      'playlist_id': playlistId,
+    },
+    user.token
+  );
 }
 
 export function getAssetDashboardLink(assetId: string) {

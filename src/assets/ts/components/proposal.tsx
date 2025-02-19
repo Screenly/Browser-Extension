@@ -1,12 +1,15 @@
 /* global browser */
 
 import { useEffect, useState } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import type { User } from '@/main';
+import { addAssetToPlaylist, waitForAssetToBeReady, getPlaylistItems } from '@/main';
+import { RootState } from '@/store';
 
 import { PopupSpinner } from '@/components/popup-spinner';
 import { SaveAuthWarning } from '@/components/save-auth-warning';
 import { SaveAuthHelp } from '@/components/save-auth-help';
+import { PlaylistSelection } from '@/components/playlist-selection';
 
 import * as cookiejs from '@/vendor/cookie.mjs';
 import {
@@ -21,6 +24,7 @@ import {
 import {
   notifyAssetSaveSuccess,
   openSettings,
+  setSelectedPlaylists,
 } from '@/features/popup-slice';
 
 interface ErrorState {
@@ -55,8 +59,13 @@ interface ApiError {
   json(): Promise<AssetError>;
 }
 
+interface PlaylistItem {
+  playlist_id: string;
+}
+
 export const Proposal: React.FC = () => {
   const dispatch = useDispatch();
+  const selectedPlaylistIds = useSelector((state: RootState) => state.popup.selectedPlaylistIds);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [assetTitle, setAssetTitle] = useState<string>('');
   const [assetUrl, setAssetUrl] = useState<string>('');
@@ -105,6 +114,9 @@ export const Proposal: React.FC = () => {
 
       if (currentProposal.state) {
         setSaveAuthentication(currentProposal.state.withCookies);
+        const playlistItems = await getPlaylistItems(currentProposal.user, currentProposal.state.assetId ?? undefined);
+        const playlistIds = playlistItems.map((item: PlaylistItem) => item.playlist_id);
+        dispatch(setSelectedPlaylists(playlistIds));
         setButtonState('update');
       } else {
         setButtonState('add');
@@ -255,6 +267,13 @@ export const Proposal: React.FC = () => {
         throw new Error('No asset data returned');
       }
 
+      if (selectedPlaylistIds.length > 0) {
+        await waitForAssetToBeReady(result[0].id, proposal.user);
+        await Promise.all(selectedPlaylistIds.map(playlistId =>
+          addAssetToPlaylist(result[0].id, playlistId, proposal.user)
+        ));
+      }
+
       State.setSavedAssetState(
         proposal.url,
         result[0].id,
@@ -366,6 +385,10 @@ export const Proposal: React.FC = () => {
               Bypass Verification
             </label>
           </div>
+        </section>
+
+        <section>
+          <PlaylistSelection />
         </section>
 
         <section>

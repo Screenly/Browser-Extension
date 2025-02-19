@@ -2,8 +2,37 @@
 
 import {
   createAsyncThunk,
-  createSlice
+  createSlice,
+  PayloadAction
 } from '@reduxjs/toolkit';
+import { getPlaylists } from '@/main';
+
+interface Playlist {
+  id: string;
+  title: string;
+}
+
+interface PopupState {
+  showSignIn: boolean;
+  showProposal: boolean;
+  showSuccess: boolean;
+  showSignInSuccess: boolean;
+  assetDashboardLink: string;
+  showSettings: boolean;
+  playlists: Playlist[];
+  selectedPlaylistIds: string[];
+}
+
+const initialState: PopupState = {
+  showSignIn: true,
+  showProposal: false,
+  showSuccess: false,
+  showSignInSuccess: false,
+  assetDashboardLink: '',
+  showSettings: false,
+  playlists: [],
+  selectedPlaylistIds: [],
+};
 
 export const signIn = createAsyncThunk(
   'popup/signIn',
@@ -23,16 +52,21 @@ export const signOut = createAsyncThunk(
   }
 );
 
+export const fetchPlaylists = createAsyncThunk(
+  'popup/fetchPlaylists',
+  async () => {
+    const result = await browser.storage.sync.get('token');
+    if (result.token) {
+      const playlists = await getPlaylists(result.token);
+      return playlists;
+    }
+    return [];
+  }
+);
+
 const popupSlice = createSlice({
   name: 'popup',
-  initialState: {
-    showSignIn: true,
-    showProposal: false,
-    showSuccess: false,
-    showSignInSuccess: false,
-    assetDashboardLink: '',
-    showSettings: false,
-  },
+  initialState,
   reducers: {
     notifyAssetSaveSuccess: (state) => {
       state.showSuccess = true;
@@ -46,10 +80,13 @@ const popupSlice = createSlice({
       state.showSettings = true;
       state.showProposal = false;
     },
+    setSelectedPlaylists: (state, action: PayloadAction<string[]>) => {
+      state.selectedPlaylistIds = action.payload;
+    },
   },
   extraReducers: (builder) => {
     builder
-      .addCase(signIn.fulfilled, (state, action) => {
+      .addCase(signIn.fulfilled, (state, action: PayloadAction<boolean>) => {
         if (action.payload) {
           state.showSignIn = false;
           state.showProposal = true;
@@ -58,6 +95,11 @@ const popupSlice = createSlice({
       .addCase(signOut.fulfilled, (state) => {
         state.showSettings = false;
         state.showSignIn = true;
+      })
+      .addCase(fetchPlaylists.fulfilled, (state, action: PayloadAction<Playlist[]>) => {
+        state.playlists = [
+          ...action.payload,
+        ];
       });
   },
 });
@@ -66,5 +108,6 @@ export const {
   notifyAssetSaveSuccess,
   notifySignInSuccess,
   openSettings,
+  setSelectedPlaylists,
 } = popupSlice.actions;
 export default popupSlice.reducer;
