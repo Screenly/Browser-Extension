@@ -137,18 +137,23 @@ export async function waitForAssetToBeReady(assetId: string, user: User) {
   } while (!readyStates.includes(asset.status));
 }
 
-export async function getPlaylistItems(assetId: string, playlistId: string, user: User) {
-  const queryParams = `asset_id=eq.${encodeURIComponent(assetId || '')}&playlist_id=eq.${encodeURIComponent(playlistId || '')}`;
+export async function getPlaylistItems(user: User, assetId?: string, playlistId?: string) {
+  const queryParams = [
+    assetId && `asset_id=eq.${encodeURIComponent(assetId)}`,
+    playlistId && `playlist_id=eq.${encodeURIComponent(playlistId)}`
+  ].filter(Boolean).join('&');
+
+  const url = `https://api.screenlyapp.com/api/v4/playlist-items/${queryParams ? `?${queryParams}` : ''}`;
   return callApi(
     'GET',
-    `https://api.screenlyapp.com/api/v4/playlist-items/?${queryParams}`,
+    url,
     null,
     user.token
   );
 }
 
 export async function addAssetToPlaylist(assetId: string, playlistId: string, user: User) {
-  const playlistItems = await getPlaylistItems(assetId, playlistId, user);
+  const playlistItems = await getPlaylistItems(user, assetId, playlistId);
   if (playlistItems.length > 0) {
     return;
   }

@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import type { User } from '@/main';
-import { addAssetToPlaylist, waitForAssetToBeReady } from '@/main';
+import { addAssetToPlaylist, waitForAssetToBeReady, getPlaylistItems } from '@/main';
 import { RootState } from '@/store';
 
 import { PopupSpinner } from '@/components/popup-spinner';
@@ -24,6 +24,7 @@ import {
 import {
   notifyAssetSaveSuccess,
   openSettings,
+  setSelectedPlaylists,
 } from '@/features/popup-slice';
 
 interface ErrorState {
@@ -56,6 +57,10 @@ interface ApiError {
   status?: number;
   statusCode?: number;
   json(): Promise<AssetError>;
+}
+
+interface PlaylistItem {
+  playlist_id: string;
 }
 
 export const Proposal: React.FC = () => {
@@ -109,6 +114,9 @@ export const Proposal: React.FC = () => {
 
       if (currentProposal.state) {
         setSaveAuthentication(currentProposal.state.withCookies);
+        const playlistItems = await getPlaylistItems(currentProposal.user, currentProposal.state.assetId ?? undefined);
+        const playlistIds = playlistItems.map((item: PlaylistItem) => item.playlist_id);
+        dispatch(setSelectedPlaylists(playlistIds));
         setButtonState('update');
       } else {
         setButtonState('add');
