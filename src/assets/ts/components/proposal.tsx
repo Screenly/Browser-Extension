@@ -106,6 +106,18 @@ export const Proposal: React.FC = () => {
       if (currentProposal.state) {
         setSaveAuthentication(currentProposal.state.withCookies);
         setButtonState('update');
+
+        const assets = await getWebAsset(
+          currentProposal.state.assetId,
+          currentProposal.user,
+        );
+
+        if (assets.length == 0) {
+          setButtonState('add');
+          State.setSavedAssetState(url, null, false, false);
+          setSaveAuthentication(false);
+          setProposal(currentProposal);
+        }
       } else {
         setButtonState('add');
       }
@@ -233,6 +245,7 @@ export const Proposal: React.FC = () => {
     }
 
     const state = proposal.state;
+
     try {
       const result = !state
         ? await createWebAsset(
