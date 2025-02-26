@@ -110,9 +110,10 @@ export function updateWebAsset(
 }
 
 export function getWebAsset(assetId: string | null, user: User) {
+  const queryParams = `id=eq.${encodeURIComponent(assetId || '')}`;
   return callApi(
     'GET',
-    `https://api.screenlyapp.com/api/v4/assets/${encodeURIComponent(assetId || '')}/`,
+    `https://api.screenlyapp.com/api/v4/assets/?${queryParams}`,
     null,
     user.token
   )
