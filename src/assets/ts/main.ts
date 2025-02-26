@@ -163,9 +163,9 @@ export class State {
     };
 
     return browser.storage.sync.get(['state'])
-      .then((result: Record<string, BrowserStorageState>) => {
+      .then((storageResult: Record<string, BrowserStorageState>) => {
         // Initialize state properly from storage
-        const state = result.state || {};
+        const state = storageResult.state || {};
 
         if (assetId) {
           state[url] = savedState;
