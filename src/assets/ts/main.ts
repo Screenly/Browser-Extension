@@ -165,7 +165,7 @@ export class State {
     return browser.storage.sync.get(['state'])
       .then((result: Record<string, BrowserStorageState>) => {
         // Initialize state properly from storage
-        let state = result.state || {};
+        const state = result.state || {};
 
         if (assetId) {
           state[url] = savedState;
@@ -185,8 +185,8 @@ export class State {
             // sync storage limit.
             return browser.storage.sync.remove('state').then(() => {
               if (assetId) {
-                state = { [url]: savedState };
-                return browser.storage.sync.set({ state });
+                const newState = { [url]: savedState };
+                return browser.storage.sync.set({ state: newState });
               } else {
                 return browser.storage.sync.set({ state: {} });
               }
