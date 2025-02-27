@@ -121,11 +121,11 @@ export const Proposal: React.FC = () => {
           } else {
             setButtonState('update');
           }
-        } catch {
+        } catch (error) {
           setError((prev) => ({
             ...prev,
             show: true,
-            message: 'Failed to get asset details'
+            message: `Failed to get asset details: ${error}`
           }));
           setButtonState('add');
           setSaveAuthentication(false);
