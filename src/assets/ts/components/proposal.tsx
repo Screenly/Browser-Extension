@@ -126,7 +126,7 @@ export const Proposal: React.FC = () => {
           await resetAssetState();
         }
 
-        function resetAssetState() {
+        async function resetAssetState() {
           setButtonState('add');
           setSaveAuthentication(false);
           setProposal(currentProposal);
