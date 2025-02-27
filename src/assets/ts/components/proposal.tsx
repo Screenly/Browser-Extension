@@ -105,19 +105,33 @@ export const Proposal: React.FC = () => {
 
       if (currentProposal.state) {
         setSaveAuthentication(currentProposal.state.withCookies);
-        setButtonState('update');
 
-        const assets = await getWebAsset(
-          currentProposal.state.assetId,
-          currentProposal.user,
-        );
+        try {
+          const assets = await getWebAsset(
+            currentProposal.state.assetId,
+            currentProposal.user,
+          );
 
-        if (assets.length == 0) {
+          if (assets.length === 0) {
+            setButtonState('add');
+            setSaveAuthentication(false);
+            setProposal(currentProposal);
+
+            await State.setSavedAssetState(url, null, false, false);
+          } else {
+            setButtonState('update');
+          }
+        } catch {
+          setError((prev) => ({
+            ...prev,
+            show: true,
+            message: 'Failed to get asset details'
+          }));
           setButtonState('add');
           setSaveAuthentication(false);
           setProposal(currentProposal);
 
-          State.setSavedAssetState(url, null, false, false);
+          await State.setSavedAssetState(url, null, false, false);
         }
       } else {
         setButtonState('add');
