@@ -125,7 +125,7 @@ export const Proposal: React.FC = () => {
           setError((prev) => ({
             ...prev,
             show: true,
-            message: `Failed to get asset details: ${error}`
+            message: `Failed to get asset details: ${error.message}`
           }));
           setButtonState('add');
           setSaveAuthentication(false);
