@@ -163,17 +163,18 @@ export class State {
     };
 
     return browser.storage.sync.get(['state'])
-      .then((state: BrowserStorageState) => {
-        state = state || {};
+      .then((storageResult: Record<string, BrowserStorageState>) => {
+        // Initialize state properly from storage
+        const state = storageResult.state || {};
 
         if (assetId) {
           state[url] = savedState;
-        } else
+        } else {
           delete state[url];
+        }
 
-        return browser.storage.sync.set({'state': state})
+        return browser.storage.sync.set({ state })
           .catch((error: Error) => {
-
             if (!error || !error.message || !error.message.includes('QUOTA_BYTES')) {
               // Unknown error. Ignore.
               throw error;
@@ -184,11 +185,11 @@ export class State {
             // sync storage limit.
             return browser.storage.sync.remove('state').then(() => {
               if (assetId) {
-                state = {};
-                state[url] = savedState;
-                return browser.storage.sync.set({'state': state});
-              } else
-                return browser.storage.sync.set({'state': {}});
+                const newState = { [url]: savedState };
+                return browser.storage.sync.set({ state: newState });
+              } else {
+                return browser.storage.sync.set({ state: {} });
+              }
             });
           });
       });
