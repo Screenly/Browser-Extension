@@ -103,6 +103,13 @@ export const Proposal: React.FC = () => {
 
       setProposal(currentProposal);
 
+      const resetAssetState = async () => {
+        setButtonState('add');
+        setSaveAuthentication(false);
+        setProposal(currentProposal);
+        return State.setSavedAssetState(url, null, false, false);
+      };
+
       if (currentProposal.state) {
         setSaveAuthentication(currentProposal.state.withCookies);
 
@@ -112,10 +119,10 @@ export const Proposal: React.FC = () => {
             currentProposal.user,
           );
 
-          setButtonState(assets.length === 0 ? 'add' : 'update');
-
           if (assets.length === 0) {
             await resetAssetState();
+          } else {
+            setButtonState('update');
           }
         } catch (error) {
           setError((prev) => ({
@@ -124,13 +131,6 @@ export const Proposal: React.FC = () => {
             message: `Failed to get asset details: ${(error as Error).message}`
           }));
           await resetAssetState();
-        }
-
-        async function resetAssetState() {
-          setButtonState('add');
-          setSaveAuthentication(false);
-          setProposal(currentProposal);
-          return State.setSavedAssetState(url, null, false, false);
         }
       } else {
         setButtonState('add');
