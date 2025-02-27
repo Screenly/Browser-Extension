@@ -114,9 +114,10 @@ export const Proposal: React.FC = () => {
 
         if (assets.length == 0) {
           setButtonState('add');
-          State.setSavedAssetState(url, null, false, false);
           setSaveAuthentication(false);
           setProposal(currentProposal);
+
+          State.setSavedAssetState(url, null, false, false);
         }
       } else {
         setButtonState('add');
