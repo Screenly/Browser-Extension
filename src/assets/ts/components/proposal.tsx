@@ -112,26 +112,25 @@ export const Proposal: React.FC = () => {
             currentProposal.user,
           );
 
-          if (assets.length === 0) {
-            setButtonState('add');
-            setSaveAuthentication(false);
-            setProposal(currentProposal);
+          setButtonState(assets.length === 0 ? 'add' : 'update');
 
-            await State.setSavedAssetState(url, null, false, false);
-          } else {
-            setButtonState('update');
+          if (assets.length === 0) {
+            await resetAssetState();
           }
         } catch (error) {
           setError((prev) => ({
             ...prev,
             show: true,
-            message: `Failed to get asset details: ${error.message}`
+            message: `Failed to get asset details: ${(error as Error).message}`
           }));
+          await resetAssetState();
+        }
+
+        function resetAssetState() {
           setButtonState('add');
           setSaveAuthentication(false);
           setProposal(currentProposal);
-
-          await State.setSavedAssetState(url, null, false, false);
+          return State.setSavedAssetState(url, null, false, false);
         }
       } else {
         setButtonState('add');
