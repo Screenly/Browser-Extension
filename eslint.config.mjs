@@ -51,7 +51,6 @@ export default [
         Atomics: 'readonly',
         SharedArrayBuffer: 'readonly',
         React: 'readonly',
-        EventListener: 'readonly',
       },
       ecmaVersion: 'latest',
       sourceType: 'module',

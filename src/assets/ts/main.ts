@@ -103,6 +103,7 @@ export function updateWebAsset(
     'PATCH',
     `https://api.screenlyapp.com/api/v4/assets/?${queryParams}`,
     {
+      // API expects snake_case, so we transform from camelCase
       'title': title,
       'headers': headers,
       'disable_verification': disableVerification,
