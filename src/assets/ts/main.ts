@@ -1,4 +1,5 @@
 /// <reference types="chrome"/>
+/* global browser, chrome */
 'use strict';
 
 import normalizeUrl from 'normalize-url';
@@ -95,7 +96,7 @@ export function updateWebAsset(
   url: string,
   title: string,
   headers: object | null,
-  disableVerification: boolean, // eslint-disable-line @typescript-eslint/no-unused-vars
+  disableVerification: boolean,
 ) {
   const queryParams = `id=eq.${encodeURIComponent(assetId || '')}`;
   return callApi(
@@ -104,6 +105,7 @@ export function updateWebAsset(
     {
       'title': title,
       'headers': headers,
+      'disable_verification': disableVerification,
     },
     user.token
   );

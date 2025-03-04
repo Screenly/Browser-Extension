@@ -51,6 +51,7 @@ export default [
         Atomics: 'readonly',
         SharedArrayBuffer: 'readonly',
         React: 'readonly',
+        EventListener: 'readonly',
       },
       ecmaVersion: 'latest',
       sourceType: 'module',
@@ -65,6 +66,8 @@ export default [
       'react/prop-types': 'off',
       '@typescript-eslint/explicit-function-return-type': 'off',
       '@typescript-eslint/no-unused-vars': ['warn', { argsIgnorePattern: '^_' }],
+      'no-unused-vars': 'error',
+      'no-undef': 'error',
     },
   }
 ];
