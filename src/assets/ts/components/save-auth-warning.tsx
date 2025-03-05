@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState } from 'react';
 
 interface SaveAuthWarningProps {
   hostname: string;
@@ -9,7 +9,7 @@ export const SaveAuthWarning: React.FC<SaveAuthWarningProps> = ({
   hostname,
   hidden,
 }) => {
-  const [currentHostname, setCurrentHostname] = useState<string>("");
+  const [currentHostname, setCurrentHostname] = useState<string>('');
 
   useEffect(() => {
     setCurrentHostname(hostname);

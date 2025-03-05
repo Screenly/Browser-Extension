@@ -1,2 +1,2 @@
-import "./test-main";
-import "./test-popup";
+import './test-main';
+import './test-popup';

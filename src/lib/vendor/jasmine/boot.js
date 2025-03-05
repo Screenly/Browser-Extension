@@ -50,21 +50,21 @@
     },
   });
 
-  var filterSpecs = !!queryString.getParam("spec");
+  var filterSpecs = !!queryString.getParam('spec');
 
   var config = {
-    failFast: queryString.getParam("failFast"),
-    oneFailurePerSpec: queryString.getParam("oneFailurePerSpec"),
-    hideDisabled: queryString.getParam("hideDisabled"),
+    failFast: queryString.getParam('failFast'),
+    oneFailurePerSpec: queryString.getParam('oneFailurePerSpec'),
+    hideDisabled: queryString.getParam('hideDisabled'),
   };
 
-  var random = queryString.getParam("random");
+  var random = queryString.getParam('random');
 
-  if (random !== undefined && random !== "") {
+  if (random !== undefined && random !== '') {
     config.random = random;
   }
 
-  var seed = queryString.getParam("seed");
+  var seed = queryString.getParam('seed');
   if (seed) {
     config.seed = seed;
   }
@@ -105,7 +105,7 @@
    */
   var specFilter = new jasmine.HtmlSpecFilter({
     filterString: function () {
-      return queryString.getParam("spec");
+      return queryString.getParam('spec');
     },
   });
 

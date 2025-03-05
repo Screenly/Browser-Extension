@@ -4,7 +4,7 @@ export const PopupSpinner: React.FC = () => {
       className="page"
       id="working-page"
       style={{
-        height: "300px",
+        height: '300px',
       }}
     >
       <div className="align-items-center d-flex h-100 justify-content-center">

@@ -1,12 +1,12 @@
 /* global browser */
 
-import { useState } from "react";
-import { useDispatch } from "react-redux";
-import classNames from "classnames";
+import { useState } from 'react';
+import { useDispatch } from 'react-redux';
+import classNames from 'classnames';
 
-import { callApi } from "@/main";
-import { notifySignInSuccess } from "@/features/popup-slice";
-import { TokenHelpText } from "@/components/token-help-text";
+import { callApi } from '@/main';
+import { notifySignInSuccess } from '@/features/popup-slice';
+import { TokenHelpText } from '@/components/token-help-text';
 
 interface SignInFormErrorProps {
   message?: string;
@@ -26,7 +26,7 @@ export const SignInForm: React.FC = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [showSignInFormError, setShowSignInFormError] =
     useState<boolean>(false);
-  const [token, setToken] = useState<string>("");
+  const [token, setToken] = useState<string>('');
   const dispatch = useDispatch();
 
   const handleSignIn = async (event: React.FormEvent<HTMLFormElement>) => {
@@ -35,8 +35,8 @@ export const SignInForm: React.FC = () => {
 
     try {
       await callApi(
-        "GET",
-        "https://api.screenlyapp.com/api/v4/assets/",
+        'GET',
+        'https://api.screenlyapp.com/api/v4/assets/',
         null,
         token,
       );
@@ -57,12 +57,12 @@ export const SignInForm: React.FC = () => {
       <div className="d-flex flex-column">
         <section
           className={classNames(
-            "align-items-center",
-            "d-flex",
-            "flex-grow-1",
-            "justify-content-center",
-            "border-0",
-            "pb-2",
+            'align-items-center',
+            'd-flex',
+            'flex-grow-1',
+            'justify-content-center',
+            'border-0',
+            'pb-2',
           )}
         >
           <div className="text-center">

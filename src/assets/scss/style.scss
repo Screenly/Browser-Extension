@@ -1,6 +1,6 @@
 $primary: #982fff;
 
-@use "bootstrap/scss/bootstrap" with (
+@use 'bootstrap/scss/bootstrap' with (
   $primary: $primary
 );
 

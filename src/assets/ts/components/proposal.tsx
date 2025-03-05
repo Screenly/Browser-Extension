@@ -1,14 +1,14 @@
 /* global browser */
 
-import { useEffect, useState } from "react";
-import { useDispatch } from "react-redux";
-import type { User } from "@/main";
+import { useEffect, useState } from 'react';
+import { useDispatch } from 'react-redux';
+import type { User } from '@/main';
 
-import { PopupSpinner } from "@/components/popup-spinner";
-import { SaveAuthWarning } from "@/components/save-auth-warning";
-import { SaveAuthHelp } from "@/components/save-auth-help";
+import { PopupSpinner } from '@/components/popup-spinner';
+import { SaveAuthWarning } from '@/components/save-auth-warning';
+import { SaveAuthHelp } from '@/components/save-auth-help';
 
-import * as cookiejs from "@/vendor/cookie.mjs";
+import * as cookiejs from '@/vendor/cookie.mjs';
 import {
   getAssetDashboardLink,
   getUser,
@@ -17,8 +17,8 @@ import {
   updateWebAsset,
   State,
   SavedAssetState,
-} from "@/main";
-import { notifyAssetSaveSuccess, openSettings } from "@/features/popup-slice";
+} from '@/main';
+import { notifyAssetSaveSuccess, openSettings } from '@/features/popup-slice';
 
 interface ErrorState {
   show: boolean;
@@ -40,7 +40,7 @@ interface Cookie {
   hostOnly?: boolean;
 }
 
-type ButtonState = "add" | "update" | "loading";
+type ButtonState = 'add' | 'update' | 'loading';
 
 interface AssetError {
   type?: string[];
@@ -55,13 +55,13 @@ interface ApiError {
 export const Proposal: React.FC = () => {
   const dispatch = useDispatch();
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [assetTitle, setAssetTitle] = useState<string>("");
-  const [assetUrl, setAssetUrl] = useState<string>("");
-  const [assetHostname, setAssetHostname] = useState<string>("");
-  const [buttonState, setButtonState] = useState<ButtonState>("add");
+  const [assetTitle, setAssetTitle] = useState<string>('');
+  const [assetUrl, setAssetUrl] = useState<string>('');
+  const [assetHostname, setAssetHostname] = useState<string>('');
+  const [buttonState, setButtonState] = useState<ButtonState>('add');
   const [error, setError] = useState<ErrorState>({
     show: false,
-    message: "Failed to add or update asset",
+    message: 'Failed to add or update asset',
   });
   const [bypassVerification, setBypassVerification] = useState<boolean>(false);
   const [saveAuthentication, setSaveAuthentication] = useState<boolean>(false);
@@ -101,7 +101,7 @@ export const Proposal: React.FC = () => {
       setProposal(currentProposal);
 
       const resetAssetState = async () => {
-        setButtonState("add");
+        setButtonState('add');
         setSaveAuthentication(false);
         setProposal(currentProposal);
         await State.removeSavedAssetState(url);
@@ -119,7 +119,7 @@ export const Proposal: React.FC = () => {
           if (assets.length === 0) {
             await resetAssetState();
           } else {
-            setButtonState("update");
+            setButtonState('update');
           }
         } catch (error) {
           setError((prev) => ({
@@ -130,13 +130,13 @@ export const Proposal: React.FC = () => {
           await resetAssetState();
         }
       } else {
-        setButtonState("add");
+        setButtonState('add');
       }
     } catch (error) {
       setError((prev) => ({
         ...prev,
         show: true,
-        message: "Failed to check asset.",
+        message: 'Failed to check asset.',
       }));
       throw error;
     }
@@ -179,13 +179,13 @@ export const Proposal: React.FC = () => {
           return [
             window.location.href,
             document.title,
-            performance.getEntriesByType("resource").map((e) => e.name),
+            performance.getEntriesByType('resource').map((e) => e.name),
           ] as [string, string, string[]];
         },
       });
 
       if (!result?.[0]?.result || !Array.isArray(result[0].result)) {
-        throw new Error("Failed to get page information");
+        throw new Error('Failed to get page information');
       }
 
       const [pageUrl, pageTitle, resourceEntries] = result[0].result as [
@@ -244,18 +244,18 @@ export const Proposal: React.FC = () => {
   const handleSubmission = async (event: React.FormEvent) => {
     event.preventDefault();
 
-    if (!proposal || buttonState === "loading") {
+    if (!proposal || buttonState === 'loading') {
       return;
     }
 
-    setButtonState("loading");
+    setButtonState('loading');
     let headers: Record<string, string> = {};
 
     if (saveAuthentication && proposal.cookieJar) {
       headers = {
         Cookie: proposal.cookieJar
           .map((cookie) => cookiejs.serialize(cookie.name, cookie.value))
-          .join("; "),
+          .join('; '),
       };
     }
 
@@ -280,7 +280,7 @@ export const Proposal: React.FC = () => {
           );
 
       if (result.length === 0) {
-        throw new Error("No asset data returned");
+        throw new Error('No asset data returned');
       }
 
       State.setSavedAssetState(
@@ -290,9 +290,9 @@ export const Proposal: React.FC = () => {
         bypassVerification,
       );
 
-      setButtonState(state ? "update" : "add");
+      setButtonState(state ? 'update' : 'add');
 
-      const event = new CustomEvent("set-asset-dashboard-link", {
+      const event = new CustomEvent('set-asset-dashboard-link', {
         detail: getAssetDashboardLink(result[0].id),
       });
       document.dispatchEvent(event);
@@ -305,14 +305,14 @@ export const Proposal: React.FC = () => {
           ...prev,
           show: true,
           message:
-            "Screenly authentication failed. Try signing out and back in again.",
+            'Screenly authentication failed. Try signing out and back in again.',
         }));
         return;
       }
 
       try {
         const errorJson = await (error as ApiError).json();
-        if (errorJson.type && errorJson.type[0] === "AssetUnreachableError") {
+        if (errorJson.type && errorJson.type[0] === 'AssetUnreachableError') {
           setBypassVerification(true);
           setError((prev) => ({
             ...prev,
@@ -323,12 +323,12 @@ export const Proposal: React.FC = () => {
         } else if (!errorJson.type) {
           throw JSON.stringify(errorJson);
         } else {
-          throw new Error("Unknown error");
+          throw new Error('Unknown error');
         }
       } catch (jsonError) {
         const prefix = state
-          ? "Failed to update asset"
-          : "Failed to save web page";
+          ? 'Failed to update asset'
+          : 'Failed to save web page';
 
         setError((prev) => ({
           ...prev,
@@ -336,7 +336,7 @@ export const Proposal: React.FC = () => {
           message: `${prefix}: ${jsonError}`,
         }));
 
-        setButtonState(state ? "update" : "add");
+        setButtonState(state ? 'update' : 'add');
       }
     }
   };
@@ -397,16 +397,16 @@ export const Proposal: React.FC = () => {
               type="submit"
               onClick={handleSubmission}
             >
-              <span className="add label" hidden={buttonState !== "add"}>
+              <span className="add label" hidden={buttonState !== 'add'}>
                 Add to Screenly
               </span>
 
               <span
                 className="spinner-border spinner-border-sm"
-                hidden={buttonState !== "loading"}
+                hidden={buttonState !== 'loading'}
               ></span>
 
-              <span className="label update" hidden={buttonState !== "update"}>
+              <span className="label update" hidden={buttonState !== 'update'}>
                 Update Asset
               </span>
             </button>

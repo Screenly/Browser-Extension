@@ -1,8 +1,8 @@
 /// <reference types="chrome"/>
 /* global browser, chrome */
-"use strict";
+'use strict';
 
-import normalizeUrl from "normalize-url";
+import normalizeUrl from 'normalize-url';
 
 interface RequestInit {
   method: string;
@@ -35,8 +35,8 @@ export function callApi(
   const init: RequestInit = {
     method: method,
     headers: {
-      "Content-Type": "application/json",
-      Prefer: "return=representation",
+      'Content-Type': 'application/json',
+      Prefer: 'return=representation',
     },
   };
 
@@ -45,7 +45,7 @@ export function callApi(
   }
 
   if (token) {
-    init.headers["Authorization"] = `Token ${token}`;
+    init.headers['Authorization'] = `Token ${token}`;
   }
 
   return fetch(url, init)
@@ -67,7 +67,7 @@ export function callApi(
 }
 
 export function getUser() {
-  return browser.storage.sync.get(["token"]);
+  return browser.storage.sync.get(['token']);
 }
 
 export function createWebAsset(
@@ -78,8 +78,8 @@ export function createWebAsset(
   disableVerification: boolean,
 ) {
   return callApi(
-    "POST",
-    "https://api.screenlyapp.com/api/v4/assets/",
+    'POST',
+    'https://api.screenlyapp.com/api/v4/assets/',
     {
       source_url: url,
       title: title,
@@ -98,9 +98,9 @@ export function updateWebAsset(
   headers: object | null,
   disableVerification: boolean,
 ) {
-  const queryParams = `id=eq.${encodeURIComponent(assetId || "")}`;
+  const queryParams = `id=eq.${encodeURIComponent(assetId || '')}`;
   return callApi(
-    "PATCH",
+    'PATCH',
     `https://api.screenlyapp.com/api/v4/assets/?${queryParams}`,
     {
       // API expects snake_case, so we transform from camelCase
@@ -113,9 +113,9 @@ export function updateWebAsset(
 }
 
 export function getWebAsset(assetId: string | null, user: User) {
-  const queryParams = `id=eq.${encodeURIComponent(assetId || "")}`;
+  const queryParams = `id=eq.${encodeURIComponent(assetId || '')}`;
   return callApi(
-    "GET",
+    'GET',
     `https://api.screenlyapp.com/api/v4/assets/?${queryParams}`,
     null,
     user.token,
@@ -164,7 +164,7 @@ export class State {
     };
 
     return browser.storage.sync
-      .get(["state"])
+      .get(['state'])
       .then((storageResult: Record<string, BrowserStorageState>) => {
         // Initialize state properly from storage
         const state = storageResult.state || {};
@@ -179,7 +179,7 @@ export class State {
           if (
             !error ||
             !error.message ||
-            !error.message.includes("QUOTA_BYTES")
+            !error.message.includes('QUOTA_BYTES')
           ) {
             // Unknown error. Ignore.
             throw error;
@@ -188,7 +188,7 @@ export class State {
           // Storage full - clear it, then try again.
           // TODO Use LRU to ensure the dictionary doesn't ever grow larger than the
           // sync storage limit.
-          return browser.storage.sync.remove("state").then(() => {
+          return browser.storage.sync.remove('state').then(() => {
             if (assetId) {
               const newState = { [url]: savedState };
               return browser.storage.sync.set({ state: newState });
@@ -204,11 +204,11 @@ export class State {
     url = State.simplifyUrl(url);
 
     return browser.storage.sync
-      .get(["state"])
+      .get(['state'])
       .then((result: { state?: BrowserStorageState }) => {
         const state = result.state || {};
         const v = state[url];
-        if (typeof v != "object") {
+        if (typeof v != 'object') {
           // Backwards compatibility with 0.2. Just ignore the old format.
           return undefined;
         }
@@ -220,7 +220,7 @@ export class State {
     url = State.simplifyUrl(url);
 
     return browser.storage.sync
-      .get(["state"])
+      .get(['state'])
       .then((result: { state?: BrowserStorageState }) => {
         const state = result.state || {};
         delete state[url];
