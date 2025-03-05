@@ -1,4 +1,24 @@
 {
-  "singleQuote": true,
-  "jsxSingleQuote": false
+  "overrides": [
+    {
+      "files": ["*.ts", "*.tsx", "*.js", "*.jsx", "*.mjs"],
+      "options": {
+        "singleQuote": true,
+        "jsxSingleQuote": false,
+        "semi": true
+      }
+    },
+    {
+      "files": ["*.scss"],
+      "options": {
+        "singleQuote": true
+      }
+    },
+    {
+      "files": ["*.css"],
+      "options": {
+        "singleQuote": true
+      }
+    }
+  ]
 }
