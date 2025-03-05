@@ -1,9 +1,9 @@
-import { useState } from 'react';
-import { useDispatch } from 'react-redux';
-import classNames from 'classnames';
+import { useState } from "react";
+import { useDispatch } from "react-redux";
+import classNames from "classnames";
 
-import { signOut } from '@/features/popup-slice';
-import { AppDispatch } from '@/store';
+import { signOut } from "@/features/popup-slice";
+import { AppDispatch } from "@/store";
 
 export const Settings: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -21,11 +21,11 @@ export const Settings: React.FC = () => {
       <div className="d-flex flex-column">
         <section
           className={classNames(
-            'align-items-center',
-            'd-flex',
-            'flex-grow-1',
-            'justify-content-center',
-            'border-bottom-0',
+            "align-items-center",
+            "d-flex",
+            "flex-grow-1",
+            "justify-content-center",
+            "border-bottom-0",
           )}
         >
           <div>
@@ -37,21 +37,12 @@ export const Settings: React.FC = () => {
           </div>
         </section>
         <section>
-          <button
-            className="btn btn-primary w-100"
-            onClick={handleSignOut}
-          >
-            {
-              isLoading
-                ? (
-                  <span
-                    className="spinner spinner-border spinner-border-sm"
-                  ></span>
-                )
-                : (
-                  <span className="label">Sign Out</span>
-                )
-            }
+          <button className="btn btn-primary w-100" onClick={handleSignOut}>
+            {isLoading ? (
+              <span className="spinner spinner-border spinner-border-sm"></span>
+            ) : (
+              <span className="label">Sign Out</span>
+            )}
           </button>
         </section>
       </div>

@@ -1,8 +1,8 @@
 /// <reference types="chrome"/>
 /* global browser, chrome */
-'use strict';
+"use strict";
 
-import normalizeUrl from 'normalize-url';
+import normalizeUrl from "normalize-url";
 
 interface RequestInit {
   method: string;
@@ -30,14 +30,14 @@ export function callApi(
   method: string,
   url: string,
   data: object | null,
-  token: string
+  token: string,
 ) {
   const init: RequestInit = {
     method: method,
     headers: {
-      'Content-Type': 'application/json',
-      'Prefer': 'return=representation',
-    }
+      "Content-Type": "application/json",
+      Prefer: "return=representation",
+    },
   };
 
   if (data !== undefined && data !== null) {
@@ -45,29 +45,29 @@ export function callApi(
   }
 
   if (token) {
-    init.headers['Authorization'] = `Token ${token}`;
+    init.headers["Authorization"] = `Token ${token}`;
   }
 
   return fetch(url, init)
-    .then(response => {
+    .then((response) => {
       if (!(response.status >= 200 && response.status < 300)) {
         throw response;
       }
 
       return response.json();
-    }).then((jsonResponse) => {
+    })
+    .then((jsonResponse) => {
       return jsonResponse;
-    }).catch((error) => {
+    })
+    .catch((error) => {
       // Do some basic logging but then just rethrow the error.
 
-      if (error.status)
-
-      throw error;
+      if (error.status) throw error;
     });
 }
 
 export function getUser() {
-  return browser.storage.sync.get(['token']);
+  return browser.storage.sync.get(["token"]);
 }
 
 export function createWebAsset(
@@ -75,18 +75,18 @@ export function createWebAsset(
   url: string,
   title: string,
   headers: object | null,
-  disableVerification: boolean
+  disableVerification: boolean,
 ) {
   return callApi(
-    'POST',
-    'https://api.screenlyapp.com/api/v4/assets/',
+    "POST",
+    "https://api.screenlyapp.com/api/v4/assets/",
     {
-      'source_url': url,
-      'title': title,
-      'headers': headers,
-      'disable_verification': disableVerification,
+      source_url: url,
+      title: title,
+      headers: headers,
+      disable_verification: disableVerification,
     },
-    user.token
+    user.token,
   );
 }
 
@@ -98,38 +98,36 @@ export function updateWebAsset(
   headers: object | null,
   disableVerification: boolean,
 ) {
-  const queryParams = `id=eq.${encodeURIComponent(assetId || '')}`;
+  const queryParams = `id=eq.${encodeURIComponent(assetId || "")}`;
   return callApi(
-    'PATCH',
+    "PATCH",
     `https://api.screenlyapp.com/api/v4/assets/?${queryParams}`,
     {
       // API expects snake_case, so we transform from camelCase
-      'title': title,
-      'headers': headers,
-      'disable_verification': disableVerification,
+      title: title,
+      headers: headers,
+      disable_verification: disableVerification,
     },
-    user.token
+    user.token,
   );
 }
 
 export function getWebAsset(assetId: string | null, user: User) {
-  const queryParams = `id=eq.${encodeURIComponent(assetId || '')}`;
+  const queryParams = `id=eq.${encodeURIComponent(assetId || "")}`;
   return callApi(
-    'GET',
+    "GET",
     `https://api.screenlyapp.com/api/v4/assets/?${queryParams}`,
     null,
-    user.token
-  )
+    user.token,
+  );
 }
 
 export function getAssetDashboardLink(assetId: string) {
   return `https://login.screenlyapp.com/login?next=/manage/assets/${assetId}`;
 }
 
-
 export class State {
-  constructor() {
-  }
+  constructor() {}
 
   // Make a new URL equivalent to the given URL but in a normalized format.
   static normalizeUrl(url: string) {
@@ -148,24 +146,25 @@ export class State {
       stripHash: true,
       stripProtocol: true,
       stripWWW: true,
-    })
+    });
   }
 
   static setSavedAssetState(
     url: string,
     assetId: string | null,
     withCookies: boolean,
-    withBypass: boolean
+    withBypass: boolean,
   ) {
     url = State.simplifyUrl(url);
 
     const savedState = {
       assetId: assetId,
       withCookies: withCookies,
-      withBypass: withBypass
+      withBypass: withBypass,
     };
 
-    return browser.storage.sync.get(['state'])
+    return browser.storage.sync
+      .get(["state"])
       .then((storageResult: Record<string, BrowserStorageState>) => {
         // Initialize state properly from storage
         const state = storageResult.state || {};
@@ -176,36 +175,40 @@ export class State {
           delete state[url];
         }
 
-        return browser.storage.sync.set({ state })
-          .catch((error: Error) => {
-            if (!error || !error.message || !error.message.includes('QUOTA_BYTES')) {
-              // Unknown error. Ignore.
-              throw error;
-            }
+        return browser.storage.sync.set({ state }).catch((error: Error) => {
+          if (
+            !error ||
+            !error.message ||
+            !error.message.includes("QUOTA_BYTES")
+          ) {
+            // Unknown error. Ignore.
+            throw error;
+          }
 
-            // Storage full - clear it, then try again.
-            // TODO Use LRU to ensure the dictionary doesn't ever grow larger than the
-            // sync storage limit.
-            return browser.storage.sync.remove('state').then(() => {
-              if (assetId) {
-                const newState = { [url]: savedState };
-                return browser.storage.sync.set({ state: newState });
-              } else {
-                return browser.storage.sync.set({ state: {} });
-              }
-            });
+          // Storage full - clear it, then try again.
+          // TODO Use LRU to ensure the dictionary doesn't ever grow larger than the
+          // sync storage limit.
+          return browser.storage.sync.remove("state").then(() => {
+            if (assetId) {
+              const newState = { [url]: savedState };
+              return browser.storage.sync.set({ state: newState });
+            } else {
+              return browser.storage.sync.set({ state: {} });
+            }
           });
+        });
       });
   }
 
   static getSavedAssetState(url: string) {
     url = State.simplifyUrl(url);
 
-    return browser.storage.sync.get(['state'])
+    return browser.storage.sync
+      .get(["state"])
       .then((result: { state?: BrowserStorageState }) => {
         const state = result.state || {};
         const v = state[url];
-        if (typeof v != 'object') {
+        if (typeof v != "object") {
           // Backwards compatibility with 0.2. Just ignore the old format.
           return undefined;
         }
@@ -216,7 +219,8 @@ export class State {
   static removeSavedAssetState(url: string) {
     url = State.simplifyUrl(url);
 
-    return browser.storage.sync.get(['state'])
+    return browser.storage.sync
+      .get(["state"])
       .then((result: { state?: BrowserStorageState }) => {
         const state = result.state || {};
         delete state[url];
