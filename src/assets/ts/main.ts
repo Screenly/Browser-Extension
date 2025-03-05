@@ -122,8 +122,18 @@ export function getWebAsset(assetId: string | null, user: User) {
   )
 }
 
-export function getAssetDashboardLink(assetId: string) {
-  return `https://login.screenlyapp.com/login?next=/manage/assets/${assetId}`;
+export function getTeamInfo(user: User, teamId: string) {
+  const queryParams = `id=eq.${encodeURIComponent(teamId || '')}`;
+  return callApi(
+    'GET',
+    `https://api.screenlyapp.com/api/v4.1/teams/?${queryParams}`,
+    null,
+    user.token
+  )
+}
+
+export function getAssetDashboardLink(assetId: string, teamDomain: string) {
+  return `https://${teamDomain}.screenlyapp.com/manage/assets/${assetId}`;
 }
 
 

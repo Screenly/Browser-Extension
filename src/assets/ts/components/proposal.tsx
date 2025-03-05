@@ -13,6 +13,7 @@ import {
   getAssetDashboardLink,
   getUser,
   getWebAsset,
+  getTeamInfo,
   createWebAsset,
   updateWebAsset,
   State,
@@ -291,8 +292,11 @@ export const Proposal: React.FC = () => {
 
       setButtonState(state ? 'update' : 'add');
 
+      const teamInfo = await getTeamInfo(proposal.user, result[0].team_id);
+      const teamDomain = teamInfo[0].domain;
+
       const event = new CustomEvent('set-asset-dashboard-link', {
-        detail: getAssetDashboardLink(result[0].id)
+        detail: getAssetDashboardLink(result[0].id, teamDomain)
       });
       document.dispatchEvent(event);
 
