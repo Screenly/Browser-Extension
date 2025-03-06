@@ -297,7 +297,7 @@ export const Proposal: React.FC = () => {
       const teamDomain = teamInfo[0].domain;
 
       const event = new CustomEvent('set-asset-dashboard-link', {
-        detail: getAssetDashboardLink(result[0].id, teamDomain)
+        detail: getAssetDashboardLink(result[0].id, teamDomain),
       });
       document.dispatchEvent(event);
 

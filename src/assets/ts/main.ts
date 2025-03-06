@@ -128,8 +128,8 @@ export function getTeamInfo(user: User, teamId: string) {
     'GET',
     `https://api.screenlyapp.com/api/v4.1/teams/?${queryParams}`,
     null,
-    user.token
-  )
+    user.token,
+  );
 }
 
 export function getAssetDashboardLink(assetId: string, teamDomain: string) {
