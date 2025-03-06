@@ -5,7 +5,8 @@
       "options": {
         "singleQuote": true,
         "jsxSingleQuote": false,
-        "semi": true
+        "semi": true,
+        "trailingComma": "all"
       }
     },
     {
