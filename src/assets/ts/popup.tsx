@@ -44,9 +44,15 @@ const PopupPage: React.FC = () => {
   useEffect(() => {
     dispatch(signIn());
 
-    document.addEventListener('set-asset-dashboard-link', ((event: CustomEvent) => {
+    const handleAssetDashboardLink = ((event: CustomEvent) => {
       setAssetDashboardLink(event.detail);
-    }) as EventListener);
+    }) as EventListener;
+
+    document.addEventListener('set-asset-dashboard-link', handleAssetDashboardLink);
+
+    return () => {
+      document.removeEventListener('set-asset-dashboard-link', handleAssetDashboardLink);
+    };
   }, []);
 
   return (
