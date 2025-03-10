@@ -19,10 +19,7 @@ import {
   State,
   SavedAssetState,
 } from '@/main';
-import {
-  notifyAssetSaveSuccess,
-  openSettings,
-} from '@/features/popup-slice';
+import { notifyAssetSaveSuccess, openSettings } from '@/features/popup-slice';
 
 interface ErrorState {
   show: boolean;
@@ -65,7 +62,7 @@ export const Proposal: React.FC = () => {
   const [buttonState, setButtonState] = useState<ButtonState>('add');
   const [error, setError] = useState<ErrorState>({
     show: false,
-    message: 'Failed to add or update asset'
+    message: 'Failed to add or update asset',
   });
   const [bypassVerification, setBypassVerification] = useState<boolean>(false);
   const [saveAuthentication, setSaveAuthentication] = useState<boolean>(false);
@@ -74,7 +71,7 @@ export const Proposal: React.FC = () => {
   const updateProposal = async (newProposal: ProposalState) => {
     setError((prev) => ({
       ...prev,
-      show: false
+      show: false,
     }));
 
     const currentProposal = newProposal;
@@ -129,7 +126,7 @@ export const Proposal: React.FC = () => {
           setError((prev) => ({
             ...prev,
             show: true,
-            message: `Failed to get asset details: ${(error as Error).message}`
+            message: `Failed to get asset details: ${(error as Error).message}`,
           }));
           await resetAssetState();
         }
@@ -140,7 +137,7 @@ export const Proposal: React.FC = () => {
       setError((prev) => ({
         ...prev,
         show: true,
-        message: 'Failed to check asset.'
+        message: 'Failed to check asset.',
       }));
       throw error;
     }
@@ -150,13 +147,13 @@ export const Proposal: React.FC = () => {
     user: User,
     url: string,
     title: string,
-    cookieJar: Cookie[]
+    cookieJar: Cookie[],
   ) => {
     await updateProposal({
       user,
       title,
       url: State.normalizeUrl(url),
-      cookieJar
+      cookieJar,
     });
   };
 
@@ -168,7 +165,10 @@ export const Proposal: React.FC = () => {
       return;
     }
 
-    const tabs = await browser.tabs.query({ active: true, currentWindow: true });
+    const tabs = await browser.tabs.query({
+      active: true,
+      currentWindow: true,
+    });
     const tabId = tabs[0].id;
 
     if (!tabId) return;
@@ -180,16 +180,20 @@ export const Proposal: React.FC = () => {
           return [
             window.location.href,
             document.title,
-            performance.getEntriesByType('resource').map(e => e.name)
+            performance.getEntriesByType('resource').map((e) => e.name),
           ] as [string, string, string[]];
-        }
+        },
       });
 
       if (!result?.[0]?.result || !Array.isArray(result[0].result)) {
         throw new Error('Failed to get page information');
       }
 
-      const [pageUrl, pageTitle, resourceEntries] = result[0].result as [string, string, string[]];
+      const [pageUrl, pageTitle, resourceEntries] = result[0].result as [
+        string,
+        string,
+        string[],
+      ];
 
       if (!resourceEntries) {
         return;
@@ -198,27 +202,25 @@ export const Proposal: React.FC = () => {
       const originDomain = new URL(pageUrl).host;
 
       const results = await Promise.all(
-        resourceEntries.map((url: string) =>
-          browser.cookies.getAll({ url })
-        )
+        resourceEntries.map((url: string) => browser.cookies.getAll({ url })),
       );
 
       let cookieJar = Array.from(
         new Map(
           results
             .flat(1)
-            .map(cookie =>
-              [
-                JSON.stringify([cookie.domain, cookie.name]),
-                cookie
-              ]
-            )
-        ).values()
+            .map((cookie) => [
+              JSON.stringify([cookie.domain, cookie.name]),
+              cookie,
+            ]),
+        ).values(),
       );
 
       if (onlyPrimaryDomain) {
-        cookieJar = cookieJar.filter(cookie =>
-          cookie.domain === originDomain || (!cookie.hostOnly && originDomain.endsWith(cookie.domain))
+        cookieJar = cookieJar.filter(
+          (cookie) =>
+            cookie.domain === originDomain ||
+            (!cookie.hostOnly && originDomain.endsWith(cookie.domain)),
         );
       }
 
@@ -230,10 +232,9 @@ export const Proposal: React.FC = () => {
 
   useEffect(() => {
     setIsLoading(true);
-    prepareToAddToScreenly()
-      .then(() => {
-        setIsLoading(false);
-      });
+    prepareToAddToScreenly().then(() => {
+      setIsLoading(false);
+    });
   }, []);
 
   const handleSettings = (event: React.MouseEvent) => {
@@ -253,9 +254,9 @@ export const Proposal: React.FC = () => {
 
     if (saveAuthentication && proposal.cookieJar) {
       headers = {
-        'Cookie': proposal.cookieJar.map(
-          cookie => cookiejs.serialize(cookie.name, cookie.value)
-        ).join('; ')
+        Cookie: proposal.cookieJar
+          .map((cookie) => cookiejs.serialize(cookie.name, cookie.value))
+          .join('; '),
       };
     }
 
@@ -264,20 +265,20 @@ export const Proposal: React.FC = () => {
     try {
       const result = !state
         ? await createWebAsset(
-          proposal.user,
-          proposal.url,
-          proposal.title,
-          headers,
-          bypassVerification
-        )
+            proposal.user,
+            proposal.url,
+            proposal.title,
+            headers,
+            bypassVerification,
+          )
         : await updateWebAsset(
-          state.assetId,
-          proposal.user,
-          proposal.url,
-          proposal.title,
-          headers,
-          bypassVerification
-        );
+            state.assetId,
+            proposal.user,
+            proposal.url,
+            proposal.title,
+            headers,
+            bypassVerification,
+          );
 
       if (result.length === 0) {
         throw new Error('No asset data returned');
@@ -287,7 +288,7 @@ export const Proposal: React.FC = () => {
         proposal.url,
         result[0].id,
         saveAuthentication,
-        bypassVerification
+        bypassVerification,
       );
 
       setButtonState(state ? 'update' : 'add');
@@ -296,7 +297,7 @@ export const Proposal: React.FC = () => {
       const teamDomain = teamInfo[0].domain;
 
       const event = new CustomEvent('set-asset-dashboard-link', {
-        detail: getAssetDashboardLink(result[0].id, teamDomain)
+        detail: getAssetDashboardLink(result[0].id, teamDomain),
       });
       document.dispatchEvent(event);
 
@@ -307,22 +308,21 @@ export const Proposal: React.FC = () => {
         setError((prev) => ({
           ...prev,
           show: true,
-          message: 'Screenly authentication failed. Try signing out and back in again.'
+          message:
+            'Screenly authentication failed. Try signing out and back in again.',
         }));
         return;
       }
 
       try {
         const errorJson = await (error as ApiError).json();
-        if (
-          errorJson.type &&
-          errorJson.type[0] === 'AssetUnreachableError'
-        ) {
+        if (errorJson.type && errorJson.type[0] === 'AssetUnreachableError') {
           setBypassVerification(true);
           setError((prev) => ({
             ...prev,
             show: true,
-            message: 'Screenly couldn\'t reach this web page. To save it anyhow, use the Bypass Verification option.'
+            message:
+              "Screenly couldn't reach this web page. To save it anyhow, use the Bypass Verification option.",
           }));
         } else if (!errorJson.type) {
           throw JSON.stringify(errorJson);
@@ -337,7 +337,7 @@ export const Proposal: React.FC = () => {
         setError((prev) => ({
           ...prev,
           show: true,
-          message: `${prefix}: ${jsonError}`
+          message: `${prefix}: ${jsonError}`,
         }));
 
         setButtonState(state ? 'update' : 'add');
@@ -356,10 +356,7 @@ export const Proposal: React.FC = () => {
           <h5 id="title">{assetTitle}</h5>
         </section>
         <section className="bg-light">
-          <div
-            className="break-anywhere text-monospace"
-            id="url"
-          >
+          <div className="break-anywhere text-monospace" id="url">
             {assetUrl}
           </div>
         </section>
@@ -372,14 +369,14 @@ export const Proposal: React.FC = () => {
               checked={saveAuthentication}
               onChange={(e) => setSaveAuthentication(e.target.checked)}
             />
-            <label
-              className="form-check-label"
-              htmlFor="with-auth-check"
-            >
+            <label className="form-check-label" htmlFor="with-auth-check">
               Save Authentication
             </label>
           </div>
-          <SaveAuthWarning hostname={assetHostname} hidden={!saveAuthentication} />
+          <SaveAuthWarning
+            hostname={assetHostname}
+            hidden={!saveAuthentication}
+          />
           <SaveAuthHelp />
         </section>
 
@@ -390,10 +387,7 @@ export const Proposal: React.FC = () => {
               id="no-verification-check"
               type="checkbox"
             />
-            <label
-              className="form-check-label"
-              htmlFor="no-verification-check"
-            >
+            <label className="form-check-label" htmlFor="no-verification-check">
               Bypass Verification
             </label>
           </div>
@@ -407,30 +401,20 @@ export const Proposal: React.FC = () => {
               type="submit"
               onClick={handleSubmission}
             >
-              <span
-                className="add label"
-                hidden={buttonState !== "add"}
-              >
+              <span className="add label" hidden={buttonState !== 'add'}>
                 Add to Screenly
               </span>
 
               <span
                 className="spinner-border spinner-border-sm"
-                hidden={buttonState !== "loading"}
-              >
-              </span>
+                hidden={buttonState !== 'loading'}
+              ></span>
 
-              <span
-                className="label update"
-                hidden={buttonState !== "update"}
-              >
+              <span className="label update" hidden={buttonState !== 'update'}>
                 Update Asset
               </span>
             </button>
-            <button
-              className="btn btn-primary"
-              onClick={handleSettings}
-            >
+            <button className="btn btn-primary" onClick={handleSettings}>
               <i className="bi bi-gear"></i>
             </button>
           </div>

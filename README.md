@@ -91,7 +91,7 @@ $ ./bin/run_tests.sh
   * You can either select the `manifest.json` file or the zipped extension.
 * Find the extension URL and then open `moz-extension://<extension-id>/test/tests.html` in Firefox.
 
-## :mag: Run Linter
+## :mag: Run Linter and Formatter
 
 Build the Docker image, which is a one-time operation:
 
@@ -106,3 +106,20 @@ $ ./bin/run_eslint.sh src/
 ```
 
 This will run ESLint on the codebase and show any style issues or potential problems that need to be fixed.
+
+### :nail_care: Run Formatter
+
+This project uses [Prettier](https://prettier.io/) to format the code.
+For more information why the linter and formatter are separate, see [this article about ESLint deprecating formatting rules](https://eslint.org/blog/2023/10/deprecating-formatting-rules/).
+
+Build the Docker image, which is a one-time operation:
+
+```bash
+$ docker compose build
+```
+
+Run the formatter:
+
+```bash
+$ ./bin/run_formatter.sh
+```

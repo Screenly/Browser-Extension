@@ -1,27 +1,18 @@
 /* global browser */
 
-import {
-  createAsyncThunk,
-  createSlice
-} from '@reduxjs/toolkit';
+import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 
-export const signIn = createAsyncThunk(
-  'popup/signIn',
-  async () => {
-    const result = await browser.storage.sync.get('token');
-    if (result.token) {
-      return true;
-    }
-    return false;
+export const signIn = createAsyncThunk('popup/signIn', async () => {
+  const result = await browser.storage.sync.get('token');
+  if (result.token) {
+    return true;
   }
-);
+  return false;
+});
 
-export const signOut = createAsyncThunk(
-  'popup/signOut',
-  async () => {
-    await browser.storage.sync.remove('token');
-  }
-);
+export const signOut = createAsyncThunk('popup/signOut', async () => {
+  await browser.storage.sync.remove('token');
+});
 
 const popupSlice = createSlice({
   name: 'popup',
@@ -62,9 +53,6 @@ const popupSlice = createSlice({
   },
 });
 
-export const {
-  notifyAssetSaveSuccess,
-  notifySignInSuccess,
-  openSettings,
-} = popupSlice.actions;
+export const { notifyAssetSaveSuccess, notifySignInSuccess, openSettings } =
+  popupSlice.actions;
 export default popupSlice.reducer;

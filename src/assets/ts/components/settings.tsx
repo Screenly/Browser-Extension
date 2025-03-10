@@ -37,21 +37,12 @@ export const Settings: React.FC = () => {
           </div>
         </section>
         <section>
-          <button
-            className="btn btn-primary w-100"
-            onClick={handleSignOut}
-          >
-            {
-              isLoading
-                ? (
-                  <span
-                    className="spinner spinner-border spinner-border-sm"
-                  ></span>
-                )
-                : (
-                  <span className="label">Sign Out</span>
-                )
-            }
+          <button className="btn btn-primary w-100" onClick={handleSignOut}>
+            {isLoading ? (
+              <span className="spinner spinner-border spinner-border-sm"></span>
+            ) : (
+              <span className="label">Sign Out</span>
+            )}
           </button>
         </section>
       </div>

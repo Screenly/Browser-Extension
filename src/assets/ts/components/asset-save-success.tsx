@@ -2,7 +2,9 @@ interface SuccessProps {
   assetDashboardLink: string;
 }
 
-export const AssetSaveSuccess: React.FC<SuccessProps> = ({ assetDashboardLink }) => {
+export const AssetSaveSuccess: React.FC<SuccessProps> = ({
+  assetDashboardLink,
+}) => {
   const openAssetDashboard = () => {
     window.open(assetDashboardLink);
   };
@@ -10,9 +12,7 @@ export const AssetSaveSuccess: React.FC<SuccessProps> = ({ assetDashboardLink })
   return (
     <div className="page" id="success-page">
       <div className="d-flex flex-column">
-        <section
-          className="align-items-center d-flex flex-grow-1 justify-content-center"
-        >
+        <section className="align-items-center d-flex flex-grow-1 justify-content-center">
           <div>
             <div className="mt-4 success-checkmark">
               <div className="check-icon">
@@ -22,12 +22,10 @@ export const AssetSaveSuccess: React.FC<SuccessProps> = ({ assetDashboardLink })
                 <div className="icon-fix"></div>
               </div>
             </div>
-            <h3 className="text-center">
-              Web page saved!
-            </h3>
+            <h3 className="text-center">Web page saved!</h3>
             <p className="text-muted">
-              To show the web page on your digital sign, add the
-              web asset to a playlist in your Screenly account.
+              To show the web page on your digital sign, add the web asset to a
+              playlist in your Screenly account.
             </p>
           </div>
         </section>
