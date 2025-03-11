@@ -1,0 +1,41 @@
+---
+name: Run ESLint and Prettier
+
+on:
+  pull_request:
+    branches:
+      - master
+  push:
+    branches:
+      - master
+    tags:
+      - v*.*
+
+jobs:
+  build-docker-images:
+    runs-on: ubuntu-latest
+    name: Build Docker images
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Build Docker images
+        run: |
+          docker compose build
+
+  run-eslint:
+    needs: build-docker-images
+    runs-on: ubuntu-latest
+    name: Run ESLint
+    steps:
+      - name: Run ESLint
+        run: |
+          ./bin/run_eslint.sh src/
+
+  run-prettier:
+    needs: build-docker-images
+    runs-on: ubuntu-latest
+    name: Run Prettier
+    steps:
+      - name: Run Prettier
+        run: |
+          MODE="check" ./bin/run_formatter.sh

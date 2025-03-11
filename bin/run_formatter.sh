@@ -3,10 +3,17 @@
 set -euo pipefail
 IFS=$'\n\t'
 
-# -v mount under same path as on host to make the paths used by arc lint work.
+MODE="${MODE:-check}"
+
+if [[ ! "$MODE" =~ ^(check|write)$ ]]; then
+    echo "Invalid mode: $MODE"
+    echo "\$MODE should be either \`check\` or \`write\`"
+    exit 1
+fi
+
 docker run \
     --rm \
     -v $(pwd):/app:delegated \
     -v /app/node_modules \
     sbe_webpack:latest \
-    npx prettier src/ --write
+    npx prettier src/ --${MODE}
