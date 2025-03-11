@@ -12,34 +12,28 @@ on:
       - v*.*
 
 jobs:
-  build-docker-images:
+  run-eslint:
     runs-on: ubuntu-latest
-    name: Build Docker images
+    name: Run ESLint
     steps:
       - name: Checkout
         uses: actions/checkout@v4
       - name: Build Docker images
         run: |
           docker compose build
-
-  run-eslint:
-    needs: build-docker-images
-    runs-on: ubuntu-latest
-    name: Run ESLint
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
       - name: Run ESLint
         run: |
           ./bin/run_eslint.sh src/
 
   run-prettier:
-    needs: build-docker-images
     runs-on: ubuntu-latest
     name: Run Prettier
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+      - name: Build Docker images
+        run: |
+          docker compose build
       - name: Run Prettier
         run: |
           MODE="check" ./bin/run_formatter.sh
