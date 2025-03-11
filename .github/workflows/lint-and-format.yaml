@@ -27,6 +27,8 @@ jobs:
     runs-on: ubuntu-latest
     name: Run ESLint
     steps:
+      - name: Checkout
+        uses: actions/checkout@v4
       - name: Run ESLint
         run: |
           ./bin/run_eslint.sh src/
@@ -36,6 +38,8 @@ jobs:
     runs-on: ubuntu-latest
     name: Run Prettier
     steps:
+      - name: Checkout
+        uses: actions/checkout@v4
       - name: Run Prettier
         run: |
           MODE="check" ./bin/run_formatter.sh
