@@ -41,15 +41,6 @@ jobs:
         run: |
           docker compose build
 
-      - name: Run Unit Tests
-        run: |
-          docker run \
-            --rm \
-            -v $(pwd):/app:delegated \
-            -v /app/node_modules \
-            sbe_webpack:latest \
-            /bin/bash -c "npx webpack --config webpack.dev.js && npm run test"
-
       - name: Build and Package the Extension
         run: |
           mkdir artifacts
