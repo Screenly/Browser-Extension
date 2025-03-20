@@ -15,9 +15,24 @@ jobs:
   unit-tests:
     runs-on: ubuntu-latest
     name: Run Unit Tests
+    strategy:
+      matrix:
+        platform: ['chrome', 'firefox']
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
+      - name: Prepare manifest.json
+        run: |
+          if [[ $GITHUB_REF == refs/tags/v* ]]; then
+            export SCREENLY_CE_VERSION=${GITHUB_REF#refs/tags/v}
+          else
+            export SCREENLY_CE_VERSION="0.0.0"
+          fi
+
+          cat src/manifest-${{ matrix.platform }}.json \
+              | jq --arg version "$SCREENLY_CE_VERSION" '.version = $version' \
+              > src/manifest.json
 
       - name: Build Docker images
         run: |
