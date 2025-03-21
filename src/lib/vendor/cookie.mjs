@@ -45,7 +45,7 @@ export function parse(str, options) {
     throw new TypeError('argument str must be a string');
   }
 
-  var obj = {}
+  var obj = {};
   var opt = options || {};
   var pairs = str.split(pairSplitRegExp);
   var dec = opt.decode || decode;
@@ -59,7 +59,7 @@ export function parse(str, options) {
       continue;
     }
 
-    var key = pair.substr(0, eq_idx).trim()
+    var key = pair.substr(0, eq_idx).trim();
     var val = pair.substr(++eq_idx, pair.length).trim();
 
     // quoted values
@@ -151,8 +151,10 @@ export function serialize(name, val, options) {
   }
 
   if (opt.sameSite) {
-    var sameSite = typeof opt.sameSite === 'string'
-        ? opt.sameSite.toLowerCase() : opt.sameSite;
+    var sameSite =
+      typeof opt.sameSite === 'string'
+        ? opt.sameSite.toLowerCase()
+        : opt.sameSite;
 
     switch (sameSite) {
       case true:

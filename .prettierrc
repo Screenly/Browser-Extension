@@ -1,0 +1,25 @@
+{
+  "overrides": [
+    {
+      "files": ["*.ts", "*.tsx", "*.js", "*.jsx", "*.mjs"],
+      "options": {
+        "singleQuote": true,
+        "jsxSingleQuote": false,
+        "semi": true,
+        "trailingComma": "all"
+      }
+    },
+    {
+      "files": ["*.scss"],
+      "options": {
+        "singleQuote": true
+      }
+    },
+    {
+      "files": ["*.css"],
+      "options": {
+        "singleQuote": true
+      }
+    }
+  ]
+}

@@ -6,15 +6,10 @@ IFS=$'\n\t'
 VERSION=${VERSION:-0.0.0}
 PLATFORM=${PLATFORM:-chrome}
 
-if [[ ! $PLATFORM =~ ^(chrome|firefox)$ ]]; then
-    echo "Invalid platform: $PLATFORM"
-    echo "Platform should be either chrome or firefox"
-    exit 1
-fi
+source "$(dirname "$0")/common.sh"
 
-cat src/manifest-$PLATFORM.json \
-    | jq --arg version "$VERSION" '.version = $version' \
-    > src/manifest.json
+validate_platform "$PLATFORM"
+generate_manifest "$PLATFORM" "$VERSION"
 
 docker compose down -v
 docker compose up --build

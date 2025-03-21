@@ -3,15 +3,15 @@ import { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import classNames from 'classnames';
 
-import { signOut } from '@/features/popup/popupSlice';
+import { signOut } from '@/features/popup-slice';
 import { getCompany, getUser } from '@/main'
-import { PopupSpinner } from '@/components/popup/popup-spinner';
+import { PopupSpinner } from '@/components/popup-spinner';
 
-export const Settings = () => {
-  const dispatch = useDispatch();
-  const [isButtonLoading, setIsButtonLoading] = useState(false);
-  const [companyName, setCompanyName] = useState('');
-  const [isViewLoading, setIsViewLoading] = useState(false);
+export const Settings: React.FC = () => {
+  const dispatch = useDispatch<AppDispatch>();
+  const [isButtonLoading, setIsButtonLoading] = useState<boolean>(false);
+  const [companyName, setCompanyName] = useState<string>('');
+  const [isViewLoading, setIsViewLoading] = useState<boolean>(false);
 
   const getCompanyData = async () => {
     setIsViewLoading(true);
@@ -25,7 +25,7 @@ export const Settings = () => {
     getCompanyData();
   }, [companyName]);
 
-  const handleSignOut = async (event) => {
+  const handleSignOut = async (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
     setIsButtonLoading(true);
     dispatch(signOut());

@@ -3,16 +3,22 @@ const CopyWebpackPlugin = require("copy-webpack-plugin");
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const RemovePlugin = require('remove-files-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const webpack = require('webpack');
 
 module.exports = {
   entry: {
-    'popup': './src/assets/js/popup.jsx',
+    'popup': './src/assets/ts/popup.tsx',
   },
 
   module: {
     rules: [
       {
-        test: /.(js|jsx|mjs)$/,
+        test: /\.tsx?$/,
+        use: 'ts-loader',
+        exclude: /node_modules/,
+      },
+      {
+        test: /\.(js|jsx|mjs)$/,
         exclude: /node_modules/,
         use: {
           loader: 'babel-loader',
@@ -36,6 +42,9 @@ module.exports = {
   },
 
   plugins: [
+    new webpack.ProvidePlugin({
+      React: 'react',
+    }),
     new CopyWebpackPlugin({
       patterns: [
         {
@@ -79,14 +88,14 @@ module.exports = {
 
   resolve: {
     alias: {
-      '@/store': path.resolve(__dirname, 'src/assets/js/store.js'),
-      '@/main': path.resolve(__dirname, 'src/assets/js/main.mjs'),
-      '@/components': path.resolve(__dirname, 'src/assets/js/components'),
-      '@/features': path.resolve(__dirname, 'src/assets/js/features'),
+      '@/store': path.resolve(__dirname, 'src/assets/ts/store.ts'),
+      '@/main': path.resolve(__dirname, 'src/assets/ts/main.ts'),
+      '@/components': path.resolve(__dirname, 'src/assets/ts/components'),
+      '@/features': path.resolve(__dirname, 'src/assets/ts/features'),
       '@/scss': path.resolve(__dirname, 'src/assets/scss'),
       '@/vendor': path.resolve(__dirname, 'src/lib/vendor'),
     },
-    extensions: ['.js', '.jsx', '.mjs'],
+    extensions: ['.ts', '.tsx', '.js', '.jsx', '.mjs'],
   },
 
   watchOptions: {
