@@ -135,7 +135,7 @@ export function getTeamInfo(user: User, teamId: string) {
 export async function getCompany(user: User) {
   const result = await callApi(
     'GET',
-    'https://api.screenlyapp.com/api/v4.1/users/',
+    'https://api.screenlyapp.com/api/v4/users/',
     null,
     user.token,
   );

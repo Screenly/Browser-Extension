@@ -5,7 +5,7 @@ import classNames from 'classnames';
 
 import { signOut } from '@/features/popup-slice';
 import { AppDispatch } from '@/store';
-import { getCompany, getUser } from '@/main'
+import { getCompany, getUser } from '@/main';
 import { PopupSpinner } from '@/components/popup-spinner';
 
 export const Settings: React.FC = () => {
@@ -16,10 +16,17 @@ export const Settings: React.FC = () => {
 
   const getCompanyData = async () => {
     setIsViewLoading(true);
+
     const { token } = await getUser();
-    const company = await getCompany({ token });
-    setCompanyName(company);
-    setIsViewLoading(false);
+
+    try {
+      const company = await getCompany({ token });
+      setCompanyName(company);
+    } catch {
+      setCompanyName('');
+    } finally {
+      setIsViewLoading(false);
+    }
   };
 
   useEffect(() => {
@@ -56,32 +63,20 @@ export const Settings: React.FC = () => {
               signed in
             </h3>
 
-            {
-              companyName && (
-                <p className="text-muted">
-                  You are signed in as a member of
-                  {' '}<strong>{companyName}</strong>.
-                </p>
-              )
-            }
+            {companyName && (
+              <p className="text-muted">
+                You are signed in as a member of <strong>{companyName}</strong>.
+              </p>
+            )}
           </div>
         </section>
         <section>
-          <button
-            className="btn btn-primary w-100"
-            onClick={handleSignOut}
-          >
-            {
-              isButtonLoading
-                ? (
-                  <span
-                    className="spinner spinner-border spinner-border-sm"
-                  ></span>
-                )
-                : (
-                  <span className="label">Sign Out</span>
-                )
-            }
+          <button className="btn btn-primary w-100" onClick={handleSignOut}>
+            {isButtonLoading ? (
+              <span className="spinner spinner-border spinner-border-sm"></span>
+            ) : (
+              <span className="label">Sign Out</span>
+            )}
           </button>
         </section>
       </div>
