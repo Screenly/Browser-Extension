@@ -31,7 +31,7 @@ export const Settings: React.FC = () => {
 
   useEffect(() => {
     getCompanyData();
-  }, [companyName]);
+  }, []);
 
   const handleSignOut = async (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
