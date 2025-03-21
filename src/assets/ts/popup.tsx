@@ -5,7 +5,6 @@ import { Provider, useDispatch, useSelector } from 'react-redux';
 import 'bootstrap-icons/font/bootstrap-icons.scss';
 
 import '@/scss/style.scss';
-import '@/scss/sweetalert-icons.scss';
 
 import { SignInForm } from '@/components/sign-in';
 import { AssetSaveSuccess } from '@/components/asset-save-success';
