@@ -71,6 +71,30 @@ $ VERSION=<VERSION> \
     ./bin/package_extension.sh
 ```
 
+The name of the packaged extension will be `screenly-<PLATFORM>-extension-<VERSION>.zip`. For example, `screenly-chrome-extension-0.0.1.zip` or `screenly-firefox-extension-0.0.1.zip`.
+
+### Testing Packaged Extensions
+
+> [!NOTE]
+> You can also download the packaged extensions from the [GitHub Releases](https://github.com/Screenly/Browser-Extension/releases) page.
+
+#### Chrome
+
+- Extract the zip file to a folder.
+- Open Chrome and navigate to `chrome://extensions/`.
+- Click on **Load unpacked** and select the folder you extracted the zip file to.
+- The extension should now be loaded and ready to use.
+
+#### Firefox
+
+> [!IMPORTANT]
+> Add-ons installed from a `.zip` file will be uninstalled when Firefox is closed.
+> This means that you will need to re-install the extension every time you open Firefox.
+
+- Open Firefox and navigate to `about:debugging`.
+- Click on **Load Temporary Add-on** and select the `.zip` file you created or downloaded.
+- The extension should now be loaded and ready to use.
+
 ## :test_tube: Run Unit Tests
 
 ```bash
