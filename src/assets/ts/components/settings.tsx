@@ -4,6 +4,7 @@ import { useDispatch } from 'react-redux';
 import classNames from 'classnames';
 
 import { signOut } from '@/features/popup-slice';
+import { AppDispatch } from '@/store';
 import { getCompany, getUser } from '@/main'
 import { PopupSpinner } from '@/components/popup-spinner';
 
@@ -15,8 +16,8 @@ export const Settings: React.FC = () => {
 
   const getCompanyData = async () => {
     setIsViewLoading(true);
-    const user = await getUser();
-    const company = await getCompany(user);
+    const { token } = await getUser();
+    const company = await getCompany({ token });
     setCompanyName(company);
     setIsViewLoading(false);
   };
@@ -58,7 +59,8 @@ export const Settings: React.FC = () => {
             {
               companyName && (
                 <p className="text-muted">
-                  You are signed in as a member of {companyName}.
+                  You are signed in as a member of
+                  {' '}<strong>{companyName}</strong>.
                 </p>
               )
             }
