@@ -36,15 +36,14 @@
 
 ## :white_check_mark: Prerequisites
 
-* Linux or macOS &mdash; If you're on Windows, you can use [WSL](https://learn.microsoft.com/en-us/windows/wsl/setup/environment). All of the scripts were written in Bash.
-* Docker &mdash; The easiest way to get started is to install [Docker Desktop](https://www.docker.com/products/docker-desktop/).
-* `jq` &mdash; Most of the scripts in the [`bin/`](/bin/) directory use `jq` to parse JSON. Install it from [here](https://jqlang.org/download/).
-
+- Linux or macOS &mdash; If you're on Windows, you can use [WSL](https://learn.microsoft.com/en-us/windows/wsl/setup/environment). All of the scripts were written in Bash.
+- Docker &mdash; The easiest way to get started is to install [Docker Desktop](https://www.docker.com/products/docker-desktop/).
+- `jq` &mdash; Most of the scripts in the [`bin/`](/bin/) directory use `jq` to parse JSON. Install it from [here](https://jqlang.org/download/).
 
 ## :seedling: Install
 
-* Install the extension from the [Chrome Web Store](https://chromewebstore.google.com/detail/save-to-screenly/kcoehkngnbhlmdcgcadliaadlmbjmcln).
-* Install the extension from Firefox [Add Ons](https://addons.mozilla.org/en-US/firefox/addon/save-to-screenly/).
+- Install the extension from the [Chrome Web Store](https://chromewebstore.google.com/detail/save-to-screenly/kcoehkngnbhlmdcgcadliaadlmbjmcln).
+- Install the extension from Firefox [Add Ons](https://addons.mozilla.org/en-US/firefox/addon/save-to-screenly/).
 
 ## :computer: Develop
 
@@ -57,9 +56,10 @@ $ PLATFORM=<PLATFORM> \
 ```
 
 > [!IMPORTANT]
-> * `VERSION` can be any valid version semver string (`X.Y.Z`),
+>
+> - `VERSION` can be any valid version semver string (`X.Y.Z`),
 >   where `X`, `Y`, and `Z` are non-negative numbers.
-> * `PLATFORM` can be either `chrome` or `firefox`.
+> - `PLATFORM` can be either `chrome` or `firefox`.
 
 Now load the content of the `dist/` folder as an unpacked extension in Chrome. As you make changes to the code, the extension is automatically rebuilt.
 
@@ -104,17 +104,17 @@ $ ./bin/run_tests.sh
 
 ### Chrome
 
-* Build the extension in dev mode.
-* Load the extension as an unpacked extension from the `dist` folder.
-* Find the extension URL and then open `chrome-extension://<extension-id>/test/tests.html` in Chrome.
+- Build the extension in dev mode.
+- Load the extension as an unpacked extension from the `dist` folder.
+- Find the extension URL and then open `chrome-extension://<extension-id>/test/tests.html` in Chrome.
 
 ### Firefox
 
-* Build the extension in dev mode.
-* Open Firefox and navigate to `about:debugging`.
-* Click on **This Firefox** and then **Load Temporary Add-on**.
-  * You can either select the `manifest.json` file or the zipped extension.
-* Find the extension URL and then open `moz-extension://<extension-id>/test/tests.html` in Firefox.
+- Build the extension in dev mode.
+- Open Firefox and navigate to `about:debugging`.
+- Click on **This Firefox** and then **Load Temporary Add-on**.
+  - You can either select the `manifest.json` file or the zipped extension.
+- Find the extension URL and then open `moz-extension://<extension-id>/test/tests.html` in Firefox.
 
 ## :sparkles: Run Linter and Formatter
 
@@ -138,6 +138,7 @@ This project uses [Prettier](https://prettier.io/) to format the code.
 For more information why the linter and formatter are separate, see [this article about ESLint deprecating formatting rules](https://eslint.org/blog/2023/10/deprecating-formatting-rules/).
 
 To check the code for formatting issues without changing any files, use the `check` mode:
+
 ```bash
 $ MODE="check" ./bin/run_formatter.sh
 ```
