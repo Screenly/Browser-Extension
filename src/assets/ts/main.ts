@@ -132,6 +132,17 @@ export function getTeamInfo(user: User, teamId: string) {
   );
 }
 
+export async function getCompany(user: User) {
+  const result = await callApi(
+    'GET',
+    'https://api.screenlyapp.com/api/v4/users/',
+    null,
+    user.token,
+  );
+
+  return result[0].company;
+}
+
 export function getAssetDashboardLink(assetId: string, teamDomain: string) {
   return `https://${teamDomain}.screenlyapp.com/manage/assets/${assetId}`;
 }
