@@ -92,7 +92,8 @@ The name of the packaged extension will be `screenly-<PLATFORM>-extension-<VERSI
 > This means that you will need to re-install the extension every time you open Firefox.
 
 - Open Firefox and navigate to `about:debugging`.
-- Click on **Load Temporary Add-on** and select the `.zip` file you created or downloaded.
+- Click on **This Firefox** and then **Load Temporary Add-on**.
+- You can either select the `manifest.json` file or the zipped extension.
 - The extension should now be loaded and ready to use.
 
 ## :test_tube: Run Unit Tests
