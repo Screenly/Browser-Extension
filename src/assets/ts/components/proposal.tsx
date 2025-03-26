@@ -19,7 +19,14 @@ import {
   State,
   SavedAssetState,
 } from '@/main';
-import { notifyAssetSaveSuccess, openSettings } from '@/features/popup-slice';
+import {
+  notifyAssetSaveSuccess,
+  notifyAssetSaveFailure,
+  openSettings,
+} from '@/features/popup-slice';
+
+const MAX_ASSET_STATUS_POLL_COUNT = 30;
+const ASSET_STATUS_POLL_INTERVAL_MS = 1000;
 
 interface ErrorState {
   show: boolean;
@@ -242,6 +249,37 @@ export const Proposal: React.FC = () => {
     dispatch(openSettings());
   };
 
+  const pollAssetStatus = async (assetId: string, user: User) => {
+    let pollCount = 0;
+    try {
+      while (pollCount < MAX_ASSET_STATUS_POLL_COUNT) {
+        const asset = await getWebAsset(assetId, user);
+        if (!asset || !asset[0] || !asset[0].status) {
+          break;
+        }
+
+        const status = asset[0].status;
+        if (['downloading', 'processing', 'finished'].includes(status)) {
+          break;
+        }
+
+        await new Promise((resolve) =>
+          setTimeout(resolve, ASSET_STATUS_POLL_INTERVAL_MS),
+        );
+        pollCount++;
+      }
+
+      if (pollCount >= MAX_ASSET_STATUS_POLL_COUNT) {
+        dispatch(notifyAssetSaveFailure());
+        return false;
+      }
+      return true;
+    } catch {
+      dispatch(notifyAssetSaveFailure());
+      return false;
+    }
+  };
+
   const handleSubmission = async (event: React.FormEvent) => {
     event.preventDefault();
 
@@ -282,6 +320,13 @@ export const Proposal: React.FC = () => {
 
       if (result.length === 0) {
         throw new Error('No asset data returned');
+      }
+
+      if (!state) {
+        const success = await pollAssetStatus(result[0].id, proposal.user);
+        if (!success) {
+          return;
+        }
       }
 
       State.setSavedAssetState(
