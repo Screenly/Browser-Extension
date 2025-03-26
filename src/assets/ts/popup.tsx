@@ -8,6 +8,7 @@ import '@/scss/style.scss';
 
 import { SignInForm } from '@/components/sign-in';
 import { AssetSaveSuccess } from '@/components/asset-save-success';
+import { AssetSaveFailure } from '@/components/asset-save-failure';
 import { Proposal } from '@/components/proposal';
 import { SignInSuccess } from '@/components/sign-in-success';
 import { Settings } from '@/components/settings';
@@ -29,6 +30,7 @@ const PopupPage: React.FC = () => {
     showSuccess,
     showSignInSuccess,
     showSettings,
+    showAssetSaveFailure,
   } = useSelector((state: RootState) => state.popup);
 
   const [assetDashboardLink, setAssetDashboardLink] = useState<string>('');
@@ -62,6 +64,7 @@ const PopupPage: React.FC = () => {
       )}
       {showSignInSuccess && <SignInSuccess />}
       {showSettings && <Settings />}
+      {showAssetSaveFailure && <AssetSaveFailure />}
     </>
   );
 };

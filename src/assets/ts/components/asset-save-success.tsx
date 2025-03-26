@@ -2,7 +2,7 @@ interface SuccessProps {
   assetDashboardLink: string;
 }
 
-import { Checkmark } from './Checkmark';
+import { CheckMark } from '@/components/check-mark';
 
 export const AssetSaveSuccess: React.FC<SuccessProps> = ({
   assetDashboardLink,
@@ -17,7 +17,7 @@ export const AssetSaveSuccess: React.FC<SuccessProps> = ({
         <section className="align-items-center d-flex flex-grow-1 justify-content-center">
           <div>
             <div className="d-flex justify-content-center align-items-center">
-              <Checkmark />
+              <CheckMark />
             </div>
             <h3 className="text-center">Web page saved!</h3>
             <p className="text-muted">

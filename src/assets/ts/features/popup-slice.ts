@@ -23,11 +23,18 @@ const popupSlice = createSlice({
     showSignInSuccess: false,
     assetDashboardLink: '',
     showSettings: false,
+    showAssetSaveFailure: false,
   },
   reducers: {
     notifyAssetSaveSuccess: (state) => {
       state.showSuccess = true;
       state.showProposal = false;
+      state.showAssetSaveFailure = false;
+    },
+    notifyAssetSaveFailure: (state) => {
+      state.showSuccess = false;
+      state.showProposal = false;
+      state.showAssetSaveFailure = true;
     },
     notifySignInSuccess: (state) => {
       state.showSignIn = false;
@@ -53,6 +60,10 @@ const popupSlice = createSlice({
   },
 });
 
-export const { notifyAssetSaveSuccess, notifySignInSuccess, openSettings } =
-  popupSlice.actions;
+export const {
+  notifyAssetSaveSuccess,
+  notifyAssetSaveFailure,
+  notifySignInSuccess,
+  openSettings,
+} = popupSlice.actions;
 export default popupSlice.reducer;
