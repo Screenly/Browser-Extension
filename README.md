@@ -100,21 +100,14 @@ The name of the packaged extension will be `screenly-<PLATFORM>-extension-<VERSI
 
 ```bash
 $ ./bin/run_tests.sh
+
+DD MM YYYY HH:MM:SS.mmm:INFO [karma-server]: Karma v6.4.4 server started at http://localhost:9876/
+DD MM YYYY HH:MM:SS.mmm:INFO [launcher]: Launching browsers ChromeHeadlessNoSandbox with concurrency unlimited
+DD MM YYYY HH:MM:SS.mmm:INFO [launcher]: Starting browser ChromeHeadless
+DD MM YYYY HH:MM:SS.mmm:INFO [Chrome Headless 78.0.3882.0 (Linux x86_64)]: Connected on socket [SOCKET_ID] with id [ID]
+Chrome Headless 78.0.3882.0 (Linux x86_64): Executed 20 of 20 SUCCESS (0.02 secs / 0.01 secs)
+TOTAL: 20 SUCCESS
 ```
-
-### Chrome
-
-- Build the extension in dev mode.
-- Load the extension as an unpacked extension from the `dist` folder.
-- Find the extension URL and then open `chrome-extension://<extension-id>/test/tests.html` in Chrome.
-
-### Firefox
-
-- Build the extension in dev mode.
-- Open Firefox and navigate to `about:debugging`.
-- Click on **This Firefox** and then **Load Temporary Add-on**.
-  - You can either select the `manifest.json` file or the zipped extension.
-- Find the extension URL and then open `moz-extension://<extension-id>/test/tests.html` in Firefox.
 
 ## :sparkles: Run Linter and Formatter
 
