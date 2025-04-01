@@ -1,5 +1,5 @@
 services:
-  webpack:
+  browser-extension:
     build: .
     command: npx webpack --watch --config webpack.dev.js
     image: sbe_webpack:latest

@@ -63,6 +63,12 @@ $ PLATFORM=<PLATFORM> \
 
 Now load the content of the `dist/` folder as an unpacked extension in Chrome. As you make changes to the code, the extension is automatically rebuilt.
 
+### Getting Inside the Docker Container
+
+```bash
+$ docker compose exec browser-extension bash
+```
+
 ### Distribute
 
 ```bash
