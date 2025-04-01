@@ -51,9 +51,10 @@ describe('State.simplifyUrl', function () {
 
 class StateMocker {
   constructor() {
-    if (!window.browser) {
+    // Check if we're in a browser environment
+    if (typeof browser === 'undefined') {
       // If we're in Headless Chrome for testing, we don't have `browser` nor `chrome`. Stub it out.
-      window.browser = {
+      global.browser = {
         storage: {
           sync: {
             set: () => {},

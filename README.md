@@ -104,15 +104,17 @@ The name of the packaged extension will be `screenly-<PLATFORM>-extension-<VERSI
 
 ## :test_tube: Run Unit Tests
 
-```bash
+```bas
 $ ./bin/run_tests.sh
 
-DD MM YYYY HH:MM:SS.mmm:INFO [karma-server]: Karma v6.4.4 server started at http://localhost:9876/
-DD MM YYYY HH:MM:SS.mmm:INFO [launcher]: Launching browsers ChromeHeadlessNoSandbox with concurrency unlimited
-DD MM YYYY HH:MM:SS.mmm:INFO [launcher]: Starting browser ChromeHeadless
-DD MM YYYY HH:MM:SS.mmm:INFO [Chrome Headless 78.0.3882.0 (Linux x86_64)]: Connected on socket [SOCKET_ID] with id [ID]
-Chrome Headless 78.0.3882.0 (Linux x86_64): Executed 20 of 20 SUCCESS (0.02 secs / 0.01 secs)
-TOTAL: 20 SUCCESS
+Randomized with seed <SEED>
+Started
+....................
+
+
+20 specs, 0 failures
+Finished in 0.01 seconds
+Randomized with seed <SEED> (jasmine --random=true --seed=<SEED>)
 ```
 
 ## :sparkles: Run Linter and Formatter
