@@ -104,7 +104,7 @@ The name of the packaged extension will be `screenly-<PLATFORM>-extension-<VERSI
 
 ## :test_tube: Run Unit Tests
 
-```bas
+```bash
 $ ./bin/run_tests.sh
 
 Randomized with seed <SEED>
