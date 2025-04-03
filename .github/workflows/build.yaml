@@ -57,6 +57,7 @@ jobs:
           zip -r ${{ github.workspace }}/screenly-${{ matrix.platform }}-extension.zip .
 
       - name: Attest
+        if: github.event.pull_request.head.repo.full_name == github.repository
         uses: actions/attest-build-provenance@v1
         with:
           subject-path: '${{ github.workspace }}/screenly-${{ matrix.platform }}-extension.zip'
