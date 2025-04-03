@@ -3,7 +3,12 @@
 'use strict';
 
 import normalizeUrl from 'normalize-url';
-import { AssetResponse, ApiResponseData, UserResponse, TeamResponse } from '@/types/screenly-api';
+import {
+  AssetResponse,
+  ApiResponseData,
+  UserResponse,
+  TeamResponse,
+} from '@/types/screenly-api';
 
 interface RequestInit {
   method: string;
@@ -117,7 +122,10 @@ export function updateWebAsset(
   });
 }
 
-export function getWebAsset(assetId: string | null, user: User): Promise<AssetResponse[]> {
+export function getWebAsset(
+  assetId: string | null,
+  user: User,
+): Promise<AssetResponse[]> {
   const queryParams = `id=eq.${encodeURIComponent(assetId || '')}`;
   return callApi(
     'GET',
@@ -129,7 +137,10 @@ export function getWebAsset(assetId: string | null, user: User): Promise<AssetRe
   });
 }
 
-export function getTeamInfo(user: User, teamId: string): Promise<TeamResponse[]> {
+export function getTeamInfo(
+  user: User,
+  teamId: string,
+): Promise<TeamResponse[]> {
   const queryParams = `id=eq.${encodeURIComponent(teamId || '')}`;
   return callApi(
     'GET',
@@ -154,7 +165,10 @@ export async function getCompany(user: User): Promise<string> {
   return result[0].company;
 }
 
-export function getAssetDashboardLink(assetId: string, teamDomain: string): string {
+export function getAssetDashboardLink(
+  assetId: string,
+  teamDomain: string,
+): string {
   return `https://${teamDomain}.screenlyapp.com/manage/assets/${assetId}`;
 }
 

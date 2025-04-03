@@ -82,50 +82,59 @@ class StateMocker {
 
     /* eslint-disable jasmine/no-unsafe-spy */
 
-    spyOn(browser.storage.sync, 'set').and.callFake((d: BrowserStorageState) => {
-      if (this.nextFailure) {
-        const theFailure = this.nextFailure;
-        this.nextFailure = null;
-        return Promise.reject(new Error(theFailure));
-      }
-
-      for (const [key, value] of Object.entries(d.state)) {
-        this.fakeStorage[key] = value;
-      }
-      return Promise.resolve();
-    });
-
-    spyOn(browser.storage.sync, 'get').and.callFake((keys: string | string[]) => {
-      if (typeof keys === 'string') {
-        return Promise.resolve({ [keys]: this.fakeStorage[keys] } as Record<string, SavedAssetState | undefined>);
-      }
-
-      if (Array.isArray(keys)) {
-        const r: Record<string, SavedAssetState | undefined> = {};
-        for (const key of keys) {
-          r[key] = this.fakeStorage[key];
+    spyOn(browser.storage.sync, 'set').and.callFake(
+      (d: BrowserStorageState) => {
+        if (this.nextFailure) {
+          const theFailure = this.nextFailure;
+          this.nextFailure = null;
+          return Promise.reject(new Error(theFailure));
         }
-        return Promise.resolve(r);
-      }
 
-      throw new Error('Unimplemented');
-    });
-
-    spyOn(browser.storage.sync, 'remove').and.callFake((keys: string | string[]) => {
-      if (typeof keys === 'string') {
-        delete this.fakeStorage[keys];
-        return Promise.resolve();
-      }
-
-      if (Array.isArray(keys)) {
-        for (const key of keys) {
-          delete this.fakeStorage[key];
+        for (const [key, value] of Object.entries(d.state)) {
+          this.fakeStorage[key] = value;
         }
         return Promise.resolve();
-      }
+      },
+    );
 
-      throw new Error('Unimplemented');
-    });
+    spyOn(browser.storage.sync, 'get').and.callFake(
+      (keys: string | string[]) => {
+        if (typeof keys === 'string') {
+          return Promise.resolve({ [keys]: this.fakeStorage[keys] } as Record<
+            string,
+            SavedAssetState | undefined
+          >);
+        }
+
+        if (Array.isArray(keys)) {
+          const r: Record<string, SavedAssetState | undefined> = {};
+          for (const key of keys) {
+            r[key] = this.fakeStorage[key];
+          }
+          return Promise.resolve(r);
+        }
+
+        throw new Error('Unimplemented');
+      },
+    );
+
+    spyOn(browser.storage.sync, 'remove').and.callFake(
+      (keys: string | string[]) => {
+        if (typeof keys === 'string') {
+          delete this.fakeStorage[keys];
+          return Promise.resolve();
+        }
+
+        if (Array.isArray(keys)) {
+          for (const key of keys) {
+            delete this.fakeStorage[key];
+          }
+          return Promise.resolve();
+        }
+
+        throw new Error('Unimplemented');
+      },
+    );
 
     /* eslint-enable jasmine/no-unsafe-spy */
   }

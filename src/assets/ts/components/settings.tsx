@@ -33,7 +33,9 @@ export const Settings: React.FC = () => {
     getCompanyData();
   }, []);
 
-  const handleSignOut = async (event: React.MouseEvent<HTMLButtonElement>): Promise<void> => {
+  const handleSignOut = async (
+    event: React.MouseEvent<HTMLButtonElement>,
+  ): Promise<void> => {
     event.preventDefault();
     setIsButtonLoading(true);
     dispatch(signOut());

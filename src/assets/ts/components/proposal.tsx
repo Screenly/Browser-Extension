@@ -249,7 +249,10 @@ export const Proposal: React.FC = () => {
     dispatch(openSettings());
   };
 
-  const pollAssetStatus = async (assetId: string, user: User): Promise<boolean> => {
+  const pollAssetStatus = async (
+    assetId: string,
+    user: User,
+  ): Promise<boolean> => {
     let pollCount = 0;
     try {
       while (pollCount < MAX_ASSET_STATUS_POLL_COUNT) {
