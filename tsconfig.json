@@ -15,7 +15,8 @@
       "@/scss/*": ["src/assets/scss/*"],
       "@/vendor/*": ["src/lib/vendor/*"],
       "@/store": ["src/assets/ts/store.ts"],
-      "@/main": ["src/assets/ts/main.ts"]
+      "@/main": ["src/assets/ts/main.ts"],
+      "@/types/*": ["src/assets/ts/types/*"]
     }
   },
   "include": ["src/**/*"],

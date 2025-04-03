@@ -47,7 +47,7 @@ const PopupPage: React.FC = () => {
       handleAssetDashboardLink,
     );
 
-    return () => {
+    return (): void => {
       document.removeEventListener(
         'set-asset-dashboard-link',
         handleAssetDashboardLink,

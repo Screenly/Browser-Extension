@@ -6,6 +6,6 @@ module.exports = merge(common, {
   mode: 'development',
 
   entry: {
-    "tests": './src/test/spec/all.js',
+    "tests": './src/test/spec/all.ts',
   },
 });

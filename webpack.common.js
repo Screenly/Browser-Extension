@@ -93,6 +93,7 @@ module.exports = {
       '@/components': path.resolve(__dirname, 'src/assets/ts/components'),
       '@/features': path.resolve(__dirname, 'src/assets/ts/features'),
       '@/scss': path.resolve(__dirname, 'src/assets/scss'),
+      '@/types': path.resolve(__dirname, 'src/assets/ts/types'),
       '@/vendor': path.resolve(__dirname, 'src/lib/vendor'),
     },
     extensions: ['.ts', '.tsx', '.js', '.jsx', '.mjs'],

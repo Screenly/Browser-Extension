@@ -48,6 +48,7 @@ export default [
         ...globals.browser,
         ...globals.jasmine,
         ...globals.node,
+        ...globals.jest,
         Atomics: 'readonly',
         SharedArrayBuffer: 'readonly',
         React: 'readonly',
