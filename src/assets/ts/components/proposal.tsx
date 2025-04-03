@@ -75,7 +75,7 @@ export const Proposal: React.FC = () => {
   const [saveAuthentication, setSaveAuthentication] = useState<boolean>(false);
   const [proposal, setProposal] = useState<ProposalState | null>(null);
 
-  const updateProposal = async (newProposal: ProposalState) => {
+  const updateProposal = async (newProposal: ProposalState): Promise<void> => {
     setError((prev) => ({
       ...prev,
       show: false,
@@ -108,7 +108,7 @@ export const Proposal: React.FC = () => {
 
       setProposal(currentProposal);
 
-      const resetAssetState = async () => {
+      const resetAssetState = async (): Promise<void> => {
         setButtonState('add');
         setSaveAuthentication(false);
         setProposal(currentProposal);
@@ -155,7 +155,7 @@ export const Proposal: React.FC = () => {
     url: string,
     title: string,
     cookieJar: Cookie[],
-  ) => {
+  ): Promise<void> => {
     await updateProposal({
       user,
       title,
@@ -164,7 +164,7 @@ export const Proposal: React.FC = () => {
     });
   };
 
-  const prepareToAddToScreenly = async () => {
+  const prepareToAddToScreenly = async (): Promise<void> => {
     const onlyPrimaryDomain = true;
     const user = await getUser();
 
@@ -244,12 +244,15 @@ export const Proposal: React.FC = () => {
     });
   }, []);
 
-  const handleSettings = (event: React.MouseEvent) => {
+  const handleSettings = (event: React.MouseEvent): void => {
     event.preventDefault();
     dispatch(openSettings());
   };
 
-  const pollAssetStatus = async (assetId: string, user: User) => {
+  const pollAssetStatus = async (
+    assetId: string,
+    user: User,
+  ): Promise<boolean> => {
     let pollCount = 0;
     try {
       while (pollCount < MAX_ASSET_STATUS_POLL_COUNT) {
@@ -280,7 +283,7 @@ export const Proposal: React.FC = () => {
     }
   };
 
-  const handleSubmission = async (event: React.FormEvent) => {
+  const handleSubmission = async (event: React.FormEvent): Promise<void> => {
     event.preventDefault();
 
     if (!proposal || buttonState === 'loading') {

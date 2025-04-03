@@ -3,6 +3,12 @@
 'use strict';
 
 import normalizeUrl from 'normalize-url';
+import {
+  AssetResponse,
+  ApiResponseData,
+  UserResponse,
+  TeamResponse,
+} from '@/types/screenly-api';
 
 interface RequestInit {
   method: string;
@@ -11,7 +17,7 @@ interface RequestInit {
 }
 
 export interface User {
-  token: string;
+  token?: string;
 }
 
 declare global {
@@ -24,14 +30,14 @@ export interface SavedAssetState {
   withBypass: boolean;
 }
 
-type BrowserStorageState = Record<string, SavedAssetState>;
+export type BrowserStorageState = Record<string, SavedAssetState>;
 
 export function callApi(
   method: string,
   url: string,
   data: object | null,
-  token: string,
-) {
+  token?: string,
+): Promise<ApiResponseData[]> {
   const init: RequestInit = {
     method: method,
     headers: {
@@ -66,7 +72,7 @@ export function callApi(
     });
 }
 
-export function getUser() {
+export function getUser(): Promise<User> {
   return browser.storage.sync.get(['token']);
 }
 
@@ -76,7 +82,7 @@ export function createWebAsset(
   title: string,
   headers: object | null,
   disableVerification: boolean,
-) {
+): Promise<AssetResponse[]> {
   return callApi(
     'POST',
     'https://api.screenlyapp.com/api/v4/assets/',
@@ -87,7 +93,9 @@ export function createWebAsset(
       disable_verification: disableVerification,
     },
     user.token,
-  );
+  ).then((response: ApiResponseData[]) => {
+    return response as AssetResponse[];
+  });
 }
 
 export function updateWebAsset(
@@ -97,7 +105,7 @@ export function updateWebAsset(
   title: string,
   headers: object | null,
   disableVerification: boolean,
-) {
+): Promise<AssetResponse[]> {
   const queryParams = `id=eq.${encodeURIComponent(assetId || '')}`;
   return callApi(
     'PATCH',
@@ -109,41 +117,58 @@ export function updateWebAsset(
       disable_verification: disableVerification,
     },
     user.token,
-  );
+  ).then((response: ApiResponseData[]) => {
+    return response as AssetResponse[];
+  });
 }
 
-export function getWebAsset(assetId: string | null, user: User) {
+export function getWebAsset(
+  assetId: string | null,
+  user: User,
+): Promise<AssetResponse[]> {
   const queryParams = `id=eq.${encodeURIComponent(assetId || '')}`;
   return callApi(
     'GET',
     `https://api.screenlyapp.com/api/v4/assets/?${queryParams}`,
     null,
     user.token,
-  );
+  ).then((response: ApiResponseData[]) => {
+    return response as AssetResponse[];
+  });
 }
 
-export function getTeamInfo(user: User, teamId: string) {
+export function getTeamInfo(
+  user: User,
+  teamId: string,
+): Promise<TeamResponse[]> {
   const queryParams = `id=eq.${encodeURIComponent(teamId || '')}`;
   return callApi(
     'GET',
     `https://api.screenlyapp.com/api/v4.1/teams/?${queryParams}`,
     null,
     user.token,
-  );
+  ).then((response: ApiResponseData[]) => {
+    return response as TeamResponse[];
+  });
 }
 
-export async function getCompany(user: User) {
+export async function getCompany(user: User): Promise<string> {
   const result = await callApi(
     'GET',
     'https://api.screenlyapp.com/api/v4/users/',
     null,
     user.token,
-  );
+  ).then((response: ApiResponseData[]) => {
+    return response as UserResponse[];
+  });
 
   return result[0].company;
 }
 
-export function getAssetDashboardLink(assetId: string, teamDomain: string) {
+export function getAssetDashboardLink(
+  assetId: string,
+  teamDomain: string,
+): string {
   return `https://${teamDomain}.screenlyapp.com/manage/assets/${assetId}`;
 }
 
@@ -151,7 +176,7 @@ export class State {
   constructor() {}
 
   // Make a new URL equivalent to the given URL but in a normalized format.
-  static normalizeUrl(url: string) {
+  static normalizeUrl(url: string): string {
     return normalizeUrl(url, {
       removeTrailingSlash: false,
       sortQueryParameters: false,
@@ -160,7 +185,7 @@ export class State {
   }
 
   // Simplify a URL heavily, even if it slightly changes its meaning.
-  static simplifyUrl(url: string) {
+  static simplifyUrl(url: string): string {
     return normalizeUrl(url, {
       removeTrailingSlash: true,
       sortQueryParameters: true,
@@ -175,7 +200,7 @@ export class State {
     assetId: string | null,
     withCookies: boolean,
     withBypass: boolean,
-  ) {
+  ): Promise<void> {
     url = State.simplifyUrl(url);
 
     const savedState = {
@@ -221,7 +246,7 @@ export class State {
       });
   }
 
-  static getSavedAssetState(url: string) {
+  static getSavedAssetState(url: string): Promise<SavedAssetState | undefined> {
     url = State.simplifyUrl(url);
 
     return browser.storage.sync
@@ -237,7 +262,7 @@ export class State {
       });
   }
 
-  static removeSavedAssetState(url: string) {
+  static removeSavedAssetState(url: string): Promise<void> {
     url = State.simplifyUrl(url);
 
     return browser.storage.sync
