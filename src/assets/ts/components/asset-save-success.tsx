@@ -3,12 +3,20 @@ interface SuccessProps {
 }
 
 import { CheckMark } from '@/components/check-mark';
+import { useDispatch } from 'react-redux';
+import { navigateToProposal } from '@/utils/navigation';
 
 export const AssetSaveSuccess: React.FC<SuccessProps> = ({
   assetDashboardLink,
 }) => {
+  const dispatch = useDispatch();
+
   const openAssetDashboard = (): void => {
     window.open(assetDashboardLink);
+  };
+
+  const handleHomeButtonClick = (): void => {
+    navigateToProposal(dispatch);
   };
 
   return (
@@ -27,12 +35,20 @@ export const AssetSaveSuccess: React.FC<SuccessProps> = ({
           </div>
         </section>
         <section>
-          <button
-            className="btn btn-primary w-100"
-            onClick={openAssetDashboard}
-          >
-            <span className="label">View Asset</span>
-          </button>
+          <div className="d-flex">
+            <button
+              className="btn btn-primary w-100 me-1"
+              onClick={openAssetDashboard}
+            >
+              <span className="label">View Asset</span>
+            </button>
+            <button
+              className="btn btn-primary d-flex align-items-center justify-content-center"
+              onClick={handleHomeButtonClick}
+            >
+              <i className="bi bi-house-fill"></i>
+            </button>
+          </div>
         </section>
       </div>
     </div>
