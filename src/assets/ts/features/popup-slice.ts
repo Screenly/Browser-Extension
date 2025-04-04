@@ -44,6 +44,12 @@ const popupSlice = createSlice({
       state.showSettings = true;
       state.showProposal = false;
     },
+    goToProposal: (state) => {
+      state.showSuccess = false;
+      state.showProposal = true;
+      state.showSettings = false;
+      state.showSignInSuccess = false;
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -56,6 +62,7 @@ const popupSlice = createSlice({
       .addCase(signOut.fulfilled, (state) => {
         state.showSettings = false;
         state.showSignIn = true;
+        state.showSignInSuccess = false;
       });
   },
 });
@@ -65,5 +72,6 @@ export const {
   notifyAssetSaveFailure,
   notifySignInSuccess,
   openSettings,
+  goToProposal,
 } = popupSlice.actions;
 export default popupSlice.reducer;
