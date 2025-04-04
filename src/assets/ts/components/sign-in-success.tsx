@@ -23,7 +23,7 @@ export const SignInSuccess: React.FC = () => {
             <h3 className="text-center">Sign in successful!</h3>
             <p className="text-muted">
               You can now{' '}
-              <a href="#" onClick={handleHomeButtonClick}>
+              <a className="btn-link" onClick={handleHomeButtonClick}>
                 add and update web assets
               </a>{' '}
               to your Screenly account.
