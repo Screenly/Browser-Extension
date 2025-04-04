@@ -8,6 +8,12 @@ export const handleSignOut = async (
 ): Promise<void> => {
   event.preventDefault();
   setIsLoading(true);
-  dispatch(signOut());
-  setIsLoading(false);
+
+  try {
+    await dispatch(signOut());
+  } catch (error) {
+    console.error('Sign out failed', error);
+  } finally {
+    setIsLoading(false);
+  }
 };
