@@ -4,7 +4,8 @@
 /* global browser */
 declare const global: typeof globalThis;
 
-import { State, SavedAssetState, BrowserStorageState } from '@/main';
+import { State } from '@/main';
+import type { SavedAssetState, BrowserStorageState } from '@/types/core';
 
 type BrowserMock = {
   storage: {

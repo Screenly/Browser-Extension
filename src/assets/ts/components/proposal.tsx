@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
-import type { User } from '@/main';
+import type { User } from '@/types/core';
 
 import { PopupSpinner } from '@/components/popup-spinner';
 import { SaveAuthWarning } from '@/components/save-auth-warning';
@@ -17,48 +17,22 @@ import {
   createWebAsset,
   updateWebAsset,
   State,
-  SavedAssetState,
 } from '@/main';
 import {
   notifyAssetSaveSuccess,
   notifyAssetSaveFailure,
   openSettings,
 } from '@/features/popup-slice';
+import {
+  ErrorState,
+  ButtonState,
+  ApiError,
+  Cookie,
+  ProposalState,
+} from '@/types/core';
 
 const MAX_ASSET_STATUS_POLL_COUNT = 30;
 const ASSET_STATUS_POLL_INTERVAL_MS = 1000;
-
-interface ErrorState {
-  show: boolean;
-  message: string;
-}
-
-interface ProposalState {
-  user: User;
-  title: string;
-  url: string;
-  cookieJar: Cookie[];
-  state?: SavedAssetState;
-}
-
-interface Cookie {
-  domain: string;
-  name: string;
-  value: string;
-  hostOnly?: boolean;
-}
-
-type ButtonState = 'add' | 'update' | 'loading';
-
-interface AssetError {
-  type?: string[];
-}
-
-interface ApiError {
-  status?: number;
-  statusCode?: number;
-  json(): Promise<AssetError>;
-}
 
 export const Proposal: React.FC = () => {
   const dispatch = useDispatch();
