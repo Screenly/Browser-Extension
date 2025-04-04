@@ -7,7 +7,7 @@ import { CheckMark } from '@/components/check-mark';
 export const AssetSaveSuccess: React.FC<SuccessProps> = ({
   assetDashboardLink,
 }) => {
-  const openAssetDashboard = () => {
+  const openAssetDashboard = (): void => {
     window.open(assetDashboardLink);
   };
 

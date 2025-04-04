@@ -29,7 +29,9 @@ export const SignInForm: React.FC = () => {
   const [token, setToken] = useState<string>('');
   const dispatch = useDispatch();
 
-  const handleSignIn = async (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSignIn = async (
+    event: React.FormEvent<HTMLFormElement>,
+  ): Promise<void> => {
     event.preventDefault();
     setIsLoading(true);
 

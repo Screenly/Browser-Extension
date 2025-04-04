@@ -14,7 +14,7 @@ export const Settings: React.FC = () => {
   const [companyName, setCompanyName] = useState<string>('');
   const [isViewLoading, setIsViewLoading] = useState<boolean>(false);
 
-  const getCompanyData = async () => {
+  const getCompanyData = async (): Promise<void> => {
     setIsViewLoading(true);
 
     const { token } = await getUser();
@@ -33,7 +33,9 @@ export const Settings: React.FC = () => {
     getCompanyData();
   }, []);
 
-  const handleSignOut = async (event: React.MouseEvent<HTMLButtonElement>) => {
+  const handleSignOut = async (
+    event: React.MouseEvent<HTMLButtonElement>,
+  ): Promise<void> => {
     event.preventDefault();
     setIsButtonLoading(true);
     dispatch(signOut());
