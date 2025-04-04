@@ -9,28 +9,16 @@ import {
   UserResponse,
   TeamResponse,
 } from '@/types/screenly-api';
-
-interface RequestInit {
-  method: string;
-  headers: Record<string, string>;
-  body?: string;
-}
-
-export interface User {
-  token?: string;
-}
+import {
+  User,
+  RequestInit,
+  SavedAssetState,
+  BrowserStorageState,
+} from '@/types/core';
 
 declare global {
   const browser: typeof chrome;
 }
-
-export interface SavedAssetState {
-  assetId: string | null;
-  withCookies: boolean;
-  withBypass: boolean;
-}
-
-export type BrowserStorageState = Record<string, SavedAssetState>;
 
 export function callApi(
   method: string,
