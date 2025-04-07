@@ -74,6 +74,8 @@ export const Proposal: React.FC = () => {
   const [bypassVerification, setBypassVerification] = useState<boolean>(false);
   const [saveAuthentication, setSaveAuthentication] = useState<boolean>(false);
   const [proposal, setProposal] = useState<ProposalState | null>(null);
+  const [isPollingTakingLong, setIsPollingTakingLong] =
+    useState<boolean>(false);
 
   const updateProposal = async (newProposal: ProposalState): Promise<void> => {
     setError((prev) => ({
@@ -254,7 +256,14 @@ export const Proposal: React.FC = () => {
     user: User,
   ): Promise<boolean> => {
     let pollCount = 0;
+    let longPollingTimeout: number | null = null;
+
     try {
+      // Set a timeout to show the "taking longer than expected" message after 3 seconds
+      longPollingTimeout = window.setTimeout(() => {
+        setIsPollingTakingLong(true);
+      }, 2000);
+
       while (pollCount < MAX_ASSET_STATUS_POLL_COUNT) {
         const asset = await getWebAsset(assetId, user);
         if (!asset || !asset[0] || !asset[0].status) {
@@ -272,12 +281,28 @@ export const Proposal: React.FC = () => {
         pollCount++;
       }
 
+      // Clear the timeout if it hasn't fired yet
+      if (longPollingTimeout) {
+        clearTimeout(longPollingTimeout);
+      }
+
+      // Reset the polling message state
+      setIsPollingTakingLong(false);
+
       if (pollCount >= MAX_ASSET_STATUS_POLL_COUNT) {
         dispatch(notifyAssetSaveFailure());
         return false;
       }
       return true;
     } catch {
+      // Clear the timeout if it hasn't fired yet
+      if (longPollingTimeout) {
+        clearTimeout(longPollingTimeout);
+      }
+
+      // Reset the polling message state
+      setIsPollingTakingLong(false);
+
       dispatch(notifyAssetSaveFailure());
       return false;
     }
@@ -472,6 +497,16 @@ export const Proposal: React.FC = () => {
             hidden={!error.show}
           >
             {error.message}
+          </div>
+          <div
+            className="alert mt-3 mb-1"
+            id="polling-message"
+            hidden={!isPollingTakingLong}
+          >
+            <p className="mb-0">
+              This is taking longer than expected. Please wait while we process
+              your asset.
+            </p>
           </div>
         </section>
       </form>
