@@ -95,6 +95,7 @@ module.exports = {
       '@/scss': path.resolve(__dirname, 'src/assets/scss'),
       '@/types': path.resolve(__dirname, 'src/assets/ts/types'),
       '@/vendor': path.resolve(__dirname, 'src/lib/vendor'),
+      '@/test': path.resolve(__dirname, 'src/test'),
     },
     extensions: ['.ts', '.tsx', '.js', '.jsx', '.mjs'],
   },

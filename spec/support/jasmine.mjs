@@ -3,7 +3,9 @@ export default {
   spec_files: [
     "tests.bundle.js"
   ],
-  helpers: [],
+  helpers: [
+    "../src/test/environment.js"
+  ],
   env: {
     stopSpecOnExpectationFailure: false,
     random: true,

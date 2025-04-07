@@ -27,6 +27,7 @@ export default [
       'src/lib/vendor/',
       'node_modules/',
       'dist/',
+      'src/test/environment.js'
     ],
   },
   {
