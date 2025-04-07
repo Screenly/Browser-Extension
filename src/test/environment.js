@@ -21,16 +21,16 @@ global.sessionStorage = dom.window.sessionStorage;
 // Mock matchMedia which is not implemented in JSDOM
 Object.defineProperty(window, 'matchMedia', {
   writable: true,
-  value: function(query) {
+  value: function (query) {
     return {
       matches: false,
       media: query,
       onchange: null,
-      addListener: function() {},
-      removeListener: function() {},
-      addEventListener: function() {},
-      removeEventListener: function() {},
-      dispatchEvent: function() {}
+      addListener: function () {},
+      removeListener: function () {},
+      addEventListener: function () {},
+      removeEventListener: function () {},
+      dispatchEvent: function () {},
     };
-  }
+  },
 });

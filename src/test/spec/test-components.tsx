@@ -11,12 +11,16 @@ describe('CheckMark', () => {
     expect(successIcon).toBeTruthy();
 
     // Check for all the required elements that make up the success icon
-    expect(document.querySelector('.swal2-success-circular-line-left')).toBeTruthy();
+    expect(
+      document.querySelector('.swal2-success-circular-line-left'),
+    ).toBeTruthy();
     expect(document.querySelector('.swal2-success-line-tip')).toBeTruthy();
     expect(document.querySelector('.swal2-success-line-long')).toBeTruthy();
     expect(document.querySelector('.swal2-success-ring')).toBeTruthy();
     expect(document.querySelector('.swal2-success-fix')).toBeTruthy();
-    expect(document.querySelector('.swal2-success-circular-line-right')).toBeTruthy();
+    expect(
+      document.querySelector('.swal2-success-circular-line-right'),
+    ).toBeTruthy();
   });
 });
 
@@ -33,5 +37,3 @@ describe('XMark', () => {
     expect(document.querySelector('.swal2-x-mark-line-right')).toBeTruthy();
   });
 });
-
-
