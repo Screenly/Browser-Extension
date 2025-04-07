@@ -259,7 +259,7 @@ export const Proposal: React.FC = () => {
     let longPollingTimeout: number | null = null;
 
     try {
-      // Set a timeout to show the "taking longer than expected" message after 3 seconds
+      // Set a timeout to show the "taking longer than expected" message after a few seconds
       longPollingTimeout = window.setTimeout(() => {
         setIsPollingTakingLong(true);
       }, 2000);
