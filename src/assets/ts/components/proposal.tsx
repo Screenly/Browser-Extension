@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
-import type { User } from '@/types/core';
 
 import { PopupSpinner } from '@/components/popup-spinner';
 import { SaveAuthWarning } from '@/components/save-auth-warning';
@@ -29,6 +28,7 @@ import {
   ApiError,
   Cookie,
   ProposalState,
+  User,
 } from '@/types/core';
 
 const MAX_ASSET_STATUS_POLL_COUNT = 30;
