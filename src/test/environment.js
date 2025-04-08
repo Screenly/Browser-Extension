@@ -1,22 +1,43 @@
 const { JSDOM } = require('jsdom');
+const React = require('react');
+const ReactDOM = require('react-dom');
+const { act } = require('@testing-library/react');
 
 // Create a new JSDOM instance
 const dom = new JSDOM('<!DOCTYPE html><html><body></body></html>', {
   runScripts: 'dangerously',
+  resources: 'usable',
+  pretendToBeVisual: true,
 });
 
 // Set up the global window and document objects
-global.window = dom.window;
-global.document = dom.window.document;
-global.navigator = dom.window.navigator;
-global.HTMLElement = dom.window.HTMLElement;
-global.XMLHttpRequest = dom.window.XMLHttpRequest;
+Object.defineProperty(global, 'window', { value: dom.window });
+Object.defineProperty(global, 'document', { value: dom.window.document });
+Object.defineProperty(global, 'navigator', {
+  value: {
+    userAgent: 'node.js',
+    language: 'en-US',
+  },
+});
+Object.defineProperty(global, 'HTMLElement', { value: dom.window.HTMLElement });
+Object.defineProperty(global, 'XMLHttpRequest', {
+  value: dom.window.XMLHttpRequest,
+});
 
 // Add any other browser globals you might need
-global.location = dom.window.location;
-global.history = dom.window.history;
-global.localStorage = dom.window.localStorage;
-global.sessionStorage = dom.window.sessionStorage;
+Object.defineProperty(global, 'location', { value: dom.window.location });
+Object.defineProperty(global, 'history', { value: dom.window.history });
+Object.defineProperty(global, 'localStorage', {
+  value: dom.window.localStorage,
+});
+Object.defineProperty(global, 'sessionStorage', {
+  value: dom.window.sessionStorage,
+});
+
+// Set up React globals
+Object.defineProperty(global, 'React', { value: React });
+Object.defineProperty(global, 'ReactDOM', { value: ReactDOM });
+Object.defineProperty(global, 'act', { value: act });
 
 // Mock matchMedia which is not implemented in JSDOM
 Object.defineProperty(window, 'matchMedia', {

@@ -17,5 +17,5 @@ docker run \
     -v $(pwd):/app:delegated \
     -v /app/node_modules \
     sbe_webpack:latest \
-    /bin/bash -c "npx webpack --config webpack.dev.js && npm test"
+    /bin/bash -c "npm test"
 

@@ -1,5 +1,5 @@
+import React from 'react';
 import { render } from '@testing-library/react';
-
 import { CheckMark } from '@/components/check-mark';
 import { XMark } from '@/components/x-mark';
 
@@ -14,6 +14,7 @@ describe('CheckMark', () => {
     expect(
       document.querySelector('.swal2-success-circular-line-left'),
     ).toBeTruthy();
+
     expect(document.querySelector('.swal2-success-line-tip')).toBeTruthy();
     expect(document.querySelector('.swal2-success-line-long')).toBeTruthy();
     expect(document.querySelector('.swal2-success-ring')).toBeTruthy();
