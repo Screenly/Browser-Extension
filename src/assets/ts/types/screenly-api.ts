@@ -5,6 +5,8 @@ export interface ApiResponseData {
 export interface AssetResponse extends ApiResponseData {
   team_id: string;
   status: string;
+  headers: Record<string, string>;
+  disable_verification: boolean;
 }
 
 export interface UserResponse extends ApiResponseData {

@@ -2,8 +2,7 @@
 
 /// <reference types="@types/chrome" />
 /// <reference types="jasmine" />
-/* global browser, describe, it, expect */
-declare const global: typeof globalThis;
+/* global describe, it, expect */
 
 import { normalizeUrlString, simplifyUrl } from '@/main';
 

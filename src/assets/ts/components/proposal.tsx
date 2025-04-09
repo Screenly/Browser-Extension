@@ -17,7 +17,6 @@ import {
   createWebAsset,
   updateWebAsset,
   normalizeUrlString,
-  simplifyUrl,
 } from '@/main';
 import {
   notifyAssetSaveSuccess,
@@ -84,14 +83,17 @@ export const Proposal: React.FC = () => {
 
       if (result.length > 0) {
         setButtonState('update');
+        const asset = result[0] as AssetResponse;
+        const withCookies = asset.headers?.Cookie !== undefined;
 
         currentProposal.state = {
-          assetId: result[0].id,
+          assetId: asset.id,
           withCookies: false,
-          withBypass: bypassVerification,
+          withBypass: asset.disable_verification,
         };
 
         setProposal(currentProposal);
+        setSaveAuthentication(withCookies);
       } else {
         setButtonState('add');
       }
@@ -171,7 +173,7 @@ export const Proposal: React.FC = () => {
         new Map(
           results
             .flat(1)
-            .map((cookie: any) => [
+            .map((cookie) => [
               JSON.stringify([cookie.domain, cookie.name]),
               cookie,
             ]),
@@ -233,7 +235,7 @@ export const Proposal: React.FC = () => {
       }
 
       return true;
-    } catch (error) {
+    } catch {
       dispatch(notifyAssetSaveFailure());
       return false;
     }

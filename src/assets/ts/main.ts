@@ -9,10 +9,7 @@ import {
   UserResponse,
   TeamResponse,
 } from '@/types/screenly-api';
-import {
-  User,
-  RequestInit,
-} from '@/types/core';
+import { User, RequestInit } from '@/types/core';
 
 declare global {
   const browser: typeof chrome;
