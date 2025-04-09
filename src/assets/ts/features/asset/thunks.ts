@@ -28,6 +28,11 @@ import {
   setProposal,
   setIsPollingTakingLong,
 } from '@/features/asset/slice';
+import {
+  openSettings,
+  notifyAssetSaveFailure,
+  notifyAssetSaveSuccess,
+} from '@/features/popup-slice';
 
 const MAX_ASSET_STATUS_POLL_COUNT = 30;
 const ASSET_STATUS_POLL_INTERVAL_MS = 1000;
@@ -120,7 +125,7 @@ export const prepareToAddToScreenly = createAsyncThunk<
         }),
       );
     } catch {
-      dispatch({ type: 'popup/openSettings' });
+      dispatch(openSettings());
     }
   } finally {
     dispatch(setIsLoading(false));
@@ -199,7 +204,6 @@ export const updateProposal = createAsyncThunk<
     }
   } catch (error) {
     dispatch(setError({ show: true, message: 'Failed to check asset.' }));
-    alert(error);
     throw error;
   }
 });
@@ -244,7 +248,7 @@ export const pollAssetStatus = createAsyncThunk<
     dispatch(setIsPollingTakingLong(false));
 
     if (pollCount >= MAX_ASSET_STATUS_POLL_COUNT) {
-      dispatch({ type: 'popup/notifyAssetSaveFailure' });
+      dispatch(notifyAssetSaveFailure());
       return false;
     }
 
@@ -258,7 +262,7 @@ export const pollAssetStatus = createAsyncThunk<
     // Reset the polling message state
     dispatch(setIsPollingTakingLong(false));
 
-    dispatch({ type: 'popup/notifyAssetSaveFailure' });
+    dispatch(notifyAssetSaveFailure());
     return false;
   }
 });
@@ -334,7 +338,7 @@ export const submitAsset = createAsyncThunk<
     });
     document.dispatchEvent(event);
 
-    dispatch({ type: 'popup/notifyAssetSaveSuccess' });
+    dispatch(notifyAssetSaveSuccess());
   } catch (error: unknown) {
     const apiError = error as ApiError;
     if (apiError.statusCode === 401) {
