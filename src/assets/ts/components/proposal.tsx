@@ -73,7 +73,7 @@ export const Proposal: React.FC = () => {
       const queryParams = [
         'and=(type.not.eq.edge-app-file,type.not.eq.edge-app)',
         'or=(status.eq.downloading,status.eq.processing,status.eq.finished)',
-        `source_url=eq.${new URL(url).toString()}`,
+        `source_url=eq.${url}`,
       ].join('&');
       const result = await callApi(
         'GET',
@@ -84,6 +84,14 @@ export const Proposal: React.FC = () => {
 
       if (result.length > 0) {
         setButtonState('update');
+
+        currentProposal.state = {
+          assetId: result[0].id,
+          withCookies: false,
+          withBypass: bypassVerification,
+        };
+
+        setProposal(currentProposal);
       } else {
         setButtonState('add');
       }
@@ -234,68 +242,103 @@ export const Proposal: React.FC = () => {
   const handleSubmission = async (event: React.FormEvent): Promise<void> => {
     event.preventDefault();
 
-    if (!proposal) {
+    if (!proposal || buttonState === 'loading') {
       return;
     }
 
     setButtonState('loading');
-    setError((prev: ErrorState) => ({
-      ...prev,
-      show: false,
-    }));
+    let headers: Record<string, string> = {};
+
+    if (saveAuthentication && proposal.cookieJar) {
+      headers = {
+        Cookie: proposal.cookieJar
+          .map((cookie) => cookiejs.serialize(cookie.name, cookie.value))
+          .join('; '),
+      };
+    }
+
+    const state = proposal.state;
 
     try {
-      const headers = saveAuthentication
-        ? {
-            Cookie: proposal.cookieJar
-              .map((cookie: Cookie) => `${cookie.name}=${cookie.value}`)
-              .join('; '),
-          }
-        : null;
+      const result = !state
+        ? await createWebAsset(
+            proposal.user,
+            proposal.url,
+            proposal.title,
+            headers,
+            bypassVerification,
+          )
+        : await updateWebAsset(
+            state.assetId,
+            proposal.user,
+            proposal.url,
+            proposal.title,
+            headers,
+            bypassVerification,
+          );
 
-      let assetId: string | null = null;
-      let assets: AssetResponse[] = [];
-
-      if (buttonState === 'add') {
-        assets = await createWebAsset(
-          proposal.user,
-          proposal.url,
-          assetTitle,
-          headers,
-          bypassVerification,
-        );
-      } else if (buttonState === 'update' && proposal.state?.assetId) {
-        assets = await updateWebAsset(
-          proposal.state.assetId,
-          proposal.user,
-          proposal.url,
-          assetTitle,
-          headers,
-          bypassVerification,
-        );
+      if (result.length === 0) {
+        throw new Error('No asset data returned');
       }
 
-      if (assets.length === 0) {
-        throw new Error('Failed to create or update asset');
-      }
-
-      assetId = assets[0].id;
-
-      if (assetId) {
-        const success = await pollAssetStatus(assetId, proposal.user);
-
-        if (success) {
-          dispatch(notifyAssetSaveSuccess());
+      if (!state) {
+        const success = await pollAssetStatus(result[0].id, proposal.user);
+        if (!success) {
+          return;
         }
       }
-    } catch (error) {
-      setError((prev: ErrorState) => ({
-        ...prev,
-        show: true,
-        message: `Failed to add or update asset: ${(error as Error).message}`,
-      }));
-    } finally {
-      setButtonState('add');
+
+      setButtonState(state ? 'update' : 'add');
+
+      const teamInfo = await getTeamInfo(proposal.user, result[0].team_id);
+      const teamDomain = teamInfo[0].domain;
+
+      const event = new CustomEvent('set-asset-dashboard-link', {
+        detail: getAssetDashboardLink(result[0].id, teamDomain),
+      });
+      document.dispatchEvent(event);
+
+      dispatch(notifyAssetSaveSuccess());
+    } catch (error: unknown) {
+      const apiError = error as ApiError;
+      if (apiError.statusCode === 401) {
+        setError((prev) => ({
+          ...prev,
+          show: true,
+          message:
+            'Screenly authentication failed. Try signing out and back in again.',
+        }));
+        return;
+      }
+
+      try {
+        const errorJson = await (error as ApiError).json();
+        if (errorJson.type && errorJson.type[0] === 'AssetUnreachableError') {
+          setBypassVerification(true);
+          setError((prev) => ({
+            ...prev,
+            show: true,
+            message:
+              "Screenly couldn't reach this web page. To save it anyhow, use the Bypass Verification option.",
+          }));
+        } else if (!errorJson.type) {
+          throw JSON.stringify(errorJson);
+        } else {
+          throw new Error('Unknown error');
+        }
+      } catch (jsonError) {
+        const prefix = state
+          ? 'Failed to update asset'
+          : 'Failed to save web page';
+
+        setError((prev) => ({
+          ...prev,
+          show: true,
+          message: `${prefix}: ${jsonError}`,
+        }));
+
+        setButtonState(state ? 'update' : 'add');
+      }
     }
   };
 
