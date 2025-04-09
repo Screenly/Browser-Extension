@@ -15,7 +15,8 @@ import {
   getTeamInfo,
   createWebAsset,
   updateWebAsset,
-  State,
+  normalizeUrlString,
+  simplifyUrl,
 } from '@/main';
 import {
   notifyAssetSaveSuccess,
@@ -30,6 +31,7 @@ import {
   ProposalState,
   User,
 } from '@/types/core';
+import { AssetResponse } from '@/types/screenly-api';
 
 const MAX_ASSET_STATUS_POLL_COUNT = 30;
 const ASSET_STATUS_POLL_INTERVAL_MS = 1000;
@@ -50,7 +52,7 @@ export const Proposal: React.FC = () => {
   const [proposal, setProposal] = useState<ProposalState | null>(null);
 
   const updateProposal = async (newProposal: ProposalState): Promise<void> => {
-    setError((prev) => ({
+    setError((prev: ErrorState) => ({
       ...prev,
       show: false,
     }));
@@ -59,63 +61,15 @@ export const Proposal: React.FC = () => {
     const url = currentProposal.url;
 
     try {
-      const state = await State.getSavedAssetState(url);
-
-      if (state) {
-        try {
-          await getWebAsset(state.assetId, newProposal.user);
-          currentProposal.state = state;
-        } catch (error: unknown) {
-          const apiError = error as ApiError;
-          if (apiError.status === 404) {
-            State.setSavedAssetState(url, null, false, false);
-            currentProposal.state = undefined;
-          } else {
-            throw error;
-          }
-        }
-      }
-
       setAssetTitle(currentProposal.title);
       setAssetUrl(currentProposal.url);
       setAssetHostname(new URL(url).hostname);
 
       setProposal(currentProposal);
-
-      const resetAssetState = async (): Promise<void> => {
-        setButtonState('add');
-        setSaveAuthentication(false);
-        setProposal(currentProposal);
-        await State.removeSavedAssetState(url);
-      };
-
-      if (currentProposal.state) {
-        setSaveAuthentication(currentProposal.state.withCookies);
-
-        try {
-          const assets = await getWebAsset(
-            currentProposal.state.assetId,
-            currentProposal.user,
-          );
-
-          if (assets.length === 0) {
-            await resetAssetState();
-          } else {
-            setButtonState('update');
-          }
-        } catch (error) {
-          setError((prev) => ({
-            ...prev,
-            show: true,
-            message: `Failed to get asset details: ${(error as Error).message}`,
-          }));
-          await resetAssetState();
-        }
-      } else {
-        setButtonState('add');
-      }
+      setButtonState('add');
+      setSaveAuthentication(false);
     } catch (error) {
-      setError((prev) => ({
+      setError((prev: ErrorState) => ({
         ...prev,
         show: true,
         message: 'Failed to check asset.',
@@ -133,7 +87,7 @@ export const Proposal: React.FC = () => {
     await updateProposal({
       user,
       title,
-      url: State.normalizeUrl(url),
+      url: normalizeUrlString(url),
       cookieJar,
     });
   };
@@ -190,16 +144,16 @@ export const Proposal: React.FC = () => {
         new Map(
           results
             .flat(1)
-            .map((cookie) => [
+            .map((cookie: any) => [
               JSON.stringify([cookie.domain, cookie.name]),
               cookie,
             ]),
         ).values(),
-      );
+      ) as Cookie[];
 
       if (onlyPrimaryDomain) {
         cookieJar = cookieJar.filter(
-          (cookie) =>
+          (cookie: Cookie) =>
             cookie.domain === originDomain ||
             (!cookie.hostOnly && originDomain.endsWith(cookie.domain)),
         );
@@ -250,8 +204,9 @@ export const Proposal: React.FC = () => {
         dispatch(notifyAssetSaveFailure());
         return false;
       }
+
       return true;
-    } catch {
+    } catch (error) {
       dispatch(notifyAssetSaveFailure());
       return false;
     }
@@ -260,110 +215,68 @@ export const Proposal: React.FC = () => {
   const handleSubmission = async (event: React.FormEvent): Promise<void> => {
     event.preventDefault();
 
-    if (!proposal || buttonState === 'loading') {
+    if (!proposal) {
       return;
     }
 
     setButtonState('loading');
-    let headers: Record<string, string> = {};
-
-    if (saveAuthentication && proposal.cookieJar) {
-      headers = {
-        Cookie: proposal.cookieJar
-          .map((cookie) => cookiejs.serialize(cookie.name, cookie.value))
-          .join('; '),
-      };
-    }
-
-    const state = proposal.state;
+    setError((prev: ErrorState) => ({
+      ...prev,
+      show: false,
+    }));
 
     try {
-      const result = !state
-        ? await createWebAsset(
-            proposal.user,
-            proposal.url,
-            proposal.title,
-            headers,
-            bypassVerification,
-          )
-        : await updateWebAsset(
-            state.assetId,
-            proposal.user,
-            proposal.url,
-            proposal.title,
-            headers,
-            bypassVerification,
-          );
+      const headers = saveAuthentication
+        ? {
+            Cookie: proposal.cookieJar
+              .map((cookie: Cookie) => `${cookie.name}=${cookie.value}`)
+              .join('; '),
+          }
+        : null;
 
-      if (result.length === 0) {
-        throw new Error('No asset data returned');
+      let assetId: string | null = null;
+      let assets: AssetResponse[] = [];
+
+      if (buttonState === 'add') {
+        assets = await createWebAsset(
+          proposal.user,
+          proposal.url,
+          assetTitle,
+          headers,
+          bypassVerification,
+        );
+      } else if (buttonState === 'update' && proposal.state?.assetId) {
+        assets = await updateWebAsset(
+          proposal.state.assetId,
+          proposal.user,
+          proposal.url,
+          assetTitle,
+          headers,
+          bypassVerification,
+        );
       }
 
-      if (!state) {
-        const success = await pollAssetStatus(result[0].id, proposal.user);
-        if (!success) {
-          return;
+      if (assets.length === 0) {
+        throw new Error('Failed to create or update asset');
+      }
+
+      assetId = assets[0].id;
+
+      if (assetId) {
+        const success = await pollAssetStatus(assetId, proposal.user);
+
+        if (success) {
+          dispatch(notifyAssetSaveSuccess());
         }
       }
-
-      State.setSavedAssetState(
-        proposal.url,
-        result[0].id,
-        saveAuthentication,
-        bypassVerification,
-      );
-
-      setButtonState(state ? 'update' : 'add');
-
-      const teamInfo = await getTeamInfo(proposal.user, result[0].team_id);
-      const teamDomain = teamInfo[0].domain;
-
-      const event = new CustomEvent('set-asset-dashboard-link', {
-        detail: getAssetDashboardLink(result[0].id, teamDomain),
-      });
-      document.dispatchEvent(event);
-
-      dispatch(notifyAssetSaveSuccess());
-    } catch (error: unknown) {
-      const apiError = error as ApiError;
-      if (apiError.statusCode === 401) {
-        setError((prev) => ({
-          ...prev,
-          show: true,
-          message:
-            'Screenly authentication failed. Try signing out and back in again.',
-        }));
-        return;
-      }
-
-      try {
-        const errorJson = await (error as ApiError).json();
-        if (errorJson.type && errorJson.type[0] === 'AssetUnreachableError') {
-          setBypassVerification(true);
-          setError((prev) => ({
-            ...prev,
-            show: true,
-            message:
-              "Screenly couldn't reach this web page. To save it anyhow, use the Bypass Verification option.",
-          }));
-        } else if (!errorJson.type) {
-          throw JSON.stringify(errorJson);
-        } else {
-          throw new Error('Unknown error');
-        }
-      } catch (jsonError) {
-        const prefix = state
-          ? 'Failed to update asset'
-          : 'Failed to save web page';
-
-        setError((prev) => ({
-          ...prev,
-          show: true,
-          message: `${prefix}: ${jsonError}`,
-        }));
-
-        setButtonState(state ? 'update' : 'add');
-      }
+    } catch (error) {
+      setError((prev: ErrorState) => ({
+        ...prev,
+        show: true,
+        message: `Failed to add or update asset: ${(error as Error).message}`,
+      }));
+    } finally {
+      setButtonState('add');
     }
   };
 
