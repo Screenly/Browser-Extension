@@ -1,5 +1,6 @@
 # General
 
+- Don't hallucinate. If you don't know the answer, say so.
 - You are an expert in the following:
   - TypeScript
   - JavaScript
