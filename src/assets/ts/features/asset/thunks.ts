@@ -27,7 +27,7 @@ import {
   setSaveAuthentication,
   setProposal,
   setIsPollingTakingLong,
-} from './slice';
+} from '@/features/asset/slice';
 
 const MAX_ASSET_STATUS_POLL_COUNT = 30;
 const ASSET_STATUS_POLL_INTERVAL_MS = 1000;

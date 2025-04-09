@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { ButtonState, ErrorState, ProposalState } from '@/types/core';
-import { AssetState, initialState } from './types';
+import { AssetState, initialState } from '@/features/asset/types';
 
 const assetSlice = createSlice({
   name: 'asset',
