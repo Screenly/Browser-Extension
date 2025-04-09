@@ -2,6 +2,16 @@
 
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 
+export interface PopupState {
+  showSignIn: boolean;
+  showProposal: boolean;
+  showSuccess: boolean;
+  showSignInSuccess: boolean;
+  assetDashboardLink: string;
+  showSettings: boolean;
+  showAssetSaveFailure: boolean;
+}
+
 export const signIn = createAsyncThunk('popup/signIn', async () => {
   const result = await browser.storage.sync.get('token');
   if (result.token) {
@@ -24,7 +34,7 @@ const popupSlice = createSlice({
     assetDashboardLink: '',
     showSettings: false,
     showAssetSaveFailure: false,
-  },
+  } as PopupState,
   reducers: {
     notifyAssetSaveSuccess: (state) => {
       state.showSuccess = true;
