@@ -67,6 +67,7 @@ on how to run them.
 - Do not explicitly import React from `react`, as it is already being taken care
   of by the `new webpack.ProvidePlugin({ React: 'react' })` plugin in
   `webpack.common.js`.
+- Avoid props drilling by using Redux for state management.
 
 # Redux
 
