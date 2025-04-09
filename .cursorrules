@@ -58,6 +58,7 @@ on how to run them.
 - When declaring new types and interfaces, make sure to add them to the
   `src/assets/ts/types` directory.
 - New files and directories must follow the kebab-case naming convention.
+- Don't use `any` as a type. The changes will cause compiler and linter errors.
 
 # React
 
