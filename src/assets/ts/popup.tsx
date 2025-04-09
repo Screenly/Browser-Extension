@@ -16,10 +16,7 @@ import { Settings } from '@/components/settings';
 import { store } from '@/store';
 import { signIn } from '@/features/popup-slice';
 import { RootState, AppDispatch } from '@/store';
-
-interface CustomEvent extends Event {
-  detail: string;
-}
+import { CustomEvent } from '@/types/core';
 
 const PopupPage: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
