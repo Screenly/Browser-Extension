@@ -89,10 +89,11 @@ export function updateWebAsset(
   headers: object | null,
   disableVerification: boolean,
 ): Promise<AssetResponse[]> {
-  const queryParams = `id=eq.${encodeURIComponent(assetId || '')}`;
+  const params = new URLSearchParams({ id: `eq.${assetId || ''}` });
+
   return callApi(
     'PATCH',
-    `https://api.screenlyapp.com/api/v4/assets/?${queryParams}`,
+    `https://api.screenlyapp.com/api/v4/assets/?${params.toString()}`,
     {
       // API expects snake_case, so we transform from camelCase
       title: title,
@@ -109,10 +110,11 @@ export function getWebAsset(
   assetId: string | null,
   user: User,
 ): Promise<AssetResponse[]> {
-  const queryParams = `id=eq.${encodeURIComponent(assetId || '')}`;
+  const params = new URLSearchParams({ id: `eq.${assetId || ''}` });
+
   return callApi(
     'GET',
-    `https://api.screenlyapp.com/api/v4/assets/?${queryParams}`,
+    `https://api.screenlyapp.com/api/v4/assets/?${params.toString()}`,
     null,
     user.token,
   ).then((response: ApiResponseData[]) => {
@@ -124,10 +126,11 @@ export function getTeamInfo(
   user: User,
   teamId: string,
 ): Promise<TeamResponse[]> {
-  const queryParams = `id=eq.${encodeURIComponent(teamId || '')}`;
+  const params = new URLSearchParams({ id: `eq.${teamId || ''}` });
+
   return callApi(
     'GET',
-    `https://api.screenlyapp.com/api/v4.1/teams/?${queryParams}`,
+    `https://api.screenlyapp.com/api/v4.1/teams/?${params.toString()}`,
     null,
     user.token,
   ).then((response: ApiResponseData[]) => {

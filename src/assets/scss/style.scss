@@ -78,7 +78,8 @@ body.popup {
   hyphens: auto;
 }
 
-.TokenHelpText {
+.TokenHelpText,
+#polling-message {
   &.alert {
     background-color: #f9f9f9;
   }
