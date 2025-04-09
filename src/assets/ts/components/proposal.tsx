@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { AppDispatch, RootState } from '@/types/store';
 
 import { PopupSpinner } from '@/components/popup-spinner';
 import { SaveAuthWarning } from '@/components/save-auth-warning';
@@ -11,8 +12,7 @@ import {
   submitAsset,
   setSaveAuthentication,
   setBypassVerification,
-} from '@/features/asset-slice';
-import { RootState, AppDispatch } from '@/store';
+} from '@/features/asset';
 
 export const Proposal: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
