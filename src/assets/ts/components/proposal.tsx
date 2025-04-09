@@ -9,6 +9,7 @@ import { SaveAuthHelp } from '@/components/save-auth-help';
 
 import * as cookiejs from '@/vendor/cookie.mjs';
 import {
+  callApi,
   getAssetDashboardLink,
   getUser,
   getWebAsset,
@@ -59,6 +60,7 @@ export const Proposal: React.FC = () => {
 
     const currentProposal = newProposal;
     const url = currentProposal.url;
+    const user = currentProposal.user;
 
     try {
       setAssetTitle(currentProposal.title);
@@ -66,8 +68,25 @@ export const Proposal: React.FC = () => {
       setAssetHostname(new URL(url).hostname);
 
       setProposal(currentProposal);
-      setButtonState('add');
       setSaveAuthentication(false);
+
+      const queryParams = [
+        'and=(type.not.eq.edge-app-file,type.not.eq.edge-app)',
+        'or=(status.eq.downloading,status.eq.processing,status.eq.finished)',
+        `source_url=eq.${new URL(url).toString()}`,
+      ].join('&');
+      const result = await callApi(
+        'GET',
+        `https://api.screenlyapp.com/api/v4/assets/?${queryParams.toString()}`,
+        null,
+        user.token,
+      );
+
+      if (result.length > 0) {
+        setButtonState('update');
+      } else {
+        setButtonState('add');
+      }
     } catch (error) {
       setError((prev: ErrorState) => ({
         ...prev,
