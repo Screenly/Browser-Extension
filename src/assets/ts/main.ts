@@ -9,12 +9,7 @@ import {
   UserResponse,
   TeamResponse,
 } from '@/types/screenly-api';
-import {
-  User,
-  RequestInit,
-  SavedAssetState,
-  BrowserStorageState,
-} from '@/types/core';
+import { User, RequestInit } from '@/types/core';
 
 declare global {
   const browser: typeof chrome;
@@ -94,10 +89,11 @@ export function updateWebAsset(
   headers: object | null,
   disableVerification: boolean,
 ): Promise<AssetResponse[]> {
-  const queryParams = `id=eq.${encodeURIComponent(assetId || '')}`;
+  const params = new URLSearchParams({ id: `eq.${assetId || ''}` });
+
   return callApi(
     'PATCH',
-    `https://api.screenlyapp.com/api/v4/assets/?${queryParams}`,
+    `https://api.screenlyapp.com/api/v4/assets/?${params.toString()}`,
     {
       // API expects snake_case, so we transform from camelCase
       title: title,
@@ -114,10 +110,11 @@ export function getWebAsset(
   assetId: string | null,
   user: User,
 ): Promise<AssetResponse[]> {
-  const queryParams = `id=eq.${encodeURIComponent(assetId || '')}`;
+  const params = new URLSearchParams({ id: `eq.${assetId || ''}` });
+
   return callApi(
     'GET',
-    `https://api.screenlyapp.com/api/v4/assets/?${queryParams}`,
+    `https://api.screenlyapp.com/api/v4/assets/?${params.toString()}`,
     null,
     user.token,
   ).then((response: ApiResponseData[]) => {
@@ -129,10 +126,11 @@ export function getTeamInfo(
   user: User,
   teamId: string,
 ): Promise<TeamResponse[]> {
-  const queryParams = `id=eq.${encodeURIComponent(teamId || '')}`;
+  const params = new URLSearchParams({ id: `eq.${teamId || ''}` });
+
   return callApi(
     'GET',
-    `https://api.screenlyapp.com/api/v4.1/teams/?${queryParams}`,
+    `https://api.screenlyapp.com/api/v4.1/teams/?${params.toString()}`,
     null,
     user.token,
   ).then((response: ApiResponseData[]) => {
@@ -160,105 +158,21 @@ export function getAssetDashboardLink(
   return `https://${teamDomain}.screenlyapp.com/manage/assets/${assetId}`;
 }
 
-export class State {
-  constructor() {}
+// URL normalization functions
+export function normalizeUrlString(url: string): string {
+  return normalizeUrl(url, {
+    removeTrailingSlash: false,
+    sortQueryParameters: false,
+    stripWWW: false,
+  });
+}
 
-  // Make a new URL equivalent to the given URL but in a normalized format.
-  static normalizeUrl(url: string): string {
-    return normalizeUrl(url, {
-      removeTrailingSlash: false,
-      sortQueryParameters: false,
-      stripWWW: false,
-    });
-  }
-
-  // Simplify a URL heavily, even if it slightly changes its meaning.
-  static simplifyUrl(url: string): string {
-    return normalizeUrl(url, {
-      removeTrailingSlash: true,
-      sortQueryParameters: true,
-      stripHash: true,
-      stripProtocol: true,
-      stripWWW: true,
-    });
-  }
-
-  static setSavedAssetState(
-    url: string,
-    assetId: string | null,
-    withCookies: boolean,
-    withBypass: boolean,
-  ): Promise<void> {
-    url = State.simplifyUrl(url);
-
-    const savedState = {
-      assetId: assetId,
-      withCookies: withCookies,
-      withBypass: withBypass,
-    };
-
-    return browser.storage.sync
-      .get(['state'])
-      .then((storageResult: Record<string, BrowserStorageState>) => {
-        // Initialize state properly from storage
-        const state = storageResult.state || {};
-
-        if (assetId) {
-          state[url] = savedState;
-        } else {
-          delete state[url];
-        }
-
-        return browser.storage.sync.set({ state }).catch((error: Error) => {
-          if (
-            !error ||
-            !error.message ||
-            !error.message.includes('QUOTA_BYTES')
-          ) {
-            // Unknown error. Ignore.
-            throw error;
-          }
-
-          // Storage full - clear it, then try again.
-          // TODO Use LRU to ensure the dictionary doesn't ever grow larger than the
-          // sync storage limit.
-          return browser.storage.sync.remove('state').then(() => {
-            if (assetId) {
-              const newState = { [url]: savedState };
-              return browser.storage.sync.set({ state: newState });
-            } else {
-              return browser.storage.sync.set({ state: {} });
-            }
-          });
-        });
-      });
-  }
-
-  static getSavedAssetState(url: string): Promise<SavedAssetState | undefined> {
-    url = State.simplifyUrl(url);
-
-    return browser.storage.sync
-      .get(['state'])
-      .then((result: { state?: BrowserStorageState }) => {
-        const state = result.state || {};
-        const v = state[url];
-        if (typeof v != 'object') {
-          // Backwards compatibility with 0.2. Just ignore the old format.
-          return undefined;
-        }
-        return v;
-      });
-  }
-
-  static removeSavedAssetState(url: string): Promise<void> {
-    url = State.simplifyUrl(url);
-
-    return browser.storage.sync
-      .get(['state'])
-      .then((result: { state?: BrowserStorageState }) => {
-        const state = result.state || {};
-        delete state[url];
-        return browser.storage.sync.set({ state });
-      });
-  }
+export function simplifyUrl(url: string): string {
+  return normalizeUrl(url, {
+    removeTrailingSlash: true,
+    sortQueryParameters: true,
+    stripHash: true,
+    stripProtocol: true,
+    stripWWW: true,
+  });
 }
