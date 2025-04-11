@@ -2,12 +2,8 @@ import { createAsyncThunk } from '@reduxjs/toolkit';
 import { AppDispatch, RootState } from '@/types/store';
 import { User } from '@/types/core';
 import { getWebAsset } from '@/main';
-import {
-  setIsPollingTakingLong,
-} from '@/features/asset/slice';
-import {
-  notifyAssetSaveFailure,
-} from '@/features/popup-slice';
+import { setIsPollingTakingLong } from '@/features/asset/slice';
+import { notifyAssetSaveFailure } from '@/features/popup-slice';
 
 const MAX_ASSET_STATUS_POLL_COUNT = 30;
 const ASSET_STATUS_POLL_INTERVAL_MS = 1000;

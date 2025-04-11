@@ -14,9 +14,7 @@ import {
   setError,
   setBypassVerification,
 } from '@/features/asset/slice';
-import {
-  notifyAssetSaveSuccess,
-} from '@/features/popup-slice';
+import { notifyAssetSaveSuccess } from '@/features/popup-slice';
 import { pollAssetStatus } from '@/features/asset/thunks/poll-asset-status';
 
 export const submitAsset = createAsyncThunk<
