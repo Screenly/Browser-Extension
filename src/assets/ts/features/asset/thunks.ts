@@ -3,7 +3,7 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { AppDispatch, RootState } from '@/types/store';
 import { Cookie, User, ProposalState } from '@/types/core';
-import * as cookiejs from '@/vendor/cookie.mjs';
+import * as cookiejs from 'cookie';
 import {
   callApi,
   getAssetDashboardLink,
