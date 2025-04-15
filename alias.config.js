@@ -47,8 +47,9 @@ function getJasmineAliases() {
     // Get the alias key without /* if it exists
     const aliasKey = key.replace('/*', '');
 
-    // Add ./ prefix to the path
-    jasmineAliases[aliasKey] = `./${basePath}`;
+    // Use path.resolve for consistent path handling
+    const resolvedPath = path.resolve(__dirname, basePath);
+    jasmineAliases[aliasKey] = resolvedPath;
   });
 
   return jasmineAliases;
