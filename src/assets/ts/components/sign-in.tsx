@@ -7,6 +7,7 @@ import classNames from 'classnames';
 import { callApi } from '@/main';
 import { notifySignInSuccess } from '@/features/popup-slice';
 import { TokenHelpText } from '@/components/token-help-text';
+import { API_BASE_URL } from '@/constants';
 
 interface SignInFormErrorProps {
   message?: string;
@@ -38,7 +39,7 @@ export const SignInForm: React.FC = () => {
     try {
       await callApi(
         'GET',
-        'https://api.screenlyapp.com/api/v4/assets/',
+        `${API_BASE_URL}/v4/assets/`,
         null,
         token,
       );

@@ -16,6 +16,7 @@ import {
 } from '@/main';
 import { AssetResponse } from '@/types/screenly-api';
 import { ApiError } from '@/types/core';
+import { API_BASE_URL } from '@/constants';
 import {
   setIsLoading,
   setAssetTitle,
@@ -178,7 +179,7 @@ export const updateProposal = createAsyncThunk<
     ].join('&');
     const result = await callApi(
       'GET',
-      `https://api.screenlyapp.com/api/v4/assets/?${queryParams.toString()}`,
+      `${API_BASE_URL}/v4/assets/?${queryParams.toString()}`,
       null,
       user.token,
     );
