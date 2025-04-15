@@ -37,12 +37,7 @@ export const SignInForm: React.FC = () => {
     setIsLoading(true);
 
     try {
-      await callApi(
-        'GET',
-        `${API_BASE_URL}/v4/assets/`,
-        null,
-        token,
-      );
+      await callApi('GET', `${API_BASE_URL}/v4/assets/`, null, token);
 
       await browser.storage.sync.set({ token: token });
 
