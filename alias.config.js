@@ -12,33 +12,12 @@ const tsconfig = JSON.parse(fs.readFileSync(tsconfigPath, 'utf8'));
 const tsPaths = tsconfig.compilerOptions.paths;
 
 /**
- * Convert TypeScript paths to webpack aliases
- * @returns {Object} Webpack aliases
+ * Convert TypeScript paths to aliases
+ * @param {boolean} useAbsolutePaths - Whether to use absolute paths (true for webpack, false for Jasmine)
+ * @returns {Object} Aliases with appropriate paths
  */
-function getWebpackAliases() {
-  const webpackAliases = {};
-
-  Object.entries(tsPaths).forEach(([key, value]) => {
-    // Handle both file and directory aliases
-    if (key.endsWith('/*')) {
-      // Directory alias - remove the /* suffix
-      const dirKey = key.replace('/*', '');
-      webpackAliases[dirKey] = path.resolve(__dirname, value[0].replace('/*', ''));
-    } else {
-      // File alias
-      webpackAliases[key] = path.resolve(__dirname, value[0]);
-    }
-  });
-
-  return webpackAliases;
-}
-
-/**
- * Get aliases for Jasmine configuration
- * @returns {Object} Jasmine aliases
- */
-function getJasmineAliases() {
-  const jasmineAliases = {};
+function getAliases(useAbsolutePaths = true) {
+  const aliases = {};
 
   Object.entries(tsPaths).forEach(([key, value]) => {
     // Get the base path without /* if it exists
@@ -47,13 +26,18 @@ function getJasmineAliases() {
     // Get the alias key without /* if it exists
     const aliasKey = key.replace('/*', '');
 
-    // Use path.resolve for consistent path handling
-    const resolvedPath = path.resolve(__dirname, basePath);
-    jasmineAliases[aliasKey] = resolvedPath;
+    // Use absolute paths for webpack and relative paths for Jasmine
+    aliases[aliasKey] = useAbsolutePaths
+      ? path.resolve(__dirname, basePath)
+      : `./${basePath}`;
   });
 
-  return jasmineAliases;
+  return aliases;
 }
+
+// Export specific versions for webpack and Jasmine
+const getWebpackAliases = () => getAliases(true);
+const getJasmineAliases = () => getAliases(false);
 
 module.exports = {
   getWebpackAliases,
