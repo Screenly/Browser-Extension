@@ -16,4 +16,4 @@ docker run \
     -v $(pwd):/app:delegated \
     -v /app/node_modules \
     sbe_webpack:latest \
-    npx prettier src/ --${MODE}
+    npm run format:${MODE}
