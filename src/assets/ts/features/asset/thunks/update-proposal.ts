@@ -35,7 +35,7 @@ export const updateProposal = createAsyncThunk<
     const queryParams = [
       'and=(type.not.eq.edge-app-file,type.not.eq.edge-app)',
       'or=(status.eq.downloading,status.eq.processing,status.eq.finished)',
-      `source_url=eq.${url}`,
+      `source_url=eq.${encodeURIComponent(url)}`,
     ].join('&');
     const result = await callApi(
       'GET',
