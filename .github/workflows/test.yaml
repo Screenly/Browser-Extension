@@ -44,5 +44,5 @@ jobs:
             --rm \
             -v $(pwd):/app:delegated \
             -v /app/node_modules \
-            sbe_webpack:latest \
+            screenly-browser-extension:latest \
             /bin/bash -c "npx webpack --config webpack.dev.js && npm run test"
