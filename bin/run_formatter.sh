@@ -15,5 +15,5 @@ docker run \
     --rm \
     -v $(pwd):/app:delegated \
     -v /app/node_modules \
-    sbe_webpack:latest \
+    screenly-browser-extension:latest \
     npx prettier src/ --${MODE}

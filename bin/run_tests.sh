@@ -16,6 +16,6 @@ docker run \
     --rm -ti \
     -v $(pwd):/app:delegated \
     -v /app/node_modules \
-    sbe_webpack:latest \
+    screenly-browser-extension:latest \
     /bin/bash -c "npm test"
 
