@@ -128,7 +128,7 @@ $ docker compose build
 ### :broom: Run Linter
 
 ```bash
-$ ./bin/run_eslint.sh src/
+$ ./bin/run_eslint.sh
 ```
 
 This will run ESLint on the codebase and show any style issues or potential problems that need to be fixed.

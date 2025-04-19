@@ -9,4 +9,4 @@ docker run \
     -v $(pwd):/app:delegated \
     -v /app/node_modules \
     sbe_webpack:latest \
-    npx eslint "$@"
+    npm run lint:check
