@@ -16,7 +16,7 @@ docker run \
     --rm -ti \
     -v $(pwd):/app:delegated \
     -v /app/node_modules \
-    sbe_webpack:latest \
+    screenly-browser-extension:latest \
     /bin/bash -c "npx webpack --config webpack.prod.js"
 
 (cd dist && zip -r ../screenly-$PLATFORM-extension-$VERSION.zip *)
