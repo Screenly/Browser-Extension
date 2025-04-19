@@ -4,6 +4,7 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const RemovePlugin = require('remove-files-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const webpack = require('webpack');
+const { getWebpackAliases } = require('./alias.config');
 
 module.exports = {
   entry: {
@@ -87,16 +88,7 @@ module.exports = {
   ],
 
   resolve: {
-    alias: {
-      '@/store': path.resolve(__dirname, 'src/assets/ts/store.ts'),
-      '@/main': path.resolve(__dirname, 'src/assets/ts/main.ts'),
-      '@/components': path.resolve(__dirname, 'src/assets/ts/components'),
-      '@/features': path.resolve(__dirname, 'src/assets/ts/features'),
-      '@/scss': path.resolve(__dirname, 'src/assets/scss'),
-      '@/types': path.resolve(__dirname, 'src/assets/ts/types'),
-      '@/utils': path.resolve(__dirname, 'src/assets/ts/utils'),
-      '@/vendor': path.resolve(__dirname, 'src/lib/vendor'),
-    },
+    alias: getWebpackAliases(),
     extensions: ['.ts', '.tsx', '.js', '.jsx', '.mjs'],
   },
 
