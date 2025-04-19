@@ -16,7 +16,8 @@ require('@babel/register')({
         '@/scss': './src/assets/scss',
         '@/types': './src/assets/ts/types',
         '@/vendor': './src/lib/vendor',
-        '@/test': './src/test'
+        '@/test': './src/test',
+        '@/constants': './src/assets/ts/constants.ts'
       }
     }]
   ]

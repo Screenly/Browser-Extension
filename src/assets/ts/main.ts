@@ -10,6 +10,7 @@ import {
   TeamResponse,
 } from '@/types/screenly-api';
 import { User, RequestInit } from '@/types/core';
+import { API_BASE_URL } from '@/constants';
 
 declare global {
   const browser: typeof chrome;
@@ -68,7 +69,7 @@ export function createWebAsset(
 ): Promise<AssetResponse[]> {
   return callApi(
     'POST',
-    'https://api.screenlyapp.com/api/v4/assets/',
+    `${API_BASE_URL}/v4/assets/`,
     {
       source_url: url,
       title: title,
@@ -93,7 +94,7 @@ export function updateWebAsset(
 
   return callApi(
     'PATCH',
-    `https://api.screenlyapp.com/api/v4/assets/?${params.toString()}`,
+    `${API_BASE_URL}/v4/assets/?${params.toString()}`,
     {
       // API expects snake_case, so we transform from camelCase
       title: title,
@@ -114,7 +115,7 @@ export function getWebAsset(
 
   return callApi(
     'GET',
-    `https://api.screenlyapp.com/api/v4/assets/?${params.toString()}`,
+    `${API_BASE_URL}/v4/assets/?${params.toString()}`,
     null,
     user.token,
   ).then((response: ApiResponseData[]) => {
@@ -130,7 +131,7 @@ export function getTeamInfo(
 
   return callApi(
     'GET',
-    `https://api.screenlyapp.com/api/v4.1/teams/?${params.toString()}`,
+    `${API_BASE_URL}/v4.1/teams/?${params.toString()}`,
     null,
     user.token,
   ).then((response: ApiResponseData[]) => {
@@ -141,7 +142,7 @@ export function getTeamInfo(
 export async function getCompany(user: User): Promise<string> {
   const result = await callApi(
     'GET',
-    'https://api.screenlyapp.com/api/v4/users/',
+    `${API_BASE_URL}/v4/users/`,
     null,
     user.token,
   ).then((response: ApiResponseData[]) => {

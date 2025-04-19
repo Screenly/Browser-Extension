@@ -96,6 +96,7 @@ module.exports = {
       '@/types': path.resolve(__dirname, 'src/assets/ts/types'),
       '@/utils': path.resolve(__dirname, 'src/assets/ts/utils'),
       '@/vendor': path.resolve(__dirname, 'src/lib/vendor'),
+      '@/constants': path.resolve(__dirname, 'src/assets/ts/constants.ts'),
     },
     extensions: ['.ts', '.tsx', '.js', '.jsx', '.mjs'],
   },
