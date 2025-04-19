@@ -3,10 +3,11 @@ import { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import classNames from 'classnames';
 
-import { signOut } from '@/features/popup-slice';
 import { AppDispatch } from '@/store';
 import { getCompany, getUser } from '@/main';
 import { PopupSpinner } from '@/components/popup-spinner';
+import { navigateToProposal } from '@/utils/navigation';
+import { handleSignOut } from '@/utils/auth';
 
 export const Settings: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -33,13 +34,8 @@ export const Settings: React.FC = () => {
     getCompanyData();
   }, []);
 
-  const handleSignOut = async (
-    event: React.MouseEvent<HTMLButtonElement>,
-  ): Promise<void> => {
-    event.preventDefault();
-    setIsButtonLoading(true);
-    dispatch(signOut());
-    setIsButtonLoading(false);
+  const handleHomeButtonClick = (): void => {
+    navigateToProposal(dispatch);
   };
 
   if (isViewLoading) {
@@ -73,13 +69,24 @@ export const Settings: React.FC = () => {
           </div>
         </section>
         <section>
-          <button className="btn btn-primary w-100" onClick={handleSignOut}>
-            {isButtonLoading ? (
-              <span className="spinner spinner-border spinner-border-sm"></span>
-            ) : (
-              <span className="label">Sign Out</span>
-            )}
-          </button>
+          <div className="d-flex">
+            <button
+              className="btn btn-primary w-100 me-1"
+              onClick={(e) => handleSignOut(e, dispatch, setIsButtonLoading)}
+            >
+              {isButtonLoading ? (
+                <span className="spinner spinner-border spinner-border-sm"></span>
+              ) : (
+                <span className="label">Sign Out</span>
+              )}
+            </button>
+            <button
+              className="btn btn-primary d-flex align-items-center justify-content-center"
+              onClick={handleHomeButtonClick}
+            >
+              <i className="bi bi-house-fill"></i>
+            </button>
+          </div>
         </section>
       </div>
     </div>
