@@ -15,6 +15,7 @@ require('@babel/register')({
         '@/features': './src/assets/ts/features',
         '@/scss': './src/assets/scss',
         '@/types': './src/assets/ts/types',
+        '@/utils': './src/assets/ts/utils',
         '@/vendor': './src/lib/vendor',
         '@/test': './src/test'
       }
