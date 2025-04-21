@@ -60,7 +60,7 @@ export const Proposal: React.FC = () => {
         <section>
           <div className="form-check">
             <input
-              className="form-check-input shadow-none"
+              className="form-check-input shadow-none round-checkbox"
               id="with-auth-check"
               type="checkbox"
               checked={saveAuthentication}

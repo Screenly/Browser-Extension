@@ -8,6 +8,7 @@ import { getCompany, getUser } from '@/main';
 import { PopupSpinner } from '@/components/popup-spinner';
 import { navigateToProposal } from '@/utils/navigation';
 import { handleSignOut } from '@/utils/auth';
+import { HomeIcon } from '@/components/home-icon';
 
 export const Settings: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -84,7 +85,7 @@ export const Settings: React.FC = () => {
               className="btn btn-primary d-flex align-items-center justify-content-center"
               onClick={handleHomeButtonClick}
             >
-              <i className="bi bi-house-fill"></i>
+              <HomeIcon />
             </button>
           </div>
         </section>

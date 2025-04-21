@@ -1,10 +1,11 @@
-interface SuccessProps {
-  assetDashboardLink: string;
-}
-
 import { CheckMark } from '@/components/check-mark';
 import { useDispatch } from 'react-redux';
 import { navigateToProposal } from '@/utils/navigation';
+import { HomeIcon } from '@/components/home-icon';
+
+interface SuccessProps {
+  assetDashboardLink: string;
+}
 
 export const AssetSaveSuccess: React.FC<SuccessProps> = ({
   assetDashboardLink,
@@ -46,7 +47,7 @@ export const AssetSaveSuccess: React.FC<SuccessProps> = ({
               className="btn btn-primary d-flex align-items-center justify-content-center"
               onClick={handleHomeButtonClick}
             >
-              <i className="bi bi-house-fill"></i>
+              <HomeIcon width={16} height={16} />
             </button>
           </div>
         </section>

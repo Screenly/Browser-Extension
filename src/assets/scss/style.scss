@@ -84,3 +84,30 @@ body.popup {
     background-color: #f9f9f9;
   }
 }
+
+.round-checkbox {
+  border-radius: 50% !important;
+  margin-top: 0 !important;
+
+  &:checked {
+    background-color: $primary;
+    border-color: $primary;
+  }
+}
+
+.form-check {
+  display: flex;
+  align-items: center;
+
+  .form-check-input {
+    margin-top: 0 !important;
+  }
+
+  .form-check-label {
+    margin-left: 0.4rem;
+    margin-top: 0.1rem;
+    line-height: 1.125rem;
+    padding-top: 0;
+    padding-bottom: 0;
+  }
+}

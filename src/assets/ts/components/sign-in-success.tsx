@@ -3,6 +3,7 @@ import { useDispatch } from 'react-redux';
 import { navigateToProposal } from '@/utils/navigation';
 import { useState } from 'react';
 import { handleSignOut } from '@/utils/auth';
+import { HomeIcon } from '@/components/home-icon';
 
 export const SignInSuccess: React.FC = () => {
   const dispatch = useDispatch();
@@ -46,7 +47,7 @@ export const SignInSuccess: React.FC = () => {
               className="btn btn-primary d-flex align-items-center justify-content-center"
               onClick={handleHomeButtonClick}
             >
-              <i className="bi bi-house-fill"></i>
+              <HomeIcon width={16} height={16} />
             </button>
           </div>
         </section>
