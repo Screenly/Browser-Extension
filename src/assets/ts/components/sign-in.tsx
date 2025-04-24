@@ -36,12 +36,7 @@ export const SignInForm: React.FC = () => {
     setIsLoading(true);
 
     try {
-      await callApi(
-        'GET',
-        'https://api.screenlyapp.com/api/v4/assets/',
-        null,
-        token,
-      );
+      await callApi('GET', `v4/assets/`, null, token);
 
       await browser.storage.sync.set({ token: token });
 
