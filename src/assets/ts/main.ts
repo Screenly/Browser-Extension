@@ -38,7 +38,7 @@ export function callApi(
     init.headers['Authorization'] = `Token ${token}`;
   }
 
-  return fetch(url, init)
+  return fetch(`${API_BASE_URL}/${url}`, init)
     .then((response) => {
       if (!(response.status >= 200 && response.status < 300)) {
         throw response;
@@ -69,7 +69,7 @@ export function createWebAsset(
 ): Promise<AssetResponse[]> {
   return callApi(
     'POST',
-    `${API_BASE_URL}/v4/assets/`,
+    `v4/assets/`,
     {
       source_url: url,
       title: title,
@@ -94,7 +94,7 @@ export function updateWebAsset(
 
   return callApi(
     'PATCH',
-    `${API_BASE_URL}/v4/assets/?${params.toString()}`,
+    `v4/assets/?${params.toString()}`,
     {
       // API expects snake_case, so we transform from camelCase
       title: title,
@@ -115,7 +115,7 @@ export function getWebAsset(
 
   return callApi(
     'GET',
-    `${API_BASE_URL}/v4/assets/?${params.toString()}`,
+    `v4/assets/?${params.toString()}`,
     null,
     user.token,
   ).then((response: ApiResponseData[]) => {
@@ -131,7 +131,7 @@ export function getTeamInfo(
 
   return callApi(
     'GET',
-    `${API_BASE_URL}/v4.1/teams/?${params.toString()}`,
+    `v4.1/teams/?${params.toString()}`,
     null,
     user.token,
   ).then((response: ApiResponseData[]) => {
@@ -140,14 +140,11 @@ export function getTeamInfo(
 }
 
 export async function getCompany(user: User): Promise<string> {
-  const result = await callApi(
-    'GET',
-    `${API_BASE_URL}/v4/users/`,
-    null,
-    user.token,
-  ).then((response: ApiResponseData[]) => {
-    return response as UserResponse[];
-  });
+  const result = await callApi('GET', `v4/users/`, null, user.token).then(
+    (response: ApiResponseData[]) => {
+      return response as UserResponse[];
+    },
+  );
 
   return result[0].company;
 }
