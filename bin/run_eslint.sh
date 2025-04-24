@@ -8,5 +8,5 @@ docker run \
     --rm \
     -v $(pwd):/app:delegated \
     -v /app/node_modules \
-    sbe_webpack:latest \
-    npx eslint "$@"
+    screenly-browser-extension:latest \
+    npm run lint:check

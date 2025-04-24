@@ -10,6 +10,7 @@ import {
   TeamResponse,
 } from '@/types/screenly-api';
 import { User, RequestInit } from '@/types/core';
+import { API_BASE_URL } from '@/constants';
 
 declare global {
   const browser: typeof chrome;
@@ -37,7 +38,7 @@ export function callApi(
     init.headers['Authorization'] = `Token ${token}`;
   }
 
-  return fetch(url, init)
+  return fetch(`${API_BASE_URL}/${url}`, init)
     .then((response) => {
       if (!(response.status >= 200 && response.status < 300)) {
         throw response;
@@ -68,7 +69,7 @@ export function createWebAsset(
 ): Promise<AssetResponse[]> {
   return callApi(
     'POST',
-    'https://api.screenlyapp.com/api/v4/assets/',
+    `v4/assets/`,
     {
       source_url: url,
       title: title,
@@ -93,7 +94,7 @@ export function updateWebAsset(
 
   return callApi(
     'PATCH',
-    `https://api.screenlyapp.com/api/v4/assets/?${params.toString()}`,
+    `v4/assets/?${params.toString()}`,
     {
       // API expects snake_case, so we transform from camelCase
       title: title,
@@ -114,7 +115,7 @@ export function getWebAsset(
 
   return callApi(
     'GET',
-    `https://api.screenlyapp.com/api/v4/assets/?${params.toString()}`,
+    `v4/assets/?${params.toString()}`,
     null,
     user.token,
   ).then((response: ApiResponseData[]) => {
@@ -130,7 +131,7 @@ export function getTeamInfo(
 
   return callApi(
     'GET',
-    `https://api.screenlyapp.com/api/v4.1/teams/?${params.toString()}`,
+    `v4.1/teams/?${params.toString()}`,
     null,
     user.token,
   ).then((response: ApiResponseData[]) => {
@@ -139,14 +140,11 @@ export function getTeamInfo(
 }
 
 export async function getCompany(user: User): Promise<string> {
-  const result = await callApi(
-    'GET',
-    'https://api.screenlyapp.com/api/v4/users/',
-    null,
-    user.token,
-  ).then((response: ApiResponseData[]) => {
-    return response as UserResponse[];
-  });
+  const result = await callApi('GET', `v4/users/`, null, user.token).then(
+    (response: ApiResponseData[]) => {
+      return response as UserResponse[];
+    },
+  );
 
   return result[0].company;
 }

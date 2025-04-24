@@ -18,7 +18,8 @@
       "@/store": ["src/assets/ts/store.ts"],
       "@/main": ["src/assets/ts/main.ts"],
       "@/types/*": ["src/assets/ts/types/*"],
-      "@/utils/*": ["src/assets/ts/utils/*"]
+      "@/utils/*": ["src/assets/ts/utils/*"],
+      "@/constants": ["src/assets/ts/constants.ts"]
     }
   },
   "include": ["src/**/*"],
