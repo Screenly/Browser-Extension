@@ -23,7 +23,7 @@ jobs:
           docker compose build
       - name: Run ESLint
         run: |
-          ./bin/run_eslint.sh src/
+          ./bin/run_eslint.sh
 
   run-prettier:
     runs-on: ubuntu-latest

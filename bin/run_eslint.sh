@@ -9,4 +9,4 @@ docker run \
     -v $(pwd):/app:delegated \
     -v /app/node_modules \
     screenly-browser-extension:latest \
-    npx eslint "$@"
+    npm run lint:check

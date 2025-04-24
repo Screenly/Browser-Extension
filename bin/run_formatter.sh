@@ -16,4 +16,4 @@ docker run \
     -v $(pwd):/app:delegated \
     -v /app/node_modules \
     screenly-browser-extension:latest \
-    npx prettier src/ --${MODE}
+    npm run format:${MODE}
