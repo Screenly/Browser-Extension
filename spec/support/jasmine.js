@@ -1,4 +1,5 @@
 const path = require('path');
+const { getJasmineAliases } = require('../../alias.config');
 
 require('../helpers/mock-styles');
 
@@ -8,17 +9,7 @@ require('@babel/register')({
   plugins: [
     ['module-resolver', {
       root: ['.'],
-      alias: {
-        '@/store': './src/assets/ts/store.ts',
-        '@/main': './src/assets/ts/main.ts',
-        '@/components': './src/assets/ts/components',
-        '@/features': './src/assets/ts/features',
-        '@/scss': './src/assets/scss',
-        '@/types': './src/assets/ts/types',
-        '@/vendor': './src/lib/vendor',
-        '@/test': './src/test',
-        '@/constants': './src/assets/ts/constants.ts'
-      }
+      alias: getJasmineAliases()
     }]
   ]
 });

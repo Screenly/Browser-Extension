@@ -60,7 +60,11 @@
   },
   "scripts": {
     "test": "cross-env NODE_ENV=test jasmine --config=spec/support/jasmine.js",
-    "build": "webpack --config webpack.prod.js"
+    "build": "webpack --config webpack.prod.js",
+    "lint:check": "eslint src/",
+    "lint:fix": "eslint src/ --fix",
+    "format:check": "prettier --check src/",
+    "format:write": "prettier --write src/"
   },
   "author": "Screenly, Inc.",
   "dependencies": {
