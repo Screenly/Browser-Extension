@@ -86,8 +86,8 @@ body.popup {
 }
 
 .round-checkbox {
-  border-radius: 50% !important;
-  margin-top: 0 !important;
+  border-radius: 50%;
+  margin-top: 0;
 
   &:checked {
     background-color: $primary;
@@ -95,19 +95,30 @@ body.popup {
   }
 }
 
-.form-check {
-  display: flex;
-  align-items: center;
+body.popup {
+  .form-check {
+    display: flex;
+    align-items: center;
 
-  .form-check-input {
-    margin-top: 0 !important;
-  }
+    .form-check-input {
+      margin-top: 0;
 
-  .form-check-label {
-    margin-left: 0.4rem;
-    margin-top: 0.1rem;
-    line-height: 1.125rem;
-    padding-top: 0;
-    padding-bottom: 0;
+      &.round-checkbox {
+        border-radius: 50%;
+
+        &:checked {
+          background-color: $primary;
+          border-color: $primary;
+        }
+      }
+    }
+
+    .form-check-label {
+      margin-left: 0.4rem;
+      margin-top: 0.1rem;
+      line-height: 1.125rem;
+      padding-top: 0;
+      padding-bottom: 0;
+    }
   }
 }
