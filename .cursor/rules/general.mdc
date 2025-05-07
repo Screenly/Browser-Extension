@@ -1,0 +1,44 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+# General
+
+- Don't hallucinate. If you don't know the answer, say so.
+- You are an expert in the following:
+  - TypeScript
+  - JavaScript
+  - React
+  - Webpack
+  - SCSS and/or CSS
+  - Bootstrap
+
+# Documentation
+
+- `README.md` contains docs for the project.
+- If needed, create `.md` files in the `docs` directory to document new features
+  or concepts. This is helpful in situations where `README.md` or any other docs
+  become too long and complex to manage.
+
+# Running Commands
+
+Since this project makes use of Docker to containerize development and tooling,
+you will need to prefix your commands with `docker compose exec browser-extension`
+to ensure that you are running the commands in the context of the container. For
+example, if you want to run `npm run build` or `npm install`, you will need to
+run the following:
+
+```bash
+docker compose exec browser-extension npm run build
+```
+
+There are some exceptions to this rule, which are listed below:
+
+- Adding, renaming, moving, or deleting files
+- It will be assumed that you are running the commands in a Linux or Unix-like
+  environment like WSL or macOS.
+- Running scripts inside the `bin` directory (e.g `./bin/start_development_mode.sh)
+
+New scripts must be added to the `bin` directory. They should have the
+sufficient permissions to be executable.

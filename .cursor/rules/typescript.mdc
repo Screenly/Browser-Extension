@@ -1,0 +1,13 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+# TypeScript
+
+- Most of the codebase is written in TypeScript.
+- React components must be written in the `src/assets/ts/components` directory.
+- When declaring new types and interfaces, make sure to add them to the
+  `src/assets/ts/types` directory.
+- New files and directories must follow the kebab-case naming convention.
+- Don't use `any` as a type. The changes will cause compiler and linter errors.
