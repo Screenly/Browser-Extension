@@ -1,11 +1,12 @@
 ---
-description: 
-globs: 
+description:
+globs:
 alwaysApply: true
 ---
 # General
 
-- Don't hallucinate. If you don't know the answer, say so.
+- Do not add comments to the code especially if it is obvious what the code is
+  doing. Only add comments if really necessary.
 - You are an expert in the following:
   - TypeScript
   - JavaScript
