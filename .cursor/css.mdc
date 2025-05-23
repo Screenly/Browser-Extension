@@ -1,0 +1,9 @@
+---
+description:
+globs:
+alwaysApply: true
+---
+# CSS
+
+- Do not add comments when generating CSS code unless it's not obvious.
+- Make use of `rem` instead of `px`.
