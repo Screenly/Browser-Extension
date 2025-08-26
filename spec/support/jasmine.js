@@ -5,11 +5,19 @@ require('../helpers/mock-styles');
 
 require('@babel/register')({
   extensions: ['.js', '.jsx', '.ts', '.tsx'],
-  presets: ['react-app'],
+  presets: [
+    ['@babel/preset-env', {
+      targets: { node: 'current' },
+      modules: 'commonjs'
+    }],
+    '@babel/preset-typescript',
+    '@babel/preset-react'
+  ],
   plugins: [
     ['module-resolver', {
       root: ['.'],
-      alias: getJasmineAliases()
+      alias: getJasmineAliases(),
+      extensions: ['.js', '.jsx', '.ts', '.tsx']
     }]
   ]
 });
