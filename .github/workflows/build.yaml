@@ -23,7 +23,7 @@ jobs:
         platform: ['chrome', 'firefox']
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Prepare manifest.json
         run: |
@@ -58,7 +58,7 @@ jobs:
 
       - name: Attest
         if: github.event.pull_request.head.repo.full_name == github.repository
-        uses: actions/attest-build-provenance@v1
+        uses: actions/attest-build-provenance@v3
         with:
           subject-path: '${{ github.workspace }}/screenly-${{ matrix.platform }}-extension.zip'
 
@@ -77,7 +77,7 @@ jobs:
 
       - name: Create Release
         if: startsWith(github.ref, 'refs/tags/')
-        uses: ncipollo/release-action@v1.11.2
+        uses: ncipollo/release-action@v1.18.0
         with:
           allowUpdates: true
           generateReleaseNotes: true
@@ -98,7 +98,7 @@ jobs:
     if: startsWith(github.ref, 'refs/tags/')
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Upload SBOM
         uses: sbomify/github-action@master
@@ -113,6 +113,6 @@ jobs:
           ENRICH: true
 
       - name: Attest build
-        uses: actions/attest-build-provenance@v1
+        uses: actions/attest-build-provenance@v3
         with:
           subject-path: '${{ github.workspace }}/${{ matrix.platform }}-extension.cdx.json'
