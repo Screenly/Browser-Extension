@@ -3,3 +3,4 @@ build
 coverage
 src/manifest-chrome.json
 src/manifest-firefox.json
+src/lib/vendor/browser-polyfill.min.js
