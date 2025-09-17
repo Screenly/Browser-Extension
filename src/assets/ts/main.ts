@@ -139,14 +139,14 @@ export function getTeamInfo(
   });
 }
 
-export async function getCompany(user: User): Promise<string> {
-  const result = await callApi('GET', `v4/users/`, null, user.token).then(
+export async function getUserData(user: User): Promise<UserResponse> {
+  const result = await callApi('GET', `v4.1/users/`, null, user.token).then(
     (response: ApiResponseData[]) => {
       return response as UserResponse[];
     },
   );
 
-  return result[0].company;
+  return result[0];
 }
 
 export function getAssetDashboardLink(

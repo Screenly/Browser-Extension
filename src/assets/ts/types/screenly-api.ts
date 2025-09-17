@@ -11,6 +11,9 @@ export interface AssetResponse extends ApiResponseData {
 
 export interface UserResponse extends ApiResponseData {
   company: string;
+  email: string;
+  first_name: string;
+  last_name: string;
 }
 
 export interface TeamResponse extends ApiResponseData {
