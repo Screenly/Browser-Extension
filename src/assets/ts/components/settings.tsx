@@ -4,7 +4,7 @@ import { useDispatch } from 'react-redux';
 import classNames from 'classnames';
 
 import { AppDispatch } from '@/store';
-import { getCompany, getUser } from '@/main';
+import { getUserData, getUser } from '@/main';
 import { PopupSpinner } from '@/components/popup-spinner';
 import { navigateToProposal } from '@/utils/navigation';
 import { handleSignOut } from '@/utils/auth';
@@ -13,26 +13,32 @@ import { HomeIcon } from '@/components/home-icon';
 export const Settings: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
   const [isButtonLoading, setIsButtonLoading] = useState<boolean>(false);
-  const [companyName, setCompanyName] = useState<string>('');
+  const [firstName, setFirstName] = useState<string>('');
+  const [lastName, setLastName] = useState<string>('');
+  const [email, setEmail] = useState<string>('');
   const [isViewLoading, setIsViewLoading] = useState<boolean>(false);
 
-  const getCompanyData = async (): Promise<void> => {
+  const setUserData = async (): Promise<void> => {
     setIsViewLoading(true);
 
     const { token } = await getUser();
 
     try {
-      const company = await getCompany({ token });
-      setCompanyName(company);
+      const userData = await getUserData({ token });
+      setFirstName(userData.first_name);
+      setLastName(userData.last_name);
+      setEmail(userData.email);
     } catch {
-      setCompanyName('');
+      setFirstName('');
+      setLastName('');
+      setEmail('');
     } finally {
       setIsViewLoading(false);
     }
   };
 
   useEffect(() => {
-    getCompanyData();
+    setUserData();
   }, []);
 
   const handleHomeButtonClick = (): void => {
@@ -62,9 +68,17 @@ export const Settings: React.FC = () => {
               signed in
             </h3>
 
-            {companyName && (
+            {(firstName || lastName || email) && (
               <p className="text-muted">
-                You are signed in as a member of <strong>{companyName}</strong>.
+                You are signed in as{' '}
+                <strong>
+                  {firstName && lastName
+                    ? `${firstName} ${lastName}`
+                    : email
+                      ? `${email}`
+                      : `${firstName || lastName || ''}`}
+                </strong>
+                .
               </p>
             )}
           </div>
