@@ -1,6 +1,2 @@
-import {JSDOM} from 'jsdom';
-
-const dom = new JSDOM('<html><body></body></html>');
-global.document = dom.window.document;
-global.window = dom.window;
-global.navigator = dom.window.navigator;
+// This file is deprecated - jsdom setup is now handled in src/test/environment.js
+// Keeping this file to avoid breaking imports but it's no longer used

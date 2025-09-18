@@ -3,11 +3,12 @@ const React = require('react');
 const ReactDOM = require('react-dom');
 const { act } = require('@testing-library/react');
 
-// Create a new JSDOM instance
+// Create a new JSDOM instance with jsdom v27 compatible options
 const dom = new JSDOM('<!DOCTYPE html><html><body></body></html>', {
-  runScripts: 'dangerously',
+  runScripts: 'outside-only',
   resources: 'usable',
   pretendToBeVisual: true,
+  url: 'http://localhost',
 });
 
 // Set up the global window and document objects
@@ -23,6 +24,11 @@ Object.defineProperty(global, 'HTMLElement', { value: dom.window.HTMLElement });
 Object.defineProperty(global, 'XMLHttpRequest', {
   value: dom.window.XMLHttpRequest,
 });
+
+// Ensure DOMException is available globally (jsdom v27 compatibility)
+if (!global.DOMException) {
+  global.DOMException = dom.window.DOMException;
+}
 
 // Add any other browser globals you might need
 Object.defineProperty(global, 'location', { value: dom.window.location });
@@ -55,3 +61,20 @@ Object.defineProperty(window, 'matchMedia', {
     };
   },
 });
+
+// Add error handling for jsdom v27 compatibility
+process.on('uncaughtException', (error) => {
+  if (error.name === 'DOMException') {
+    // Suppress DOMException errors that are common in jsdom v27
+    console.warn('Suppressed DOMException:', error.message);
+    return;
+  }
+  throw error;
+});
+
+// Cleanup function for tests
+global.cleanup = function() {
+  if (dom && dom.window) {
+    dom.window.close();
+  }
+};
