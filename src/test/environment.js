@@ -73,7 +73,7 @@ process.on('uncaughtException', (error) => {
 });
 
 // Cleanup function for tests
-global.cleanup = function() {
+global.cleanup = function () {
   if (dom && dom.window) {
     dom.window.close();
   }
