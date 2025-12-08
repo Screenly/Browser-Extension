@@ -23,7 +23,7 @@ jobs:
         platform: ['chrome', 'firefox']
     steps:
       - name: Checkout
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
 
       - name: Prepare manifest.json
         run: |
@@ -63,7 +63,7 @@ jobs:
           subject-path: '${{ github.workspace }}/screenly-${{ matrix.platform }}-extension.zip'
 
       - name: Upload Archive as Artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: screenly-${{ matrix.platform }}-extension
           path: artifacts/dist
@@ -98,7 +98,7 @@ jobs:
     if: startsWith(github.ref, 'refs/tags/')
     steps:
       - name: Checkout
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
 
       - name: Upload SBOM
         uses: sbomify/github-action@master
