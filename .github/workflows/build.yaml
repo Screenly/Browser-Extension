@@ -63,7 +63,7 @@ jobs:
           subject-path: '${{ github.workspace }}/screenly-${{ matrix.platform }}-extension.zip'
 
       - name: Upload Archive as Artifact
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           name: screenly-${{ matrix.platform }}-extension
           path: artifacts/dist
