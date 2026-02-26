@@ -58,7 +58,7 @@ jobs:
 
       - name: Attest
         if: github.event.pull_request.head.repo.full_name == github.repository
-        uses: actions/attest-build-provenance@v3
+        uses: actions/attest-build-provenance@v4
         with:
           subject-path: '${{ github.workspace }}/screenly-${{ matrix.platform }}-extension.zip'
 
@@ -113,6 +113,6 @@ jobs:
           ENRICH: true
 
       - name: Attest build
-        uses: actions/attest-build-provenance@v3
+        uses: actions/attest-build-provenance@v4
         with:
           subject-path: '${{ github.workspace }}/${{ matrix.platform }}-extension.cdx.json'
