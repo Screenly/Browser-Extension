@@ -69,6 +69,14 @@ module.exports = {
         },
       ],
     }),
+    new CopyWebpackPlugin({
+      patterns: [
+        {
+          from: "src/assets/rules.json",
+          to: "assets/rules.json",
+        },
+      ],
+    }),
     new HtmlWebpackPlugin({
       filename: 'popup.html',
       template: './src/popup.html',

@@ -12,8 +12,18 @@
     "activeTab",
     "storage",
     "scripting",
-    "cookies"
+    "cookies",
+    "declarativeNetRequest"
   ],
+  "declarative_net_request": {
+    "rule_resources": [
+      {
+        "id": "screenly_api_rules",
+        "enabled": true,
+        "path": "assets/rules.json"
+      }
+    ]
+  },
   "host_permissions": [
     "http://*/*",
     "https://*/*"
