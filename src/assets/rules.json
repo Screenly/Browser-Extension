@@ -13,7 +13,7 @@
       ]
     },
     "condition": {
-      "urlFilter": "https://api.screenlyapp.com/*",
+      "urlFilter": "https://api.screenlyapp.com/api/*",
       "resourceTypes": ["xmlhttprequest"]
     }
   }
