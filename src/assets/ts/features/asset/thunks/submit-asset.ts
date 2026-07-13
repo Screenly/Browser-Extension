@@ -1,7 +1,6 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { AppDispatch, RootState } from '@/types/store';
-import { Cookie } from '@/types/core';
-import * as cookiejs from 'cookie';
+import { buildCookieHeader } from '@/utils/cookies';
 import {
   getAssetDashboardLink,
   getTeamInfo,
@@ -35,9 +34,7 @@ export const submitAsset = createAsyncThunk<
 
   if (saveAuthentication && proposal.cookieJar) {
     headers = {
-      Cookie: proposal.cookieJar
-        .map((cookie: Cookie) => cookiejs.serialize(cookie.name, cookie.value))
-        .join('; '),
+      Cookie: buildCookieHeader(proposal.cookieJar),
     };
   }
 

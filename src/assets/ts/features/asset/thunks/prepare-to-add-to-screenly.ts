@@ -4,6 +4,7 @@ import { createAsyncThunk } from '@reduxjs/toolkit';
 import { AppDispatch, RootState } from '@/types/store';
 import { Cookie, User } from '@/types/core';
 import { getUser } from '@/main';
+import { filterCookiesByOriginDomain } from '@/utils/cookies';
 import { setIsLoading } from '@/features/asset/slice';
 import { openSettings } from '@/features/popup-slice';
 import { proposeToAddToScreenly } from '@/features/asset/thunks/propose-to-add-to-screenly';
@@ -62,10 +63,14 @@ export const prepareToAddToScreenly = createAsyncThunk<
         return;
       }
 
-      const originDomain = new URL(pageUrl).host;
+      const originHostname = new URL(pageUrl).hostname;
 
+      // Include the page URL itself: its cookies matter most for
+      // authentication and it never shows up among its own resource entries.
       const results = await Promise.all(
-        resourceEntries.map((url: string) => browser.cookies.getAll({ url })),
+        [pageUrl, ...resourceEntries].map((url: string) =>
+          browser.cookies.getAll({ url }),
+        ),
       );
 
       let cookieJar = Array.from(
@@ -80,11 +85,7 @@ export const prepareToAddToScreenly = createAsyncThunk<
       ) as Cookie[];
 
       if (onlyPrimaryDomain) {
-        cookieJar = cookieJar.filter(
-          (cookie: Cookie) =>
-            cookie.domain === originDomain ||
-            (!cookie.hostOnly && originDomain.endsWith(cookie.domain)),
-        );
+        cookieJar = filterCookiesByOriginDomain(cookieJar, originHostname);
       }
 
       await dispatch(
