@@ -48,6 +48,7 @@ export const submitAsset = createAsyncThunk<
           proposal.title,
           headers,
           bypassVerification,
+          navigator.userAgent,
         )
       : await updateWebAsset(
           assetState.assetId,
@@ -56,6 +57,7 @@ export const submitAsset = createAsyncThunk<
           proposal.title,
           headers,
           bypassVerification,
+          navigator.userAgent,
         );
 
     if (result.length === 0) {

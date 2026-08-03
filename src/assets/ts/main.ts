@@ -66,15 +66,17 @@ export function createWebAsset(
   title: string,
   headers: object | null,
   disableVerification: boolean,
+  userAgent?: string,
 ): Promise<AssetResponse[]> {
   return callApi(
     'POST',
-    `v4/assets/`,
+    `v4.1/assets/`,
     {
       source_url: url,
       title: title,
       headers: headers,
       disable_verification: disableVerification,
+      ...(userAgent ? { user_agent: userAgent } : {}),
     },
     user.token,
   ).then((response: ApiResponseData[]) => {
@@ -89,17 +91,19 @@ export function updateWebAsset(
   title: string,
   headers: object | null,
   disableVerification: boolean,
+  userAgent?: string,
 ): Promise<AssetResponse[]> {
   const params = new URLSearchParams({ id: `eq.${assetId || ''}` });
 
   return callApi(
     'PATCH',
-    `v4/assets/?${params.toString()}`,
+    `v4.1/assets/?${params.toString()}`,
     {
       // API expects snake_case, so we transform from camelCase
       title: title,
       headers: headers,
       disable_verification: disableVerification,
+      ...(userAgent ? { user_agent: userAgent } : {}),
     },
     user.token,
   ).then((response: ApiResponseData[]) => {
@@ -115,7 +119,7 @@ export function getWebAsset(
 
   return callApi(
     'GET',
-    `v4/assets/?${params.toString()}`,
+    `v4.1/assets/?${params.toString()}`,
     null,
     user.token,
   ).then((response: ApiResponseData[]) => {
