@@ -20,7 +20,7 @@ jobs:
         platform: ['chrome', 'firefox']
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
 
       - name: Prepare manifest.json
         run: |
