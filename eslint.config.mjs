@@ -12,7 +12,7 @@ const __dirname = path.dirname(__filename);
 const compat = new FlatCompat({
   baseDirectory: __dirname,
   recommendedConfig: js.configs.recommended,
-  allConfig: js.configs.all
+  allConfig: js.configs.all,
 });
 
 export default [
@@ -20,14 +20,14 @@ export default [
     'eslint:recommended',
     'plugin:react/recommended',
     'plugin:jasmine/recommended',
-    'plugin:@typescript-eslint/recommended'
   ),
+  ...tseslint.configs['flat/recommended'],
   {
     ignores: [
       'src/lib/vendor/',
       'node_modules/',
       'dist/',
-      'src/test/environment.js'
+      'src/test/environment.js',
     ],
   },
   {
@@ -66,8 +66,11 @@ export default [
     rules: {
       'react/prop-types': 'off',
       '@typescript-eslint/explicit-function-return-type': 'error',
-      '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
+      '@typescript-eslint/no-unused-vars': [
+        'error',
+        { argsIgnorePattern: '^_' },
+      ],
       'no-undef': 'error',
     },
-  }
+  },
 ];
