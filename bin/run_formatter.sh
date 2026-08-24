@@ -16,4 +16,4 @@ docker run \
     -v $(pwd):/app:delegated \
     -v /app/node_modules \
     screenly-browser-extension:latest \
-    npm run format:${MODE}
+    bun run format:${MODE}

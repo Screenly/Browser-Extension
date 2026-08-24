@@ -1,7 +1,7 @@
 services:
   browser-extension:
     build: .
-    command: npx webpack --watch --config webpack.dev.js
+    command: bunx webpack --watch --config webpack.dev.js
     image: screenly-browser-extension:latest
     volumes:
       - .:/app:delegated

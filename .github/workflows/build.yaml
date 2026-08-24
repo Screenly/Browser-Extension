@@ -49,7 +49,7 @@ jobs:
             -v $(pwd)/artifacts:/app/artifacts:delegated \
             -v /app/artifacts/node_modules \
             screenly-browser-extension:latest \
-            /bin/bash -c "npm run build && cp -r dist/ artifacts/"
+            /bin/bash -c "bun run build && cp -r dist/ artifacts/"
 
       - name: Compress
         run: |
