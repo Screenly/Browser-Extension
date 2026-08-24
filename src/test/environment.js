@@ -5,6 +5,7 @@ const { act } = require('@testing-library/react');
 
 // Create a new JSDOM instance
 const dom = new JSDOM('<!DOCTYPE html><html><body></body></html>', {
+  url: 'http://localhost/',
   runScripts: 'dangerously',
   resources: 'usable',
   pretendToBeVisual: true,
