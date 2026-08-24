@@ -45,4 +45,4 @@ jobs:
             -v $(pwd):/app:delegated \
             -v /app/node_modules \
             screenly-browser-extension:latest \
-            /bin/bash -c "npx webpack --config webpack.dev.js && npm run test"
+            /bin/bash -c "bunx webpack --config webpack.dev.js && bun run test"
