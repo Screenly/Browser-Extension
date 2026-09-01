@@ -39,7 +39,7 @@ export const updateProposal = createAsyncThunk<
     ].join('&');
     const result = await callApi(
       'GET',
-      `v4/assets/?${queryParams.toString()}`,
+      `v4.1/assets/?${queryParams.toString()}`,
       null,
       user.token,
     );
