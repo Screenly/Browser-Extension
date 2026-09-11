@@ -8,6 +8,13 @@ updates:
       npm:
         patterns:
           - "*"
+    # typescript-eslint does not support TypeScript 7 yet: its peer range is
+    # ">=4.8.4 <6.1.0" as of typescript-eslint 8.70.0, and TypeScript 7 removed
+    # the `ts.Extension.Cjs` API that @typescript-eslint/typescript-estree reads,
+    # which breaks linting. Remove this once typescript-eslint supports TS 7.
+    ignore:
+      - dependency-name: "typescript"
+        versions: [">=7.0.0"]
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
