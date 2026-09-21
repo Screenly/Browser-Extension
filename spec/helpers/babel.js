@@ -1,4 +1,3 @@
-require('@babel/register')({
-  extensions: ['.js', '.jsx', '.ts', '.tsx'],
-  presets: ['react-app']
-});
+const babelConfig = require('../../babel.register.config');
+
+require('@babel/register').default(babelConfig);

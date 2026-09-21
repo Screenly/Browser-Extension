@@ -1,11 +1,11 @@
 const path = require('path');
 const { getJasmineAliases } = require('../../alias.config');
+const babelConfig = require('../../babel.register.config');
 
 require('../helpers/mock-styles');
 
-require('@babel/register')({
-  extensions: ['.js', '.jsx', '.ts', '.tsx'],
-  presets: ['react-app'],
+require('@babel/register').default({
+  ...babelConfig,
   plugins: [
     ['module-resolver', {
       root: ['.'],

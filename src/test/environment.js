@@ -5,6 +5,9 @@ const { act } = require('@testing-library/react');
 
 // Create a new JSDOM instance
 const dom = new JSDOM('<!DOCTYPE html><html><body></body></html>', {
+  // jsdom refuses to expose localStorage/sessionStorage on an opaque origin,
+  // so the document needs a real URL.
+  url: 'http://localhost/',
   runScripts: 'dangerously',
   resources: 'usable',
   pretendToBeVisual: true,
