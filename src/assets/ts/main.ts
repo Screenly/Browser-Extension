@@ -10,7 +10,7 @@ import {
   TeamResponse,
 } from '@/types/screenly-api';
 import { User, RequestInit } from '@/types/core';
-import { API_BASE_URL } from '@/constants';
+import { API_BASE_URL, API_VERSION } from '@/constants';
 
 declare global {
   const browser: typeof chrome;
@@ -66,15 +66,17 @@ export function createWebAsset(
   title: string,
   headers: object | null,
   disableVerification: boolean,
+  userAgent: string,
 ): Promise<AssetResponse[]> {
   return callApi(
     'POST',
-    `v4/assets/`,
+    `${API_VERSION}/assets/`,
     {
       source_url: url,
       title: title,
       headers: headers,
       disable_verification: disableVerification,
+      user_agent: userAgent,
     },
     user.token,
   ).then((response: ApiResponseData[]) => {
@@ -89,17 +91,19 @@ export function updateWebAsset(
   title: string,
   headers: object | null,
   disableVerification: boolean,
+  userAgent: string,
 ): Promise<AssetResponse[]> {
   const params = new URLSearchParams({ id: `eq.${assetId || ''}` });
 
   return callApi(
     'PATCH',
-    `v4/assets/?${params.toString()}`,
+    `${API_VERSION}/assets/?${params.toString()}`,
     {
       // API expects snake_case, so we transform from camelCase
       title: title,
       headers: headers,
       disable_verification: disableVerification,
+      user_agent: userAgent,
     },
     user.token,
   ).then((response: ApiResponseData[]) => {
@@ -115,7 +119,7 @@ export function getWebAsset(
 
   return callApi(
     'GET',
-    `v4/assets/?${params.toString()}`,
+    `${API_VERSION}/assets/?${params.toString()}`,
     null,
     user.token,
   ).then((response: ApiResponseData[]) => {
@@ -131,7 +135,7 @@ export function getTeamInfo(
 
   return callApi(
     'GET',
-    `v4.1/teams/?${params.toString()}`,
+    `${API_VERSION}/teams/?${params.toString()}`,
     null,
     user.token,
   ).then((response: ApiResponseData[]) => {
@@ -140,11 +144,14 @@ export function getTeamInfo(
 }
 
 export async function getUserData(user: User): Promise<UserResponse> {
-  const result = await callApi('GET', `v4.1/users/`, null, user.token).then(
-    (response: ApiResponseData[]) => {
-      return response as UserResponse[];
-    },
-  );
+  const result = await callApi(
+    'GET',
+    `${API_VERSION}/users/`,
+    null,
+    user.token,
+  ).then((response: ApiResponseData[]) => {
+    return response as UserResponse[];
+  });
 
   return result[0];
 }

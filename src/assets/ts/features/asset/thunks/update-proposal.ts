@@ -2,6 +2,7 @@ import { createAsyncThunk } from '@reduxjs/toolkit';
 import { AppDispatch, RootState } from '@/types/store';
 import { ProposalState } from '@/types/core';
 import { callApi } from '@/main';
+import { API_VERSION } from '@/constants';
 import { AssetResponse } from '@/types/screenly-api';
 import {
   setAssetTitle,
@@ -39,7 +40,7 @@ export const updateProposal = createAsyncThunk<
     ].join('&');
     const result = await callApi(
       'GET',
-      `v4/assets/?${queryParams.toString()}`,
+      `${API_VERSION}/assets/?${queryParams.toString()}`,
       null,
       user.token,
     );
