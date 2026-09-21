@@ -8,6 +8,19 @@ updates:
       npm:
         patterns:
           - "*"
+    ignore:
+      # typescript-eslint 8.70.0 declares a `typescript@">=4.8.4 <6.1.0"` peer
+      # range, so TypeScript 6.1 and newer break `npm install` with ERESOLVE.
+      # Drop this once typescript-eslint widens the range.
+      - dependency-name: "typescript"
+        versions: [">=6.1.0"]
+      # eslint-plugin-react 7.37.5 (its latest release) declares an
+      # `eslint@"... || ^9.7"` peer range and has no ESLint 10 support yet.
+      # Drop these once eslint-plugin-react supports ESLint 10.
+      - dependency-name: "eslint"
+        versions: [">=10.0.0"]
+      - dependency-name: "@eslint/js"
+        versions: [">=10.0.0"]
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:

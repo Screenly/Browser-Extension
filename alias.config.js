@@ -20,8 +20,10 @@ function getAliases(useAbsolutePaths = true) {
   const aliases = {};
 
   Object.entries(tsPaths).forEach(([key, value]) => {
-    // Get the base path without /* if it exists
-    const basePath = value[0].replace('/*', '');
+    // Get the base path without /* if it exists, normalised to be relative to
+    // this file (tsconfig paths are written as './src/...' now that TypeScript
+    // no longer accepts the deprecated `baseUrl` option).
+    const basePath = value[0].replace('/*', '').replace(/^\.\//, '');
 
     // Get the alias key without /* if it exists
     const aliasKey = key.replace('/*', '');
