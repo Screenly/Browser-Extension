@@ -17,5 +17,5 @@ docker run \
     -v $(pwd):/app:delegated \
     -v /app/node_modules \
     screenly-browser-extension:latest \
-    /bin/bash -c "npm test"
+    /bin/bash -c "bun run test"
 

@@ -49,7 +49,7 @@ jobs:
             -v $(pwd)/artifacts:/app/artifacts:delegated \
             -v /app/artifacts/node_modules \
             screenly-browser-extension:latest \
-            /bin/bash -c "npm run build && cp -r dist/ artifacts/"
+            /bin/bash -c "bun run build && cp -r dist/ artifacts/"
 
       - name: Compress
         run: |
@@ -107,7 +107,7 @@ jobs:
           COMPONENT_ID: 'NwxGnn8u8K'
           OVERRIDE_SBOM_METADATA: true
           SBOM_VERSION: ${{ github.ref_name }}
-          LOCK_FILE: 'package-lock.json'
+          LOCK_FILE: 'bun.lock'
           OUTPUT_FILE: '${{ matrix.platform }}-extension.cdx.json'
           AUGMENT: true
           ENRICH: true
