@@ -1,5 +1,5 @@
 /// <reference types="chrome"/>
-/* global browser, chrome */
+/* global browser */
 'use strict';
 
 import normalizeUrl from 'normalize-url';
@@ -11,10 +11,6 @@ import {
 } from '@/types/screenly-api';
 import { User, RequestInit } from '@/types/core';
 import { API_BASE_URL, API_VERSION } from '@/constants';
-
-declare global {
-  const browser: typeof chrome;
-}
 
 export function callApi(
   method: string,
