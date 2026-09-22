@@ -71,20 +71,52 @@ $ git tag
 $ git tag -a vYYYY.M.MICRO -m "tl;dr changelog."
 $ git push origin vYYYY.M.MICRO
 ```
-* Navigate to the [GitHub releases](https://github.com/Screenly/Browser-Extension/releases) and click 'Draft a new release'.
-* Select the tag you just created above and provide a release title and description.
-  * You can use `git diff <previous tag>..<new tag>` to diff between the current and previous release to help you with the changelog.
-* Go to the [CI Job](https://github.com/Screenly/Browser-Extension/actions/workflows/build.yaml) and pull down the release `.zip` files for the release you created.
-  * You can verify the `.zip` files you downloaded with the GitHub CLI by running `gh attestation verify path/to/release.zip --owner Screenly`.
+* Pushing the tag runs [`build.yaml`](/.github/workflows/build.yaml), which builds
+  both extensions and opens a GitHub release for the tag as a **pre-release**,
+  with generated notes and the two `.zip` files attached.
+* Edit that release: give it a title, tidy the notes, and check the `.zip` files.
+  * You can use `git diff <previous tag>..<new tag>` to diff between the current
+    and previous release to help you with the changelog.
+  * You can verify a downloaded `.zip` with the GitHub CLI by running
+    `gh attestation verify path/to/release.zip --owner Screenly`.
 
-### Publishing to Stores
+## :package: Publishing to the Stores
 
-#### Chrome
+Untick 'Set as a pre-release' and publish the release. That is the point of no
+return: it fires [`publish.yaml`](/.github/workflows/publish.yaml), which
+submits what is attached to the release rather than rebuilding it, and checks
+each artifact's build provenance and version against the tag before it does.
+Nothing publishes off a bare tag push.
 
-* Navigate to [Chrome Web Store Developer Dashboard](https://chrome.google.com/u/1/webstore/devconsole/).
-* Select the right publisher account and upload `screenly-chrome-extension.zip` you downloaded before.
+For Chrome the workflow uploads the package and submits it for review. For
+Firefox it uploads the package together with a source archive of the tagged
+commit, which AMO requires from us because the build is bundled and minified;
+see [`SOURCE_BUILD_INSTRUCTIONS.md`](/SOURCE_BUILD_INSTRUCTIONS.md). Both stores
+then review by hand, so the new version goes live hours to days later. Neither
+job waits for that.
 
-#### Firefox
+### Re-running a Submission
 
-* Navigate to Firefox's [Add-on Developer Hub](https://addons.mozilla.org/en-US/developers/).
-* Upload `screenly-firefox-extension.zip` you downloaded before.
+If one store fails and the other succeeds, don't re-publish the release — run
+`publish.yaml` from the Actions tab instead. It takes the tag, which store to
+submit to, and a `dry_run` option that stops short of submitting: for Chrome it
+leaves the package as an unsubmitted draft, for Firefox it only lints.
+
+### Credentials
+
+`publish.yaml` reads these from the `store-release` environment. Give that
+environment required reviewers if you want submissions to need a second
+approval.
+
+| Secret | Where it comes from |
+| --- | --- |
+| `CHROME_PUBLISHER_ID` | The publisher account ID, visible in the Developer Dashboard URL. Not the extension ID. |
+| `CHROME_CLIENT_ID`, `CHROME_CLIENT_SECRET`, `CHROME_REFRESH_TOKEN` | A Google Cloud OAuth client with the Chrome Web Store API enabled. `npx chrome-webstore-upload-keys` walks through it. |
+| `AMO_JWT_ISSUER`, `AMO_JWT_SECRET` | [AMO API credentials](https://addons.mozilla.org/en-US/developers/addon/api/key/). The secret is shown once. |
+
+Two things to watch. A Google refresh token stops working if it goes unused for
+six months, which is easy to hit at our release cadence — a failed Chrome job
+with an auth error usually means a new token, not a broken workflow. And the
+Chrome Web Store API v1.1 is switched off after 15 October 2026; we are on v2
+via `chrome-webstore-upload-cli` v4, so pin any replacement tooling to something
+that speaks v2.

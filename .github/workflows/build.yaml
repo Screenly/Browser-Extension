@@ -56,8 +56,11 @@ jobs:
           cd artifacts/dist/
           zip -r ${{ github.workspace }}/screenly-${{ matrix.platform }}-extension.zip .
 
+      # Forks cannot mint attestations, so pull requests from them are skipped.
+      # Tag builds must be covered: the release artifacts are what we publish to
+      # the stores, and publish.yaml verifies their provenance before it does.
       - name: Attest
-        if: github.event.pull_request.head.repo.full_name == github.repository
+        if: startsWith(github.ref, 'refs/tags/') || github.event.pull_request.head.repo.full_name == github.repository
         uses: actions/attest-build-provenance@v4
         with:
           subject-path: '${{ github.workspace }}/screenly-${{ matrix.platform }}-extension.zip'

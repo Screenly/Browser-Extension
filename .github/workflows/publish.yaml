@@ -1,0 +1,256 @@
+---
+name: Publish Browser Extensions
+
+# Publishing is deliberately a separate workflow from build.yaml. build.yaml
+# runs on the tag and leaves a *prerelease* behind; promoting that prerelease
+# to a full release is the human decision that fires this workflow. Store
+# submissions cannot be taken back, so nothing here runs off a bare tag push.
+on:
+  release:
+    types: [released]
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Release tag to publish, e.g. v2026.9.0'
+        required: true
+        type: string
+      platform:
+        description: 'Store to publish to'
+        required: true
+        default: 'both'
+        type: choice
+        options:
+          - both
+          - chrome
+          - firefox
+      dry_run:
+        description: 'Validate and (for Chrome) upload a draft, but do not submit for review'
+        required: false
+        default: false
+        type: boolean
+
+permissions:
+  contents: read
+  attestations: read
+
+env:
+  # Public identifiers, not secrets: both are visible on the store listings.
+  CHROME_EXTENSION_ID: kcoehkngnbhlmdcgcadliaadlmbjmcln
+  FIREFOX_ADDON_SLUG: save-to-screenly
+
+jobs:
+  chrome:
+    name: Chrome Web Store
+    runs-on: ubuntu-latest
+    # Add required reviewers to this environment in the repository settings to
+    # gate submissions on a second pair of eyes. It also holds the store
+    # credentials, which keeps them out of reach of workflows on pull requests.
+    environment: store-release
+    if: inputs.platform != 'firefox'
+    steps:
+      - name: Resolve the release tag
+        id: release
+        env:
+          TAG: ${{ inputs.tag || github.event.release.tag_name }}
+        run: |
+          if [[ ! $TAG =~ ^v[0-9] ]]; then
+            echo "Expected a tag like v2026.9.0, got '$TAG'."
+            exit 1
+          fi
+          echo "tag=$TAG" >> "$GITHUB_OUTPUT"
+          echo "version=${TAG#v}" >> "$GITHUB_OUTPUT"
+
+      - name: Check that the store credentials are present
+        env:
+          PUBLISHER_ID: ${{ secrets.CHROME_PUBLISHER_ID }}
+          CLIENT_ID: ${{ secrets.CHROME_CLIENT_ID }}
+          CLIENT_SECRET: ${{ secrets.CHROME_CLIENT_SECRET }}
+          REFRESH_TOKEN: ${{ secrets.CHROME_REFRESH_TOKEN }}
+        run: |
+          missing=()
+          for name in PUBLISHER_ID CLIENT_ID CLIENT_SECRET REFRESH_TOKEN; do
+            [[ -n ${!name} ]] || missing+=("CHROME_$name")
+          done
+          if (( ${#missing[@]} )); then
+            echo "Missing secrets: ${missing[*]}."
+            echo "See the 'Publishing to the stores' section of CONTRIBUTING.md."
+            exit 1
+          fi
+
+      - name: Download the release artifact
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ steps.release.outputs.tag }}
+        run: |
+          gh release download "$TAG" \
+            --repo "$GITHUB_REPOSITORY" \
+            --pattern "screenly-chrome-extension-$TAG.zip" \
+            --output extension.zip
+
+      - name: Verify the artifact's build provenance
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh attestation verify extension.zip --repo "$GITHUB_REPOSITORY"
+
+      - name: Check the packaged version matches the tag
+        env:
+          VERSION: ${{ steps.release.outputs.version }}
+        run: |
+          packaged=$(unzip -p extension.zip manifest.json | jq -er .version)
+          if [[ $packaged != "$VERSION" ]]; then
+            echo "The package says $packaged but the tag says $VERSION."
+            exit 1
+          fi
+
+      - name: Install Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: 24
+
+      - name: Upload the package
+        env:
+          EXTENSION_ID: ${{ env.CHROME_EXTENSION_ID }}
+          PUBLISHER_ID: ${{ secrets.CHROME_PUBLISHER_ID }}
+          CLIENT_ID: ${{ secrets.CHROME_CLIENT_ID }}
+          CLIENT_SECRET: ${{ secrets.CHROME_CLIENT_SECRET }}
+          REFRESH_TOKEN: ${{ secrets.CHROME_REFRESH_TOKEN }}
+        run: npx --yes chrome-webstore-upload-cli@4 upload --source extension.zip
+
+      - name: Submit for review
+        if: ${{ !inputs.dry_run }}
+        env:
+          EXTENSION_ID: ${{ env.CHROME_EXTENSION_ID }}
+          PUBLISHER_ID: ${{ secrets.CHROME_PUBLISHER_ID }}
+          CLIENT_ID: ${{ secrets.CHROME_CLIENT_ID }}
+          CLIENT_SECRET: ${{ secrets.CHROME_CLIENT_SECRET }}
+          REFRESH_TOKEN: ${{ secrets.CHROME_REFRESH_TOKEN }}
+        run: npx --yes chrome-webstore-upload-cli@4 publish
+
+      - name: Summarise
+        env:
+          TAG: ${{ steps.release.outputs.tag }}
+          DRY_RUN: ${{ inputs.dry_run }}
+        run: |
+          {
+            echo "### Chrome Web Store"
+            echo
+            if [[ $DRY_RUN == true ]]; then
+              echo "\`$TAG\` uploaded as a draft. Not submitted for review."
+            else
+              echo "\`$TAG\` uploaded and submitted for review."
+            fi
+            echo
+            echo "<https://chrome.google.com/webstore/devconsole/>"
+          } >> "$GITHUB_STEP_SUMMARY"
+
+  firefox:
+    name: Firefox Add-ons
+    runs-on: ubuntu-latest
+    environment: store-release
+    if: inputs.platform != 'chrome'
+    steps:
+      - name: Resolve the release tag
+        id: release
+        env:
+          TAG: ${{ inputs.tag || github.event.release.tag_name }}
+        run: |
+          if [[ ! $TAG =~ ^v[0-9] ]]; then
+            echo "Expected a tag like v2026.9.0, got '$TAG'."
+            exit 1
+          fi
+          echo "tag=$TAG" >> "$GITHUB_OUTPUT"
+          echo "version=${TAG#v}" >> "$GITHUB_OUTPUT"
+
+      - name: Check that the store credentials are present
+        env:
+          WEB_EXT_API_KEY: ${{ secrets.AMO_JWT_ISSUER }}
+          WEB_EXT_API_SECRET: ${{ secrets.AMO_JWT_SECRET }}
+        run: |
+          missing=()
+          [[ -n $WEB_EXT_API_KEY ]] || missing+=(AMO_JWT_ISSUER)
+          [[ -n $WEB_EXT_API_SECRET ]] || missing+=(AMO_JWT_SECRET)
+          if (( ${#missing[@]} )); then
+            echo "Missing secrets: ${missing[*]}."
+            echo "See the 'Publishing to the stores' section of CONTRIBUTING.md."
+            exit 1
+          fi
+
+      # AMO reviews the add-on by rebuilding it, so the submission carries the
+      # sources the released commit was built from — not the working tree.
+      - name: Checkout the released commit
+        uses: actions/checkout@v7
+        with:
+          ref: ${{ steps.release.outputs.tag }}
+
+      - name: Download the release artifact
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ steps.release.outputs.tag }}
+        run: |
+          gh release download "$TAG" \
+            --repo "$GITHUB_REPOSITORY" \
+            --pattern "screenly-firefox-extension-$TAG.zip" \
+            --output extension.zip
+
+      - name: Verify the artifact's build provenance
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh attestation verify extension.zip --repo "$GITHUB_REPOSITORY"
+
+      - name: Unpack the artifact
+        env:
+          VERSION: ${{ steps.release.outputs.version }}
+        run: |
+          unzip -q extension.zip -d dist
+          packaged=$(jq -er .version dist/manifest.json)
+          if [[ $packaged != "$VERSION" ]]; then
+            echo "The package says $packaged but the tag says $VERSION."
+            exit 1
+          fi
+
+      - name: Package the sources for review
+        env:
+          VERSION: ${{ steps.release.outputs.version }}
+        run: ./bin/package_source.sh
+
+      - name: Install Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: 24
+
+      - name: Lint the package
+        run: npx --yes web-ext@10 lint --source-dir dist
+
+      # --approval-timeout 0 returns as soon as AMO has accepted the upload.
+      # A listed submission then sits in a human review queue, so waiting for
+      # the signed XPI here would mean holding a runner open for days.
+      - name: Submit for review
+        if: ${{ !inputs.dry_run }}
+        env:
+          WEB_EXT_API_KEY: ${{ secrets.AMO_JWT_ISSUER }}
+          WEB_EXT_API_SECRET: ${{ secrets.AMO_JWT_SECRET }}
+          VERSION: ${{ steps.release.outputs.version }}
+        run: |
+          npx --yes web-ext@10 sign \
+            --source-dir dist \
+            --channel listed \
+            --upload-source-code "screenly-extension-source-$VERSION.zip" \
+            --approval-timeout 0 \
+            --artifacts-dir artifacts
+
+      - name: Summarise
+        env:
+          TAG: ${{ steps.release.outputs.tag }}
+          DRY_RUN: ${{ inputs.dry_run }}
+        run: |
+          {
+            echo "### Firefox Add-ons"
+            echo
+            if [[ $DRY_RUN == true ]]; then
+              echo "\`$TAG\` linted. Not submitted for review."
+            else
+              echo "\`$TAG\` submitted for review."
+            fi
+            echo
+            echo "<https://addons.mozilla.org/en-US/developers/addon/$FIREFOX_ADDON_SLUG/versions>"
+          } >> "$GITHUB_STEP_SUMMARY"
