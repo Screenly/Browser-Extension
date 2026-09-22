@@ -104,16 +104,15 @@ leaves the package as an unsubmitted draft, for Firefox it only lints.
 
 ### Credentials
 
-`publish.yaml` reads these from the `store-release` environment. Give that
-environment required reviewers if you want submissions to need a second
-approval.
+`publish.yaml` runs in the `store-release` environment, which is provisioned
+along with its reviewers and the refs allowed to reach it. What it reads:
 
-| Secret | What it is |
-| --- | --- |
-| `CHROME_PUBLISHER_ID` | The publisher account ID, visible in the Developer Dashboard URL. Not the extension ID. |
-| `GCP_WORKLOAD_IDENTITY_PROVIDER` | Resource name of the workload identity provider, `projects/.../locations/global/workloadIdentityPools/.../providers/...`. |
-| `GCP_SERVICE_ACCOUNT` | Email of the service account the provider is allowed to impersonate. |
-| `AMO_JWT_ISSUER`, `AMO_JWT_SECRET` | [AMO API credentials](https://addons.mozilla.org/en-US/developers/addon/api/key/). The secret is shown once. |
+| Name | Kind | What it is |
+| --- | --- | --- |
+| `GCP_WORKLOAD_IDENTITY_PROVIDER` | variable, provisioned | Resource name of the workload identity provider the OIDC token is exchanged through. |
+| `GCP_SERVICE_ACCOUNT` | variable, provisioned | Email of the service account that provider may impersonate. |
+| `CHROME_PUBLISHER_ID` | secret, by hand | The publisher account ID, visible in the Developer Dashboard URL. Not the extension ID. |
+| `AMO_JWT_ISSUER`, `AMO_JWT_SECRET` | secret, by hand | [AMO API credentials](https://addons.mozilla.org/en-US/developers/addon/api/key/). The secret is shown once. |
 
 Only the last row is a credential. The Chrome side stores nothing that grants
 access on its own: at run time GitHub mints an OIDC token for the workflow,
@@ -129,33 +128,20 @@ don't expire on their own.
 
 #### Setting up the Chrome side
 
-One-time, and it needs both a Google Cloud project and Chrome Web Store
-publisher access:
+The Google side — the service account, its workload identity binding to this
+repository, and the Chrome Web Store API — and the GitHub environment with the
+two variables above are managed by Screenly's internal infrastructure
+automation. Change them there rather than in the Google or GitHub consoles;
+Screenly engineers will find the details alongside the rest of our CI
+configuration.
 
-1. In the Cloud project, enable the **Chrome Web Store API**, the **IAM Service
-   Account Credentials API** and the **Security Token Service API**. The last
-   two are what the token exchange runs on, and leaving them off fails at
-   authentication rather than at setup.
-2. Create a service account. It needs no project roles.
-3. In the Chrome Web Store Developer Dashboard, under **Account**, add that
-   service account's email. A publisher can have only one, so this is worth
-   agreeing on before creating it.
-4. Create a workload identity pool and a GitHub OIDC provider in it, with the
-   attribute condition restricted to this repository.
-5. Grant the provider's principal `roles/iam.workloadIdentityUser` on the
-   service account.
-
-Google's guide to [using a service account with the Chrome Web Store
-API](https://developer.chrome.com/docs/webstore/service-accounts) covers 1–3,
-and [`google-github-actions/auth`](https://github.com/google-github-actions/auth)
-covers 4–5.
-
-If federation is more than you want to set up, the same action takes a service
-account JSON key instead: replace `workload_identity_provider` with
-`credentials_json: ${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}` in `publish.yaml`.
-That is a long-lived secret again, but unlike a refresh token it belongs to the
-organisation rather than to whoever happened to click through the consent
-screen, and it can be rotated without one.
+One step has no API and stays manual: someone with publisher access has to paste
+the service account's email into **Account** in the [Chrome Web Store Developer
+Dashboard](https://chrome.google.com/webstore/devconsole/). A publisher accepts
+exactly one service account, so agree on it before changing it — swapping it
+breaks releases for whatever was using the old one. Google's [guide to service
+accounts](https://developer.chrome.com/docs/webstore/service-accounts) describes
+what that box does.
 
 #### A note on the API version
 

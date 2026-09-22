@@ -42,9 +42,10 @@ jobs:
   chrome:
     name: Chrome Web Store
     runs-on: ubuntu-latest
-    # Add required reviewers to this environment in the repository settings to
-    # gate submissions on a second pair of eyes. It also scopes the store
-    # identifiers to this workflow, out of reach of pull request builds.
+    # The environment, its reviewers and the refs allowed to reach it are
+    # provisioned by our infrastructure automation rather than set in the
+    # repository settings UI. It also scopes the store identifiers to this
+    # workflow, out of reach of pull request builds.
     environment: store-release
     if: inputs.platform != 'firefox'
     permissions:
@@ -64,11 +65,15 @@ jobs:
           echo "tag=$TAG" >> "$GITHUB_OUTPUT"
           echo "version=${TAG#v}" >> "$GITHUB_OUTPUT"
 
+      # The two GCP values are variables, not secrets: a provider resource name
+      # and a service account email, neither of which authorises anything on
+      # its own. They are provisioned, so a missing one means the environment
+      # has drifted from the configuration that sets it.
       - name: Check that the store credentials are present
         env:
           CHROME_PUBLISHER_ID: ${{ secrets.CHROME_PUBLISHER_ID }}
-          GCP_SERVICE_ACCOUNT: ${{ secrets.GCP_SERVICE_ACCOUNT }}
-          GCP_WORKLOAD_IDENTITY_PROVIDER: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}
+          GCP_SERVICE_ACCOUNT: ${{ vars.GCP_SERVICE_ACCOUNT }}
+          GCP_WORKLOAD_IDENTITY_PROVIDER: ${{ vars.GCP_WORKLOAD_IDENTITY_PROVIDER }}
         run: |
           missing=()
           for name in CHROME_PUBLISHER_ID GCP_SERVICE_ACCOUNT \
@@ -121,8 +126,8 @@ jobs:
         id: auth
         uses: google-github-actions/auth@v3
         with:
-          workload_identity_provider: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}
-          service_account: ${{ secrets.GCP_SERVICE_ACCOUNT }}
+          workload_identity_provider: ${{ vars.GCP_WORKLOAD_IDENTITY_PROVIDER }}
+          service_account: ${{ vars.GCP_SERVICE_ACCOUNT }}
           token_format: access_token
           access_token_scopes: https://www.googleapis.com/auth/chromewebstore
 
