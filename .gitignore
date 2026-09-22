@@ -17,4 +17,5 @@ node_modules
 
 screenly-chrome-extension-*.zip
 screenly-firefox-extension-*.zip
+screenly-extension-source-*.zip
 src/manifest.json
