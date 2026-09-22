@@ -183,12 +183,14 @@ jobs:
             exit 1
           fi
 
-      # AMO reviews the add-on by rebuilding it, so the submission carries the
-      # sources the released commit was built from — not the working tree.
-      - name: Checkout the released commit
+      # The default ref, so the scripts come from the same revision as the
+      # workflow driving them. The full history is needed because the archive
+      # AMO reviews is cut from the released tag, not from what is checked out.
+      - name: Check out the publishing scripts
         uses: actions/checkout@v7
         with:
-          ref: ${{ steps.release.outputs.tag }}
+          fetch-depth: 0
+          fetch-tags: true
 
       - name: Download the release artifact
         env:
@@ -216,9 +218,12 @@ jobs:
             exit 1
           fi
 
+      # AMO reviews the add-on by rebuilding it, so the archive has to hold the
+      # sources the released artifact was built from.
       - name: Package the sources for review
         env:
           VERSION: ${{ steps.release.outputs.version }}
+          REF: ${{ steps.release.outputs.tag }}
         run: ./bin/package_source.sh
 
       - name: Install Node.js

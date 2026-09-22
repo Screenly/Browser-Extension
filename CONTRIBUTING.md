@@ -132,8 +132,10 @@ don't expire on their own.
 One-time, and it needs both a Google Cloud project and Chrome Web Store
 publisher access:
 
-1. In the Cloud project, enable the **Chrome Web Store API** and the **IAM
-   Service Account Credentials API**.
+1. In the Cloud project, enable the **Chrome Web Store API**, the **IAM Service
+   Account Credentials API** and the **Security Token Service API**. The last
+   two are what the token exchange runs on, and leaving them off fails at
+   authentication rather than at setup.
 2. Create a service account. It needs no project roles.
 3. In the Chrome Web Store Developer Dashboard, under **Account**, add that
    service account's email. A publisher can have only one, so this is worth
