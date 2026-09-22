@@ -43,10 +43,14 @@ jobs:
     name: Chrome Web Store
     runs-on: ubuntu-latest
     # Add required reviewers to this environment in the repository settings to
-    # gate submissions on a second pair of eyes. It also holds the store
-    # credentials, which keeps them out of reach of workflows on pull requests.
+    # gate submissions on a second pair of eyes. It also scopes the store
+    # identifiers to this workflow, out of reach of pull request builds.
     environment: store-release
     if: inputs.platform != 'firefox'
+    permissions:
+      contents: read
+      attestations: read
+      id-token: write  # to exchange for a Google access token
     steps:
       - name: Resolve the release tag
         id: release
@@ -62,20 +66,28 @@ jobs:
 
       - name: Check that the store credentials are present
         env:
-          PUBLISHER_ID: ${{ secrets.CHROME_PUBLISHER_ID }}
-          CLIENT_ID: ${{ secrets.CHROME_CLIENT_ID }}
-          CLIENT_SECRET: ${{ secrets.CHROME_CLIENT_SECRET }}
-          REFRESH_TOKEN: ${{ secrets.CHROME_REFRESH_TOKEN }}
+          CHROME_PUBLISHER_ID: ${{ secrets.CHROME_PUBLISHER_ID }}
+          GCP_SERVICE_ACCOUNT: ${{ secrets.GCP_SERVICE_ACCOUNT }}
+          GCP_WORKLOAD_IDENTITY_PROVIDER: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}
         run: |
           missing=()
-          for name in PUBLISHER_ID CLIENT_ID CLIENT_SECRET REFRESH_TOKEN; do
-            [[ -n ${!name} ]] || missing+=("CHROME_$name")
+          for name in CHROME_PUBLISHER_ID GCP_SERVICE_ACCOUNT \
+                      GCP_WORKLOAD_IDENTITY_PROVIDER; do
+            [[ -n ${!name} ]] || missing+=("$name")
           done
           if (( ${#missing[@]} )); then
             echo "Missing secrets: ${missing[*]}."
             echo "See the 'Publishing to the stores' section of CONTRIBUTING.md."
             exit 1
           fi
+
+      # Before the download: checkout cleans the working directory. The default
+      # ref is the commit this workflow is running from, so the script and the
+      # workflow always come from the same revision.
+      - name: Check out the publishing script
+        uses: actions/checkout@v7
+        with:
+          sparse-checkout: bin
 
       - name: Download the release artifact
         env:
@@ -102,39 +114,25 @@ jobs:
             exit 1
           fi
 
-      - name: Install Node.js
-        uses: actions/setup-node@v7
+      # GitHub's OIDC token is exchanged for an access token that is good for
+      # an hour and scoped to the Chrome Web Store. Nothing that can reach the
+      # store is stored in this repository or its secrets.
+      - name: Authenticate to Google Cloud
+        id: auth
+        uses: google-github-actions/auth@v3
         with:
-          node-version: 24
+          workload_identity_provider: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}
+          service_account: ${{ secrets.GCP_SERVICE_ACCOUNT }}
+          token_format: access_token
+          access_token_scopes: https://www.googleapis.com/auth/chromewebstore
 
-      # Pinned exactly, and fetched in its own step, so that nothing is pulled
-      # from the registry while the store credentials are in the environment.
-      - name: Install the Chrome Web Store CLI
-        run: |
-          npm install --no-save --prefix "$RUNNER_TEMP/tools" \
-            chrome-webstore-upload-cli@4.0.1
-
-      - name: Upload the package
+      - name: Upload and submit
         env:
-          EXTENSION_ID: ${{ env.CHROME_EXTENSION_ID }}
+          ACCESS_TOKEN: ${{ steps.auth.outputs.access_token }}
           PUBLISHER_ID: ${{ secrets.CHROME_PUBLISHER_ID }}
-          CLIENT_ID: ${{ secrets.CHROME_CLIENT_ID }}
-          CLIENT_SECRET: ${{ secrets.CHROME_CLIENT_SECRET }}
-          REFRESH_TOKEN: ${{ secrets.CHROME_REFRESH_TOKEN }}
-        run: |
-          "$RUNNER_TEMP/tools/node_modules/.bin/chrome-webstore-upload" \
-            upload --source extension.zip
-
-      - name: Submit for review
-        if: ${{ !inputs.dry_run }}
-        env:
           EXTENSION_ID: ${{ env.CHROME_EXTENSION_ID }}
-          PUBLISHER_ID: ${{ secrets.CHROME_PUBLISHER_ID }}
-          CLIENT_ID: ${{ secrets.CHROME_CLIENT_ID }}
-          CLIENT_SECRET: ${{ secrets.CHROME_CLIENT_SECRET }}
-          REFRESH_TOKEN: ${{ secrets.CHROME_REFRESH_TOKEN }}
-        run: |
-          "$RUNNER_TEMP/tools/node_modules/.bin/chrome-webstore-upload" publish
+          SUBMIT: ${{ !inputs.dry_run }}
+        run: ./bin/publish_chrome.sh
 
       - name: Summarise
         env:

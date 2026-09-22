@@ -108,15 +108,56 @@ leaves the package as an unsubmitted draft, for Firefox it only lints.
 environment required reviewers if you want submissions to need a second
 approval.
 
-| Secret | Where it comes from |
+| Secret | What it is |
 | --- | --- |
 | `CHROME_PUBLISHER_ID` | The publisher account ID, visible in the Developer Dashboard URL. Not the extension ID. |
-| `CHROME_CLIENT_ID`, `CHROME_CLIENT_SECRET`, `CHROME_REFRESH_TOKEN` | A Google Cloud OAuth client with the Chrome Web Store API enabled. `npx chrome-webstore-upload-keys` walks through it. |
+| `GCP_WORKLOAD_IDENTITY_PROVIDER` | Resource name of the workload identity provider, `projects/.../locations/global/workloadIdentityPools/.../providers/...`. |
+| `GCP_SERVICE_ACCOUNT` | Email of the service account the provider is allowed to impersonate. |
 | `AMO_JWT_ISSUER`, `AMO_JWT_SECRET` | [AMO API credentials](https://addons.mozilla.org/en-US/developers/addon/api/key/). The secret is shown once. |
 
-Two things to watch. A Google refresh token stops working if it goes unused for
-six months, which is easy to hit at our release cadence — a failed Chrome job
-with an auth error usually means a new token, not a broken workflow. And the
-Chrome Web Store API v1.1 is switched off after 15 October 2026; we are on v2
-via `chrome-webstore-upload-cli` v4, so pin any replacement tooling to something
-that speaks v2.
+Only the last row is a credential. The Chrome side stores nothing that grants
+access on its own: at run time GitHub mints an OIDC token for the workflow,
+Google trades it for an access token good for an hour, and the authority for
+that trade lives in an IAM binding on Google's side rather than in this
+repository. There is no refresh token to obtain, store, rotate, or lose — which
+also removes the trap where a Google refresh token quietly stops working after
+six months unused, a span shorter than the gap between some of our releases.
+
+Firefox has no equivalent. AMO authenticates with an issuer and secret that
+have to be stored; the workflow uses them to sign short-lived JWTs, and they
+don't expire on their own.
+
+#### Setting up the Chrome side
+
+One-time, and it needs both a Google Cloud project and Chrome Web Store
+publisher access:
+
+1. In the Cloud project, enable the **Chrome Web Store API** and the **IAM
+   Service Account Credentials API**.
+2. Create a service account. It needs no project roles.
+3. In the Chrome Web Store Developer Dashboard, under **Account**, add that
+   service account's email. A publisher can have only one, so this is worth
+   agreeing on before creating it.
+4. Create a workload identity pool and a GitHub OIDC provider in it, with the
+   attribute condition restricted to this repository.
+5. Grant the provider's principal `roles/iam.workloadIdentityUser` on the
+   service account.
+
+Google's guide to [using a service account with the Chrome Web Store
+API](https://developer.chrome.com/docs/webstore/service-accounts) covers 1–3,
+and [`google-github-actions/auth`](https://github.com/google-github-actions/auth)
+covers 4–5.
+
+If federation is more than you want to set up, the same action takes a service
+account JSON key instead: replace `workload_identity_provider` with
+`credentials_json: ${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}` in `publish.yaml`.
+That is a long-lived secret again, but unlike a refresh token it belongs to the
+organisation rather than to whoever happened to click through the consent
+screen, and it can be rotated without one.
+
+#### A note on the API version
+
+Chrome Web Store API v1.1 is switched off after 15 October 2026, and most of
+the publishing actions on the GitHub Marketplace still speak it. `publish.yaml`
+calls v2 directly, which is why it needs a publisher ID alongside the extension
+ID. Anything that replaces `bin/publish_chrome.sh` needs to speak v2 too.
