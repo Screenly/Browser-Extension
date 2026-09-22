@@ -32,6 +32,30 @@ For a guide on how to open a pull request, please read [this documentation from 
 
 ## :rocket: Release Process
 
+### Versioning
+
+Releases use CalVer `YYYY.M.MICRO`, with no zero padding on the month:
+`2026.9.0`, `2026.10.0`. A new month resets MICRO to `0`; a second release
+within the same month increments it. Tags carry a `v` prefix — `v2026.9.0` —
+which is what `build.yaml` triggers on.
+
+**The version lives in the manifests.** `src/manifest-chrome.json` and
+`src/manifest-firefox.json` both carry it, and it is what the stores read. Bump
+both on `master` first, then tag that commit, and keep the tag and the manifests
+equal.
+
+Nothing checks that yet. `build.yaml` and `test.yaml` still derive `.version`
+from the git ref and write it over the manifest on the way into the build, which
+is how the committed number came to differ from every released one. Replacing
+that with a check is a follow-up; until it lands, the tag and the manifests
+agreeing is a convention rather than a guarantee.
+
+`package.json` is the build tooling's own manifest (`sce-webpack`, `private`),
+not the extension's. Its version is unrelated and is not bumped for a release.
+
+Chrome Web Store versions may only ever increase, so the move from `1.x` to
+CalVer is one-way.
+
 ### Creating a Release
 
 * Generate a new release tag in `git`:
@@ -41,12 +65,12 @@ $ git pull
 $ git checkout master
 $ git tag
 [...]
-$ git tag -a vX.Y.Z -m "tl;dr changelog."
-$ git push origin vX.Y.Z
+$ git tag -a v2026.9.0 -m "tl;dr changelog."
+$ git push origin v2026.9.0
 ```
 * Navigate to the [GitHub releases](https://github.com/Screenly/Browser-Extension/releases) and click 'Draft a new release'.
 * Select the tag you just created above and provide a release title and description.
-  * You can use `git diff v0.2.0..v0.3.0` to diff between the current and previous release to help you with the changelog.
+  * You can use `git diff v1.6.1..v2026.9.0` to diff between the current and previous release to help you with the changelog.
 * Go to the [CI Job](https://github.com/Screenly/Browser-Extension/actions/workflows/build.yaml) and pull down the release `.zip` files for the release you created.
   * You can verify the `.zip` files you downloaded with the GitHub CLI by running `gh attestation verify path/to/release.zip --owner Screenly`.
 
