@@ -107,6 +107,13 @@ jobs:
         with:
           node-version: 24
 
+      # Pinned exactly, and fetched in its own step, so that nothing is pulled
+      # from the registry while the store credentials are in the environment.
+      - name: Install the Chrome Web Store CLI
+        run: |
+          npm install --no-save --prefix "$RUNNER_TEMP/tools" \
+            chrome-webstore-upload-cli@4.0.1
+
       - name: Upload the package
         env:
           EXTENSION_ID: ${{ env.CHROME_EXTENSION_ID }}
@@ -114,7 +121,9 @@ jobs:
           CLIENT_ID: ${{ secrets.CHROME_CLIENT_ID }}
           CLIENT_SECRET: ${{ secrets.CHROME_CLIENT_SECRET }}
           REFRESH_TOKEN: ${{ secrets.CHROME_REFRESH_TOKEN }}
-        run: npx --yes chrome-webstore-upload-cli@4 upload --source extension.zip
+        run: |
+          "$RUNNER_TEMP/tools/node_modules/.bin/chrome-webstore-upload" \
+            upload --source extension.zip
 
       - name: Submit for review
         if: ${{ !inputs.dry_run }}
@@ -124,7 +133,8 @@ jobs:
           CLIENT_ID: ${{ secrets.CHROME_CLIENT_ID }}
           CLIENT_SECRET: ${{ secrets.CHROME_CLIENT_SECRET }}
           REFRESH_TOKEN: ${{ secrets.CHROME_REFRESH_TOKEN }}
-        run: npx --yes chrome-webstore-upload-cli@4 publish
+        run: |
+          "$RUNNER_TEMP/tools/node_modules/.bin/chrome-webstore-upload" publish
 
       - name: Summarise
         env:
@@ -218,8 +228,15 @@ jobs:
         with:
           node-version: 24
 
+      # Pinned exactly, and installed outside the checkout so it neither
+      # reaches the registry with credentials present nor disturbs the sources
+      # that go to AMO.
+      - name: Install web-ext
+        run: npm install --no-save --prefix "$RUNNER_TEMP/tools" web-ext@10.7.0
+
       - name: Lint the package
-        run: npx --yes web-ext@10 lint --source-dir dist
+        run: |
+          "$RUNNER_TEMP/tools/node_modules/.bin/web-ext" lint --source-dir dist
 
       # --approval-timeout 0 returns as soon as AMO has accepted the upload.
       # A listed submission then sits in a human review queue, so waiting for
@@ -231,7 +248,7 @@ jobs:
           WEB_EXT_API_SECRET: ${{ secrets.AMO_JWT_SECRET }}
           VERSION: ${{ steps.release.outputs.version }}
         run: |
-          npx --yes web-ext@10 sign \
+          "$RUNNER_TEMP/tools/node_modules/.bin/web-ext" sign \
             --source-dir dist \
             --channel listed \
             --upload-source-code "screenly-extension-source-$VERSION.zip" \
