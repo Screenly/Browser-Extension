@@ -22,19 +22,24 @@ No network access is needed beyond the dependency install.
 
 ## Build
 
-`PLATFORM` is `firefox` or `chrome`. `VERSION` is the version of the submission
-you are reviewing, and must match, because it is written into `manifest.json`
-and is what the store checks.
+Set the platform and the version first. Both paths below read them, so an
+AMO reviewer sets `PLATFORM=firefox` and anyone checking the Chrome artifact
+sets `PLATFORM=chrome`. `VERSION` is the version of the submission you are
+reviewing, and must match, because it is written into `manifest.json` and is
+what the store checks.
+
+```bash
+export PLATFORM=firefox   # or chrome
+export VERSION=<version>
+```
 
 ### With Docker
 
 ```bash
-PLATFORM=firefox \
-VERSION=<version> \
-  ./bin/package_extension.sh
+./bin/package_extension.sh
 ```
 
-The result is `screenly-<platform>-extension-<version>.zip`, plus the unpacked
+The result is `screenly-$PLATFORM-extension-$VERSION.zip`, plus the unpacked
 build in `dist/`.
 
 ### Without Docker
@@ -42,8 +47,8 @@ build in `dist/`.
 ```bash
 bun install --frozen-lockfile
 
-jq --arg version "<version>" '.version = $version' \
-  src/manifest-firefox.json > src/manifest.json
+jq --arg version "$VERSION" '.version = $version' \
+  "src/manifest-$PLATFORM.json" > src/manifest.json
 
 bunx webpack --config webpack.prod.js
 ```
