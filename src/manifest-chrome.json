@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Save to Screenly",
-  "version": "2026.9.0",
+  "version": "2026.10.0",
   "description": "Display live web pages on your Screenly digital sign.",
   "icons": {
     "16": "assets/images/screenly-logo-16.png",
