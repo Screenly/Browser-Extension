@@ -34,10 +34,10 @@ For a guide on how to open a pull request, please read [this documentation from 
 
 ### Versioning
 
-Releases use CalVer `YYYY.M.MICRO`, with no zero padding on the month:
-`2026.9.0`, `2026.10.0`. A new month resets MICRO to `0`; a second release
-within the same month increments it. Tags carry a `v` prefix — `v2026.9.0` —
-which is what `build.yaml` triggers on.
+Releases use CalVer `YY.M.MICRO`, with a two-digit year and no zero padding on
+the month: `26.9.0`, `26.11.0`. A new month resets MICRO to `0`; a second
+release within the same month increments it. Tags carry a `v` prefix —
+`v26.11.0` — which is what `build.yaml` triggers on.
 
 **The version lives in the manifests.** `src/manifest-chrome.json` and
 `src/manifest-firefox.json` both carry it, and it is what the stores read. Bump
@@ -54,22 +54,23 @@ agreeing is a convention rather than a guarantee.
 not the extension's. Its version is unrelated and is not bumped for a release.
 
 Chrome Web Store versions may only ever increase, so the move from `1.x` to
-CalVer is one-way.
+CalVer is one-way. The same goes for the year: `26` sorts below `2026`, so a
+single `vYYYY` release would rule out the two-digit year for good.
 
 ### Creating a Release
 
 * Bump `.version` in `src/manifest-chrome.json` and `src/manifest-firefox.json`
-  to the new `YYYY.M.MICRO` version, and merge that to `master`.
-* Tag the merged commit. `vYYYY.M.MICRO`, matching the manifests exactly — the
-  first CalVer release was `v2026.9.0`:
+  to the new `YY.M.MICRO` version, and merge that to `master`.
+* Tag the merged commit. `vYY.M.MICRO`, matching the manifests exactly — the
+  first CalVer release is `v26.11.0`:
 
 ```bash
 $ git pull
 $ git checkout master
 $ git tag
 [...]
-$ git tag -a vYYYY.M.MICRO -m "tl;dr changelog."
-$ git push origin vYYYY.M.MICRO
+$ git tag -a vYY.M.MICRO -m "tl;dr changelog."
+$ git push origin vYY.M.MICRO
 ```
 * Navigate to the [GitHub releases](https://github.com/Screenly/Browser-Extension/releases) and click 'Draft a new release'.
 * Select the tag you just created above and provide a release title and description.
