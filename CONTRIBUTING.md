@@ -44,9 +44,10 @@ which is what `build.yaml` triggers on.
 both on `master` first, then tag that commit, and keep the tag and the manifests
 equal.
 
-`build.yaml` enforces this: a tag build fails when the tag does not equal the
-manifest version, and the manifests are copied into the build unchanged, so
-what you commit is what ships.
+`build.yaml` enforces this: on a tag, a check job compares the tag with both
+manifests and the builds only start once it passes, so a mismatch stops the
+release for both platforms. The manifests are copied into the build unchanged,
+so what you commit is what ships.
 
 `package.json` is the build tooling's own manifest (`sce-webpack`, `private`),
 not the extension's. Its version is unrelated and is not bumped for a release.

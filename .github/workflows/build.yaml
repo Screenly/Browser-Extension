@@ -11,9 +11,36 @@ on:
     tags:
       - v*.*
 jobs:
+  check-version:
+    runs-on: ubuntu-latest
+    name: Check Tag Matches Manifests
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Compare the tag with both manifests
+        run: |
+          # The committed manifests carry the version and ship as is, so a tag
+          # build has to match both before either platform can be released.
+          if [[ $GITHUB_REF != refs/tags/v* ]]; then
+            exit 0
+          fi
+
+          TAG_VERSION=${GITHUB_REF#refs/tags/v}
+          STATUS=0
+          for MANIFEST in src/manifest-chrome.json src/manifest-firefox.json; do
+            MANIFEST_VERSION=$(jq -r .version "$MANIFEST")
+            if [[ "$TAG_VERSION" != "$MANIFEST_VERSION" ]]; then
+              echo "::error::Tag v$TAG_VERSION does not match $MANIFEST version $MANIFEST_VERSION. Bump both manifests on master, then tag that commit."
+              STATUS=1
+            fi
+          done
+          exit $STATUS
+
   build:
     runs-on: ubuntu-latest
     name: Build and Generate Artifact
+    needs: check-version
     permissions:
       id-token: write
       contents: write
@@ -26,21 +53,7 @@ jobs:
         uses: actions/checkout@v7
 
       - name: Prepare manifest.json
-        env:
-          MANIFEST: src/manifest-${{ matrix.platform }}.json
-        run: |
-          # The committed manifest carries the version. A tag build ships it as
-          # is, so the tag has to match it.
-          if [[ $GITHUB_REF == refs/tags/v* ]]; then
-            TAG_VERSION=${GITHUB_REF#refs/tags/v}
-            MANIFEST_VERSION=$(jq -r .version "$MANIFEST")
-            if [[ "$TAG_VERSION" != "$MANIFEST_VERSION" ]]; then
-              echo "::error::Tag v$TAG_VERSION does not match $MANIFEST version $MANIFEST_VERSION. Bump both manifests on master, then tag that commit."
-              exit 1
-            fi
-          fi
-
-          cp "$MANIFEST" src/manifest.json
+        run: cp src/manifest-${{ matrix.platform }}.json src/manifest.json
 
       - name: Build Docker images
         run: |
