@@ -44,11 +44,10 @@ which is what `build.yaml` triggers on.
 both on `master` first, then tag that commit, and keep the tag and the manifests
 equal.
 
-Nothing checks that yet. `build.yaml` and `test.yaml` still derive `.version`
-from the git ref and write it over the manifest on the way into the build, which
-is how the committed number came to differ from every released one. Replacing
-that with a check is a follow-up; until it lands, the tag and the manifests
-agreeing is a convention rather than a guarantee.
+`build.yaml` enforces this: on a tag, a check job compares the tag with both
+manifests and the builds only start once it passes, so a mismatch stops the
+release for both platforms. The manifests are copied into the build unchanged,
+so what you commit is what ships.
 
 `package.json` is the build tooling's own manifest (`sce-webpack`, `private`),
 not the extension's. Its version is unrelated and is not bumped for a release.
