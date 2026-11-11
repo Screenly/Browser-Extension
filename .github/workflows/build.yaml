@@ -101,7 +101,7 @@ jobs:
         uses: actions/checkout@v7
 
       - name: Upload SBOM
-        uses: sbomify/github-action@master
+        uses: sbomify/sbomify-action@master
         env:
           TOKEN: ${{ secrets.SBOMIFY_TOKEN }}
           COMPONENT_ID: 'NwxGnn8u8K'
